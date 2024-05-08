@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SystemOfTermometry2.CustomComponent.SettingComponent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SystemOfTermometry2.CustomComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <NavigationView x:Name="settingNavigat"
+                            PaneDisplayMode="Left"
+                            SelectionChanged="settingNavigat_SelectionChanged"
+                            IsSettingsVisible="False"
+                            IsBackButtonVisible="Collapsed"
+                            IsPaneToggleButtonVisible ="False"   
+                            OpenPaneLength="230"
+                            >
+        <NavigationView.MenuItems >
+            <NavigationViewItem Name = "GeneralSetting" Content="Общие настройки" Tag="Setting"  IsSelected="True" Margin="0, 40, 0, 0"/>
+            <NavigationViewItem Name = "BoardParameters" Content="Параметры платы" Tag="Setting"  />
+            <NavigationViewItem Name = "SilosSetting" Content="Настройка силосов" Tag="Setting"  />
+            <NavigationViewItem Name = "GrainSetting" Content="Настройка культур" Tag="Setting" />
+            <NavigationViewItem Name = "StructuralDivisions" Content="Структурные подразделения" Tag="Setting" />
+            <NavigationViewItem Name = "OfflineMode" Content="Автономный режим" Tag="Setting" />
+            <NavigationViewItem Name = "DBConnect" Content="Настройка БД" Tag="Setting"  />
+            <NavigationViewItem Name = "MailSetting" Content="Настройка почты" Tag="Setting" />
+            <NavigationViewItem Name = "SettingProvider" Content="Настройки разработочика" Tag="Setting" />
+        </NavigationView.MenuItems>
+        
+        <Frame x:Name="contentFrame" Margin="15"/>
+    </NavigationView>
+
+</Page>

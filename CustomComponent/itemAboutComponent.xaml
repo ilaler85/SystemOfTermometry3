@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SystemOfTermometry2.CustomComponent.AboutComponent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SystemOfTermometry2.CustomComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="10, 40, 0, 0">
+        <TextBlock FontSize="26" Margin="0,0,0,20">O нас</TextBlock>
+        <TextBlock Name ="textNameProduct" FontSize="16" Margin="0,0,0,10">
+        </TextBlock>
+        <TextBlock Name ="textNameProduct2" FontSize="16" Margin="0,0,0,10"></TextBlock>
+        <TextBlock FontSize="16" Margin="0,0,0,30">Все права защищены Ⓒ</TextBlock>
+        <StackPanel Margin="0,0,0,10">
+            <Image />
+            <HyperlinkButton Content="394088, г. Воронеж, ул. Электросигнальная, д. 13/4" NavigateUri="https://yandex.ru/maps/-/CDbafSMg" />
+        </StackPanel>
+        <StackPanel Margin="12,0,0,10">
+            <Image />
+            <TextBlock Name ="number" Text="+7 (473) 203-06-04"></TextBlock>
+        </StackPanel>
+
+        
+
+        <StackPanel Margin="12,0,0,10">
+            <Image />
+            <TextBlock Name ="mail" Text="info@vrn-vik.ru"></TextBlock>
+        </StackPanel>
+        <StackPanel Margin="0,0,0,10">
+            <Image />
+            <HyperlinkButton Content="www.vrn-vik.ru" NavigateUri="http://www.vrn-vik.ru" />
+        </StackPanel>
+        <Image Name ="imageQRCode"></Image>
+    </StackPanel>
+</Page>

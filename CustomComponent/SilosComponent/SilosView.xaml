@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SystemOfTermometry2.CustomComponent.SilosComponent.SilosView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SystemOfTermometry2.CustomComponent.SilosComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid CanDrag="True">
+        <Image x:Name="imageSilosItem" ></Image>
+        <TextBlock x:Name="labelNameSilos"></TextBlock>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Margin="0,0,10,0">Max</TextBlock>
+                <TextBlock x:Name="labelMax"></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Margin="0,0,10,0">Mid</TextBlock>
+                <TextBlock x:Name="labelMid"></TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Margin="0,0,10,0">Min</TextBlock>
+                <TextBlock x:Name="labelMin"></TextBlock>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

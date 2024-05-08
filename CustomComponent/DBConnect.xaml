@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="SystemOfTermometry2.CustomComponent.DBConnect"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SystemOfTermometry2.CustomComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Image Name="imageLogo"></Image>
+            <TextBlock>Подключение к БД</TextBlock>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock>Сервер</TextBlock>
+            <TextBox x:Name="BoxServer"></TextBox>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock>Порт</TextBlock>
+            <TextBox x:Name="BoxPort"></TextBox>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock>Имя БД</TextBlock>
+            <TextBox x:Name="BoxNameDB"></TextBox>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock>Пользователь</TextBlock>
+            <TextBox x:Name="BoxUser"></TextBox>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock>Пароль</TextBlock>
+            <TextBox x:Name="BoxPassword"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ButConnect" Content="Подключиться"></Button>
+            <Button x:Name="ButAutoConnect" Content="Авто"></Button>
+            <Button x:Name="ButCancel" Content="Отмена"> </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

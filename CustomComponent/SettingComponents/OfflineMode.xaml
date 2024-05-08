@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SystemOfTermometry2.CustomComponent.Setting_components.OfflineMode"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SystemOfTermometry2.CustomComponent.Setting_components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel>
+        <Button Name ="offlineModeButton" Margin="20,20,0,20" Content="Перейти в автономный режим и загрузить конфигурацию из файла"></Button>
+        <Button Name ="setOfflineModeButton" Margin="20,0,0,20" Content="Перейти в автономный режим"></Button>
+        <Button Name ="saveSettingButton" Margin="20,0,0,20" Content="Сохранить текущую конфигурацию в файл"></Button>
+        <Button Name ="downloadTemperatureFromFileButton" Margin="20,0,0,20" Content="Загрузить температуру из файла"></Button>
+    </StackPanel>
+</Page>
