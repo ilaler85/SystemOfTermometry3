@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using SystemOfThermometry2.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfTermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     /// <summary>
     /// Класс для выполнения некоторых действий каждый промежуток времени.

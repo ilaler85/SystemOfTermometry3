@@ -1,7 +1,7 @@
 ﻿using System;
-using SystemOfTermometry2.Model;
+using SystemOfThermometry3.Model;
 
-namespace SystemOfThermometry2.DAO;
+namespace SystemOfThermometry3.DAO;
 
 partial class QueryHolder
 {

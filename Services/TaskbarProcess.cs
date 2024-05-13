@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SystemOfTermometry2.Services;
+namespace SystemOfThermometry3.Services;
 
 public static class TaskbarProgress
 {

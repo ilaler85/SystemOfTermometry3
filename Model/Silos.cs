@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System;
 
-namespace SystemOfTermometry2.Model;
+namespace SystemOfThermometry3.Model;
 
 /// <summary>
 /// Силос.

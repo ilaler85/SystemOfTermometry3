@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace SystemOfTermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     class MyLoger
     {

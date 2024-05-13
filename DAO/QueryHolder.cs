@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemOfThermometry2.DAO;
+namespace SystemOfThermometry3.DAO;
 
 /// <summary>
 /// Статический класс, который содержит в себе некоторые запросы.

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SystemOfTermometry2.Model;
+namespace SystemOfThermometry3.Model;
 
 [DataContract]
 public class Grain

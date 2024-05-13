@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemOfTermometry2.WinUIWorker;
+namespace SystemOfThermometry3.WinUIWorker;
 internal class OneSilosWorker
 {
 }

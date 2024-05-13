@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using SystemOfTermometry2.Model;
+using SystemOfThermometry3.Model;
 
-namespace SystemOfTermometry2.DAO;
+namespace SystemOfThermometry3.DAO;
 
 //Интерфейс для работы с базой данных
 //Что бы перейти на другую бд, нужно унаследоваться, реализовать все методы

@@ -7,11 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using SystemOfTermometry2.Model;
-using SystemOfThermometry2.Services;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
 
 
-namespace SystemOfTermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     /// <summary>
     /// Сервис по отправки писем

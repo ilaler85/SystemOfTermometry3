@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SystemOfTermometry2.CustomComponent;
+using SystemOfThermometry3.CustomComponent;
 
-namespace SystemOfTermometry2.Services;
+namespace SystemOfThermometry3.Services;
 public static class MessageBox
 {
 

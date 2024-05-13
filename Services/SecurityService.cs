@@ -4,7 +4,7 @@ using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SystemOfTermometry2.Services;
+namespace SystemOfThermometry3.Services;
 
 public class SecurityService
 {

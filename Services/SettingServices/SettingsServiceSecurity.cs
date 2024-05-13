@@ -1,4 +1,4 @@
-﻿namespace SystemOfThermometry2.Services
+﻿namespace SystemOfThermometry3.Services
 {
     partial class SettingsService
     {

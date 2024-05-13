@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0007:Использование неявного типа", Justification = "<Ожидание>", Scope = "member", Target = "~M:SystemOfThermometry2.DAO.MySQLDAO.DBisCorrect~System.Boolean")]
+[assembly: SuppressMessage("Style", "IDE0007:Использование неявного типа", Justification = "<Ожидание>", Scope = "member", Target = "~M:SystemOfThermometry3.DAO.MySQLDAO.DBisCorrect~System.Boolean")]

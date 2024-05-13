@@ -1,4 +1,4 @@
-﻿namespace SystemOfTermometry2.Model;
+﻿namespace SystemOfThermometry3.Model;
 
 /// <summary>
 /// Перечислений возможных типов термоподвесок.

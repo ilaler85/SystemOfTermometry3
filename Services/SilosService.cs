@@ -9,12 +9,12 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using SystemOfTermometry2.Model;
-using SystemOfThermometry2.Services;
-using SystemOfTermometry2.Properties;
-using static SystemOfTermometry2.Services.GrainService;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Properties;
+using static SystemOfThermometry3.Services.GrainService;
 
-namespace SystemOfTermometry2.Services;
+namespace SystemOfThermometry3.Services;
 
 /// <summary>
 /// Класс-посредник между пользовательским интерфейсом и логикой и базой данных

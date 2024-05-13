@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SystemOfTermometry2.Model;
+namespace SystemOfThermometry3.Model;
 
 /// <summary>
 /// Представляет собой струкурное объединение - одно из свойств силоса

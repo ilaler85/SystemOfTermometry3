@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using SystemOfTermometry2.DAO;
-using SystemOfTermometry2.Model;
-using SystemOfTermometry2.Services;
+using SystemOfThermometry3.DAO;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfThermometry2.DAO
+namespace SystemOfThermometry3.DAO
 {
     partial class MySQLDAO : Dao
     {

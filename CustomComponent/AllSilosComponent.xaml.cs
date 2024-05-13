@@ -12,13 +12,13 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using SystemOfTermometry2.CustomComponent;
+using SystemOfThermometry3.CustomComponent;
 using Microsoft.UI.Xaml.Media.Animation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SystemOfTermometry2.CustomComponent;
+namespace SystemOfThermometry3.CustomComponent;
 
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.

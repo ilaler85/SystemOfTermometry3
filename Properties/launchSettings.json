@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "SystemOfTermometry2 (Package)": {
+    "SystemOfThermometry3 (Package)": {
       "commandName": "MsixPackage"
     },
-    "SystemOfTermometry2 (Unpackaged)": {
+    "SystemOfThermometry3 (Unpackaged)": {
       "commandName": "Project"
     },
     "WSL": {

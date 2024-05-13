@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
-using SystemOfTermometry2.Model;
+using SystemOfThermometry3.Model;
 
-namespace SystemOfTermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     /// <summary>
     /// Статический класс для работы с файлами

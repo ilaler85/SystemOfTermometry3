@@ -1,7 +1,7 @@
 ﻿using System;
-using SystemOfTermometry2.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfThermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     partial class SettingsService
     {

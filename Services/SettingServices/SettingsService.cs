@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SystemOfTermometry2.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfThermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     public partial class SettingsService
     {
-        private SystemOfTermometry2.DAO.Dao dao;
+        private SystemOfThermometry3.DAO.Dao dao;
         private Dictionary<string, string> settings; //Кэшированные настройки
 
         private bool offlineMode = false; // Режим, в котором база данных не обязательна,
@@ -20,7 +20,7 @@ namespace SystemOfThermometry2.Services
         private bool isAdminMode = false; // Режим, в котором можно осуществлять настройку конфигурации и двигать компоненты
         public bool IsAdminMode { get => isAdminMode; set => isAdminMode = value; }
 
-        public SettingsService(SystemOfTermometry2.DAO.Dao dao)
+        public SettingsService(SystemOfThermometry3.DAO.Dao dao)
         {
             this.dao = dao ?? throw new ArgumentNullException("dao is null");
             settings = new Dictionary<string, string>();

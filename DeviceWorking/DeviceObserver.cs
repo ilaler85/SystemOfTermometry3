@@ -4,9 +4,9 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SystemOfTermometry2.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfTermometry2.DeviceWorking
+namespace SystemOfThermometry3.DeviceWorking
 {
     /// <summary>
     /// Абстрактный класс, который является базовым для всех опросчиков устройств

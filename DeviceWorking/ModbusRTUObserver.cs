@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Modbus.Device;
 //using Modbus.Device;
 
-namespace SystemOfTermometry2.DeviceWorking
+namespace SystemOfThermometry3.DeviceWorking
 {
     /// <summary>
     /// 

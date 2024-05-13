@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using SystemOfTermometry2.Model;
-using SystemOfThermometry2.Services;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfTermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     /// <summary>
     /// Класс, который проверяет силоса на перегрев.

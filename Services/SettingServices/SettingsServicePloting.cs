@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SystemOfThermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     public partial class SettingsService
     {

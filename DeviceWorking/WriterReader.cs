@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using SystemOfTermometry2.Model;
-using SystemOfTermometry2.Services;
-using SystemOfThermometry2.Services;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfTermometry2.DeviceWorking
+namespace SystemOfThermometry3.DeviceWorking
 {
     /// <summary>
     /// Класс, который в бесконечном цикле опрашивает платы и пишет данные в базу данных.

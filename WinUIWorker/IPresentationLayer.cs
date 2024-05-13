@@ -4,38 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OxyPlot;
-using SystemOfTermometry2.Services;
-using SystemOfThermometry2.Services;
+using SystemOfThermometry3.DAO;
+using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Services;
 
-namespace SystemOfTermometry2.WinUIWorker;
-internal interface IPresentationLayer
+namespace SystemOfThermometry3.WinUIWorker;
+public interface IPresentationLayer
 {
     /// <summary>
-    /// Вызов информации об одном силосе
+    /// Открытие окна подключения к БД
     /// </summary>
-    public void callOneSilosComponent(SilosService silosService);
+    public void openConnectDBDialog(ref Dao dao);
 
     /// <summary>
-    /// Вызов информации по всем силосам
+    /// 
     /// </summary>
-    /// <param name="silosService"></param>
-    public void callAllSilosComponent(SilosService silosService);
+    public void closeConnectDB();
+
+
+    /// <summary>
+    /// Открытие окна при загрузки приложения 
+    /// </summary>
+    public void showWindowDownload(bool flag);
 
     /// <summary>
     /// Вызов настроек 
     /// </summary>
     /// <param name="settingsService"></param>
-    public void callSettingComponent(SettingsService settingsService);
-
-    /// <summary>
-    /// Вызов графика запоненности силосов
-    /// </summary>
-    public void callFillingChartMode();
-
-    /// <summary>
-    /// Вызов окна графиков функции
-    /// </summary>
-    public void callChartMode(PlotModel model);
+    public void callSettingComponent(SettingsService settingsService, bool adminSetting);
 
     /// <summary>
     /// Установка режим администратора
@@ -66,11 +62,16 @@ internal interface IPresentationLayer
     /// </summary>
     public void runObservMode();
 
-
     /// <summary>
     /// Остановка процесса опроса плат
     /// </summary>
     public void stopObservMode();
+
+    /// <summary>
+    /// Вызывает окно с вопросом остановки опроса датчиков
+    /// </summary>
+    /// <returns>true можно остановить опрос, false не останавливать</returns>
+    public bool stopObserv();
 
     /// <summary>
     /// 
@@ -89,6 +90,27 @@ internal interface IPresentationLayer
     /// </summary>
     public void refreshAllSilos();
 
+    /// <summary>
+    /// отправка значение progress bar 
+    /// -1 активация прогресс бара
+    /// -2 ошибка выполнения задачи
+    /// 100 успешное выполнение задачи запуск таймера на исчезновение прогресс бара
+    /// другое значение - прогресс 
+    /// </summary>
+    public void setProgressBar(int value);
 
-      
+    public void setStatus(string message);
+
+    /// <summary>
+    /// закрытие настроек при старте опроса
+    /// </summary>
+    /// <returns>возвращает закрыли (true) ли настройки или нет (false)</returns>
+    public bool closeSetting();
+
+    /// <summary>
+    /// Вызов окна с предупреждением о перегреве датчиков
+    /// </summary>
+    public void overheatMessageBox();
+
+    
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemOfThermometry2.Services
+namespace SystemOfThermometry3.Services
 {
     public partial class SettingsService
     {

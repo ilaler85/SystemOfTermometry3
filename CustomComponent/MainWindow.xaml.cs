@@ -12,21 +12,69 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using SystemOfTermometry2.CustomComponent;
+using SystemOfThermometry3.CustomComponent;
+using System.Threading;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SystemOfTermometry2;
+namespace SystemOfThermometry3;
 /// <summary>
 /// An empty window that can be used on its own or navigated to within a Frame.
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    DispatcherTimer timer;
     public MainWindow()
     {
         this.InitializeComponent();
+        timer.Interval = TimeSpan.FromMilliseconds(4000);
+        timer.Tick += Timer_Tick;
     }
+
+    private void Timer_Tick(object sender, object e) 
+    {
+        progressBarOff();
+        timer.Stop();
+    }
+
+    private void progressBarError()
+    {
+        timer.Start();
+    }
+
+    public void progressBarSetValue(int value)
+    {
+        switch (value)
+        {
+            case -1:
+                progressBarOn();
+                break;
+            case -2:
+                progressBarError();
+                break;
+            case 100:
+                progressBar.Value = value;
+                timer.Start();
+                break;
+            default:
+                progressBar.Value = value;
+                break;
+        }
+    }
+
+
+    private void progressBarOn()
+    {
+        progressBar.Value = 0;
+        progressBar.Visibility = Visibility.Visible;
+    }
+
+    private void progressBarOff()
+    {
+        progressBar.Visibility = Visibility.Collapsed;
+    }
+
     private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         FrameNavigationOptions navOptions = new FrameNavigationOptions();

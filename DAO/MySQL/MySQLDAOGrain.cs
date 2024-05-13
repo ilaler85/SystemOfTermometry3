@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
-using SystemOfTermometry2.DAO;
-using SystemOfTermometry2.Model;
+using SystemOfThermometry3.DAO;
+using SystemOfThermometry3.Model;
 
-namespace SystemOfThermometry2.DAO;
+namespace SystemOfThermometry3.DAO;
 
 partial class MySQLDAO : Dao
 {

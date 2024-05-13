@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemOfTermometry2.Model;
+namespace SystemOfThermometry3.Model;
 
 public static class GrainColor
 {

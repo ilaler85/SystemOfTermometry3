@@ -15,7 +15,7 @@
   <mp:PhoneIdentity PhoneProductId="891f64ca-b806-4e53-ae51-048a7a13da49" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>SystemOfTermometry2</DisplayName>
+    <DisplayName>SystemOfThermometry3</DisplayName>
     <PublisherDisplayName>ivano</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -34,8 +34,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="SystemOfTermometry2"
-        Description="SystemOfTermometry2"
+        DisplayName="SystemOfThermometry3"
+        Description="SystemOfThermometry3"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

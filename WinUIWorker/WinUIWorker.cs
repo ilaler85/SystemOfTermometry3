@@ -7,20 +7,19 @@ using System.Drawing;
 using NPOI.HPSF;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Utilities;
-using SystemOfTermometry2.CustomComponent;
-using SystemOfTermometry2.DeviceWorking;
-using SystemOfTermometry2.Model;
-using SystemOfTermometry2.Services;
-using SystemOfThermometry2.DAO;
-using SystemOfThermometry2.Services;
-using SystemOfTermometry2.WinUIWorker;
+using SystemOfThermometry3.CustomComponent;
+using SystemOfThermometry3.DeviceWorking;
+using SystemOfThermometry3.Model;
+using SystemOfThermometry3.Services;
+using SystemOfThermometry3.DAO;
+using SystemOfThermometry3.WinUIWorker;
 using Windows.UI.ApplicationSettings;
-using static SystemOfTermometry2.Services.SilosService;
+using static SystemOfThermometry3.Services.SilosService;
 
-namespace SystemOfTermometry2.WinUIWorker;
-public class WinUIWorker: IBisnesLogicLayer
+namespace SystemOfThermometry3.WinUIWorker;
+public partial class WinUIWorker : IBisnesLogicLayer
 {
-    private Window mainForm;
+    private IPresentationLayer presentation;
 
     #region переменные
 
@@ -31,20 +30,16 @@ public class WinUIWorker: IBisnesLogicLayer
     private WriterReader observer; // Опросчик плат
     private MailSender scheduler; //Отправляет письма
     private OverheatTrigger overheatTrigger; //Класс для обнаружения перегрева.
-    public delegate void Progress(int value);
-    private Progress progressDel;
     private IntPtr hwnd1;
     //private DataBaseSettings dbSetingsDialog; // Форма с настройками подключения к бд, вызывается, если нет файла с строкой подключения
 
+    // объекты для обработки запросов пользователя 
+    private ExportExcelWorker exportWorker; //Форма с выбором времени для выгрузки.
+    private SettingWorker settingWorker;
+    private AllSilosWorker allSilosesWorker; // Компонент, на котором отображаются все силосы. 
+    private OneSilosWorker oneSilosInfoWorker; // Компонент с информацией об одном силосе.
+    private LogPanelWorker logPanelWorker;
 
-    private ExportToExcelForm exportForm; //Форма с выбором времени для выгрузки.
-    private OverheatMessageBox overheatMessageBox; //Форма с сообщением о перегреве.
-    private SimpleSettingPan simpleSettingsPan;
-    private AllSilosWorker allSilosesComponent; // Компонент, на котором отображаются все силосы. 
-    private OneSilosFullinformation oneSilosInfoComponent; // Компонент с информацией об одном силосе.
-    private PlotBuildingComponent plotBuildingComponent; // Компонент, который строит графики.
-    private NewSettingPann newSettingPann;
-    private ToolStripLog toolStripLogHost; // Содержит внутри журнал событий
 
     private int value;
     private Thread splashScreenThread; // Поток, в котором запускается форма загрузки
@@ -54,28 +49,22 @@ public class WinUIWorker: IBisnesLogicLayer
 
     #endregion
 
-    public WinUIWorker(Window window)
+    public WinUIWorker(IPresentationLayer presentation)
     {
         if (ApplyKeyForm.EnterKey() != DialogResult.Yes)
         {
             CustomClose();
             //return;
         }
-        mainForm = window;
+        this.presentation = presentation;
+
         //Показывает экран загрузки в отдельном потоке, который после загрузки мейн формы прерывается
         splashScreenThread = SplashScreenForm.ShowAsync();
-        InitializeComponent();
-        this.BackColor = Color.BlueViolet;
 
 
-
-        //workPanel.Height = winSize.Height;
-        //allSilosesPanel.Height = workPanel.Height - logPan.Height;
-        this.SetStyle(ControlStyles.ResizeRedraw, true);
+        presentation.showWindowDownload(true);
         dao = new MySQLDAO();
-        dbSetingsDialog = new DataBaseSettings(ref dao);
-        dbSetingsDialog.closeEvent += CustomClose;
-        dbSetingsDialog.connectedEvent += successStartWithDB;
+        presentation.openConnectDBDialog(ref dao);
         dbSetingsDialog.offlineModeEvent += successStartOfflineMode;
 
         string connectionString = FileProcessingService.getConnectionString();
@@ -102,7 +91,7 @@ public class WinUIWorker: IBisnesLogicLayer
     }
 
 
-    private void successStartWithDB()
+    public void successStartWithDB()
     {
         settingsService = new SettingsService(dao);
         settingsService.OfflineMode = false;
@@ -119,98 +108,17 @@ public class WinUIWorker: IBisnesLogicLayer
         splashScreenThread.Abort();
     }
 
-
-    private bool flagSetting = false;
-    private void butSet_Click(object sender, EventArgs e)
-    {
-        if (!flagSetting)
-        {
-            menuSetting.Show();
-            flagSetting = true;
-        }
-        else
-        {
-            menuSetting.Hide();
-            flagSetting = false;
-        }
-    }
-
-    /// <summary>
-    /// Изменяем выбранный силос
-    /// </summary>
-    /// <param name="sender">силос</param>
-    public void changeLastSilos(Silos sender)
-    {
-        //tabControl1.SelectedIndex = 1;
-        openSelectSilos();
-        oneSilosInfoComponent.showSilos(sender);
-    }
-
     /// <summary>
     /// Вызывается, если работа начата в автономном режиме, т.е. без базы данных.
     /// </summary>
-    private void successStartOfflineMode()
+    public void successStartOfflineMode()
     {
         settingsService = new SettingsService(dao);
         settingsService.OfflineMode = true;
 
         initCustomComponent();
     }
-    #region инициализация форм при первом обращении
 
-    public void initAdminSetting()
-    {
-        if (newSettingPann == null)
-            newSettingPann = new NewSettingPann(dao, silosService, settingsService, grainService);
-        if (simpleSettingsPan != null)
-            simpleSettingsPan.Hide();
-    }
-
-    private void initSimpleSetting()
-    {
-        if (simpleSettingsPan == null)
-            simpleSettingsPan = new SimpleSettingPan(settingsService, silosService, grainService);
-        if (newSettingPann != null)
-            newSettingPann.Hide();
-    }
-
-
-    public void initSetting()
-    {
-        if (settingsService == null)
-            settingsService = new SettingsService(dao);
-
-    }
-
-    public void initExportToExcel()
-    {
-
-    }
-
-    public void initStatistic()
-    {
-        if (plotBuildingComponent == null)
-        {
-            plotBuildingComponent = new PlotBuildingComponent(silosService, settingsService);
-            plotBuildingComponent.Parent = staticPan;
-            plotBuildingComponent.Dock = DockStyle.Fill;
-        }
-
-    }
-
-    private void initOneSilosPanel()
-    {
-        if (oneSilosInfoComponent == null)
-        {
-            oneSilosInfoComponent = new OneSilosFullinformation(silosService, settingsService, allSilShow);
-            oneSilosInfoComponent.Dock = DockStyle.Fill;
-            oneSilosInfoComponent.Parent = oneSilosPanel;
-            return;
-        }
-        oneSilosInfoComponent.Show();
-    }
-
-    #endregion
     /// <summary>
     /// Иницилизирует все компоненты, делает привязку событий и тд.
     /// </summary>
@@ -221,7 +129,7 @@ public class WinUIWorker: IBisnesLogicLayer
         silosService = new SilosService(dao, settingsService, grainService, progressBarWorking, progressBarOn);
         observer = new WriterReader(silosService, settingsService);
         observer.errorMessage += messageHandler; //Ошибка, напримет, связанная с открытием порта
-
+        settingsService = new SettingsService(dao);
         //Сообщения из другого потока, обрабатываются специальным образом
         observer.asyncMessage += observerAsyncHandler; //Некоторое сообщение, которое не должно останавливать опрос
         observer.criticalErrorMessage += observerCriticalErrorHandler; //Сообщение об ошибке, после которой останавливается опрос
@@ -229,21 +137,19 @@ public class WinUIWorker: IBisnesLogicLayer
         observer.endIterationEvent += observerEndIterationEventHandler; //Сообщение о конце итерации
         observer.sendDataEvent += observerSendDataEventHandler; // Сообщение, которое несет в себе информацию о последнем запросе
                                                                 // ***
-
         observer.progressEvent += progressBarWorking;
 
         scheduler = new MailSender(silosService, settingsService);
         scheduler.successSendEvent += mailSenderSuccessMessage;
         scheduler.errorSendEvent += mailSenderErrorMessage;
-        newSettingPann = new NewSettingPann(dao, silosService, settingsService, grainService);
-        newSettingPann.changeReadMode += changeMode;
+        settingWorker = new SettingWorker(dao, silosService, settingsService, grainService);
+        settingWorker.changeReadMode += changeMode;
         overheatTrigger = new OverheatTrigger(silosService, settingsService);
-        overheatMessageBox = new OverheatMessageBox();
 
-        allSilosesComponent = new AllSilosesComponent(this, silosService, settingsService, allFillingComponentInvoke);
-        allSilosesComponent.Parent = allSilosesPanel;
-        allSilosesComponent.Dock = DockStyle.Fill;
-        allSilosesComponent.AutoSize = true;
+        allSilosesWorker = new AllSilosWorker(this, silosService, settingsService, allFillingComponentInvoke);
+        allSilosesWorker.Parent = allSilosesPanel;
+        allSilosesWorker.Dock = DockStyle.Fill;
+        allSilosesWorker.AutoSize = true;
 
         loggingRichTextBox.MinimumSize = new Size(settingsService.LogTextboxWidthHeight, settingsService.LogTextboxWidthHeight);
         hwnd1 = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
@@ -283,12 +189,12 @@ public class WinUIWorker: IBisnesLogicLayer
             if (settingsService.IsAdminMode)
             {
                 settingsService.IsAdminMode = false;
-                allSilosesComponent.refreshButton();
+                allSilosesWorker.refreshButton();
             }
             else
             {
                 settingsService.IsAdminMode = true;
-                allSilosesComponent.refreshButton();
+                allSilosesWorker.refreshButton();
             }
         }
     }
@@ -423,8 +329,8 @@ public class WinUIWorker: IBisnesLogicLayer
                 + (settingsService.OfflineMode ? " Автономный режим." : " Подключено к базе данных. ")
                 + (settingsService.IsAdminMode ? " Режим Администратора." : " Режим пользователя.");
 
-            //allSilosesComponent.refreshButton();
-            //simpleSettingsPan.showStatus();
+            //allSilosesWorker.refreshButton();
+            //settingWorker.showStatus();
         }
     }
 
@@ -433,9 +339,9 @@ public class WinUIWorker: IBisnesLogicLayer
     /// </summary>
     private void refreshSilosesTemperature()
     {
-        allSilosesComponent.refreshTemperature();
+        allSilosesWorker.refreshTemperature();
         //initOneSilosPanel();
-        //oneSilosInfoComponent.showChosenSilos();
+        //oneSilosInfoWorker.showChosenSilos();
     }
 
     /// <summary>
@@ -446,8 +352,8 @@ public class WinUIWorker: IBisnesLogicLayer
     /// </summary>
     private void refreshAllSiloses()
     {
-        //      oneSilosInfoComponent.refreshAll(); //Обнавляем панель с одним силосом
-        allSilosesComponent.refreshAll();
+        //      oneSilosInfoWorker.refreshAll(); //Обнавляем панель с одним силосом
+        allSilosesWorker.refreshAll();
 
         //Обновляем журнал здесь, т.к. при закрытии окна настроек вызывается эта функция
         //toolStripLogHost.
@@ -496,8 +402,7 @@ public class WinUIWorker: IBisnesLogicLayer
         }
 
         isSettingWindowOpen = false;
-        //plotBuildingComponent.refreshAll();
-        //simpleSettingsPan.refreshAll();
+        //settingWorker.refreshAll();
         refreshAllSiloses();
 
         showStatus();
@@ -521,7 +426,7 @@ public class WinUIWorker: IBisnesLogicLayer
 
         if (allFillingComponent != null)
             allFillingComponent.Hide();
-        allSilosesComponent.Visible = true;
+        allSilosesWorker.Visible = true;
         logPan.Visible = true;
 
     }
@@ -650,31 +555,29 @@ public class WinUIWorker: IBisnesLogicLayer
 
     public void allSilShow()
     {
+        logPan.Visible = true;
+        allSilosesPanel.Visible = true;
+        allSilosesWorker.Parent = allSilosesPanel;
+        allSilosesWorker.Dock = DockStyle.Fill;
+        allSilosesWorker.AutoSize = true;
+        //allSilosesWorker.refreshAll();
 
-        {
-            logPan.Visible = true;
-            allSilosesPanel.Visible = true;
-            allSilosesComponent.Parent = allSilosesPanel;
-            allSilosesComponent.Dock = DockStyle.Fill;
-            allSilosesComponent.AutoSize = true;
-            //allSilosesComponent.refreshAll();
-
-        }
+    }
 
 
 
-        private void butSil_Click(object sender, EventArgs e)
-        {
-            //if (exportProgressBar.Enabled == true)
-            //    exportProgressBar.Visible = true;
-            logPan.Visible = true;
-            allSilosesPanel.Visible = true;
-            allSilosesComponent.Parent = allSilosesPanel;
-            allSilosesComponent.Dock = DockStyle.Fill;
-            allSilosesComponent.AutoSize = true;
-            //allSilosesComponent.refreshAll();
-            backAllSilosComponentShow();
-        }
+    private void butSil_Click(object sender, EventArgs e)
+    {
+        //if (exportProgressBar.Enabled == true)
+        //    exportProgressBar.Visible = true;
+        logPan.Visible = true;
+        allSilosesPanel.Visible = true;
+        allSilosesWorker.Parent = allSilosesPanel;
+        allSilosesWorker.Dock = DockStyle.Fill;
+        allSilosesWorker.AutoSize = true;
+        //allSilosesWorker.refreshAll();
+        backAllSilosComponentShow();
+    }
 
 
     private bool flagObserv = false;
@@ -705,92 +608,23 @@ public class WinUIWorker: IBisnesLogicLayer
         }
     }
 
-    private bool flagVis = false;
-    private void butEx_Click(object sender, EventArgs e)
-    {
-        if (flagVis)
-        {
-            filePanel.Show();
-            flagVis = false;
-
-        }
-        else
-        {
-            flagVis = true;
-            filePanel.Hide();
-        }
-    }
-
-    public void openSelectSilos()
-    {
-        initOneSilosPanel();
-        allSilosesPanel.Visible = false;
-        logPan.Visible = false;
-        oneSilosPanel.Show();
-        oneSilosPanel.Parent = workPanel;
-        oneSilosPanel.Dock = DockStyle.Fill;
-    }
-
-
-    private void butStat_Click(object sender, EventArgs e)
-    {
-        claerWorkPan();
-        initStatistic();
-        staticPan.Show();
-        staticPan.Dock = DockStyle.Fill;
-    }
-
-
-    /// <summary>
-    /// Отчищает workPanel от других панелей
-    /// </summary>
-    private void claerWorkPan()
-    {
-        allSilosesPanel.Visible = false;
-        oneSilosPanel.Hide();
-        logPan.Hide();
-        settingPan.Hide();
-        staticPan.Hide();
-        isSettingWindowOpen = false;
-        filePanel.Visible = false;
-
-    }
-
-    private void imageButton_Click(object sender, EventArgs e)
-    {
-        string fileName;
-        if (backgroudFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            //fileName = backgroudFileDialog.FileName;
-
-            //allSilosesComponent = Image.FromFile(fileName);
-            //allSilosesComponent.BackgroundImageLayout = ImageLayout.Zoom;
-        }
-
-    }
-
-    private void toolStripContainer1_ContentPanel_Load(object sender, EventArgs e)
-    {
-
-    }
 
     private void refreshSetting()
     {
         if (settingsService.IsAdminMode)
 
-            newSettingPann.RefreshAll();
+            settingWorker.RefreshAll();
         else
         {
-            if (simpleSettingsPan == null)
+            if (settingWorker == null)
                 initSimpleSetting();
 
-            simpleSettingsPan.refreshAll();
+            settingWorker.refreshAll();
         }
     }
 
-    private void reapitConnect_Click(object sender, EventArgs e)
+    private void reapitConnect()
     {
-        filePanel.Hide();
         try
         {
             if (!dao.connectToDB(FileProcessingService.getConnectionString(), settingsService.IsOnlyReadMode))
@@ -803,7 +637,7 @@ public class WinUIWorker: IBisnesLogicLayer
                 MessageBox.Show("Подключение успешно!");
                 silosService.synchronizeWithGettingData();
                 refreshAllSettings();
-                if (newSettingPann == null)
+                if (settingWorker == null)
                     initSetting();
 
                 refreshSetting();
@@ -826,7 +660,7 @@ public class WinUIWorker: IBisnesLogicLayer
         {
             if (settingsService.IsAdminMode) // Выходим из режиема администратора
             {
-                newSettingPann.Hide();
+                settingWorker.Hide();
                 butSil_Click(sender, e);
                 //changeMode();
                 changeStatus();
@@ -838,20 +672,16 @@ public class WinUIWorker: IBisnesLogicLayer
 
     private void exportToExcelTime_Click(object sender, EventArgs e)
     {
-        filePanel.Hide();
-        loggingRichTextBox.Height -= exportProgressBar.Height;
-
-        if (exportForm == null)
+        if (exportWorker == null)
         {
-            exportForm = new ExportToExcelForm(silosService, settingsService, exportEndEvent, progressBarWorking);
+            exportWorker = new ExportToExcelForm(silosService, settingsService, exportEndEvent, progressBarWorking);
 
         }
-        exportForm.ShowDialog();
+        exportWorker.ShowDialog();
     }
 
     private void exportToExcel_Click(object sender, EventArgs e)
     {
-        filePanel.Hide();
         if (saveExcelFileDialog.ShowDialog() == DialogResult.OK)
         {
             exportProgressBar.Visible = true;
@@ -861,19 +691,6 @@ public class WinUIWorker: IBisnesLogicLayer
                     addMessageToTextBoxLoger("Выгрузка началась!", Color.Black);
                 else
                     MessageBox.Show("Выгрузка в процессе!");
-                /*
-                if (!ExportService.exportToExcel(saveExcelFileDialog.FileName,
-                    silosService, settingsService))
-                {
-                    MessageBox.Show("Не удалось сделать выгрузку в Файл. \n" +
-                        "Возможно он открыт в другой программе");
-                    addMessageToTextBoxLoger("Неудалось сделать выгрузку!", Color.Red);
-                }
-                else
-                {
-                    addMessageToTextBoxLoger("Выгрузка сделана успешно!", Color.Green);
-                    MessageBox.Show("Выгрузка сделана успешно!");
-                }*/
             }
         }
 
@@ -881,52 +698,31 @@ public class WinUIWorker: IBisnesLogicLayer
 
     private void simpleSet_Click(object sender, EventArgs e)
     {
-        menuSetting.Hide();
         if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
             if (EnterPasswordForm.enterOperator() != DialogResult.Yes)
                 return;
 
         if (observer.IsRunning)
         {
-            DialogResult dialogResult = MessageBox.Show("Остановить опрос и открыть настройки?",
-                "Остановка опроса", MessageBoxButtons.YesNo);
-
-            if (dialogResult == DialogResult.Yes)
+            if (presentation.stopObserv() == true)
             {
-                butRunStop_Click(sender, e);
+                presentation.stopObservMode();
                 stopObserv();
-                observationStatusToolStripStatusLabel.Text = "Опрос остановлен";
+                presentation.setStatus("Опрос остановлен");
 
             }
         }
-        claerWorkPan();
-        if (newSettingPann != null)
-            newSettingPann.Hide();
-
-        initSimpleSetting();
-        settingPan.Show();
-        simpleSettingsPan.Show();
-        settingPan.Dock = DockStyle.Fill;
-        simpleSettingsPan.Parent = settingPan;
-        simpleSettingsPan.Dock = DockStyle.Fill;
-        //simpleSettingsForm.ShowDialog();
-        menuSetting.Hide();
-        flagSetting = false;
     }
 
     public void changeStatus()
     {
-
-
-
         changeMode();
         showStatus();
-
     }
 
-    private void adminSet_Click(object sender, EventArgs e)
+    private void adminSet_Click()
     {
-        menuSetting.Hide();
+
         if (!settingsService.IsAdminMode) // пытаемся войти как администратор
         {
             adminEnter();
@@ -939,15 +735,11 @@ public class WinUIWorker: IBisnesLogicLayer
 
         if (observer.IsRunning)
         {
-            DialogResult dialogResult = MessageBox.Show("Остановить опрос и открыть настройки?",
-                "Остановка опроса", MessageBoxButtons.YesNo);
-
-            if (dialogResult == DialogResult.Yes)
+            if (presentation.closeSetting() == true)
             {
-                butRunStop_Click(sender, e);
+                presentation.stopObservMode();
                 stopObserv();
                 Thread.Sleep(300);
-                observationStatusToolStripStatusLabel.Text = "Опрос остановлен";
             }
         }
         if (!observer.IsRunning)
@@ -955,47 +747,29 @@ public class WinUIWorker: IBisnesLogicLayer
             isSettingWindowOpen = true;
             try
             {
-                claerWorkPan();
-                if (simpleSettingsPan != null)
-                    simpleSettingsPan.Hide();
-                initAdminSetting();
-                newSettingPann.Show();
-                settingPan.Show();
-                newSettingPann.Parent = settingPan;
-                settingPan.Dock = DockStyle.Fill;
-                newSettingPann.Dock = DockStyle.Fill;
+                presentation.callSettingComponent(settingsService, true);
             }
             catch (Exception ex)
             {
                 MyLoger.LogError(ex.Message);
-                Application.Restart();
             }
 
         }
-        menuSetting.Hide();
-        flagSetting = false;
     }
 
     private void adminEnter()
     {
-        EnterPasswordForm enterPasswordForm = new EnterPasswordForm(settingsService, changeStatus);
-        enterPasswordForm.ShowDialog();
+        EnterPasswordForm enterPasswordForm = new EnterPasswordForm();
+        enterPasswordForm.Activate();
     }
 
-
-
-
-    private void redTimer_Tick(object sender, EventArgs e)
-    {
-        if (exportProgressBar.Value != 100)
-        {
-            exportProgressBar.Value += 10;
-            TaskbarProgress.SetValue(hwnd1, exportProgressBar.Value, 100);
-        }
-        else
-        {
-            redTimer.Stop();
-            TaskbarProgress.Reset(hwnd1);
-        }
-    }
+    public SilosService getAllSilos() => throw new NotImplementedException();
+    public GrainService getGrainService() => throw new NotImplementedException();
+    public void runObserv() => throw new NotImplementedException();
+    public void exportExcel() => throw new NotImplementedException();
+    public void painthart() => throw new NotImplementedException();
+    public void getFilling() => throw new NotImplementedException();
+    public void calculateFilling() => throw new NotImplementedException();
+    public void enterAdminMode() => throw new NotImplementedException();
+    public void changeTemperature() => throw new NotImplementedException();
 }
