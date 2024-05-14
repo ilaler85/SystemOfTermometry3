@@ -55,8 +55,6 @@ public class SilosService
 
     public delegate void ProgressDelegate(int progress);
     private ProgressDelegate progressDelegate;
-    public delegate void ProgressBarOn();
-    private ProgressBarOn progressBarOn;
 
 
     private static SilosService instance;
@@ -69,14 +67,13 @@ public class SilosService
     /// <param name="settingsService">сервис для работы с настройками</param>
     /// <param name="grainService">Сервис для работы с культурами</param>
     /// 
-    public SilosService(DAO.Dao dao, SettingsService settingsService, GrainService grainService, ProgressDelegate progressDelegate, ProgressBarOn progressBarOn)
+    public SilosService(DAO.Dao dao, SettingsService settingsService, GrainService grainService, ProgressDelegate progressDelegate)
     {
         this.dao = dao ?? throw new ArgumentNullException("dao is null");
         this.settingsService = settingsService ?? throw new ArgumentException("setting service is null");
         this.grainService = grainService ?? throw new ArgumentNullException("grain service is null");
         this.grainService.updateGrain += updateGrains;
         this.progressDelegate = progressDelegate ?? throw new ArgumentNullException("error progress bar");
-        this.progressBarOn = progressBarOn ?? throw new ArgumentNullException("error progressBar");
         if (grainService != null)
             this.grainService = grainService;
 

@@ -12,9 +12,9 @@ using SystemOfThermometry3.DeviceWorking;
 using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
 using SystemOfThermometry3.DAO;
-using SystemOfThermometry3.WinUIWorker;
 using Windows.UI.ApplicationSettings;
 using static SystemOfThermometry3.Services.SilosService;
+using System.Text;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker : IBisnesLogicLayer
@@ -51,7 +51,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public WinUIWorker(IPresentationLayer presentation)
     {
-        if (ApplyKeyForm.EnterKey() != DialogResult.Yes)
+        if (presentation.openFormApplyKeyForm())
         {
             CustomClose();
             //return;
@@ -59,12 +59,12 @@ public partial class WinUIWorker : IBisnesLogicLayer
         this.presentation = presentation;
 
         //Показывает экран загрузки в отдельном потоке, который после загрузки мейн формы прерывается
-        splashScreenThread = SplashScreenForm.ShowAsync();
+        splashScreenThread = presentation.showWindowDownload();
 
 
         presentation.showWindowDownload(true);
         dao = new MySQLDAO();
-        presentation.openConnectDBDialog(ref dao);
+        presentation.openFormConnectDBDialog(ref dao);
         dbSetingsDialog.offlineModeEvent += successStartOfflineMode;
 
         string connectionString = FileProcessingService.getConnectionString();
@@ -74,7 +74,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         if (connectionString == "") //Первое подключение
         {
-            dbSetingsDialog.ShowDialog();
+            presentation.openFormConnectDBDialog();
             //dbSetingsDialog.Focus();
         }
         else
@@ -87,7 +87,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             dbSetingsDialog.ShowDialog();
         }
-        observationStatusToolStripStatusLabel.Text = "Готов";
+       presentation.setStatus("Готов");
     }
 
 
@@ -97,15 +97,15 @@ public partial class WinUIWorker : IBisnesLogicLayer
         settingsService.OfflineMode = false;
         initCustomComponent();
         if (settingsService.OfflineMode)
-            adminMode.Image = Properties.Resources.readModeGreen;
+            presentation.setOfflineMode();
         else
         {
             if (settingsService.IsAdminMode)
-                adminMode.Image = Properties.Resources.adminModeGreen;
+                presentation.setAdminMode();
             else
-                adminMode.Image = Properties.Resources.adminModeGray1;
+                presentation.setNormalMode();
         }
-        splashScreenThread.Abort();
+        presentation.closeWindowDownload();
     }
 
     /// <summary>
@@ -124,9 +124,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     private void initCustomComponent()
     {
-        dbSetingsDialog.Hide();
+        presentation.closeFormConnectDB();
         grainService = new GrainService(dao, settingsService);
-        silosService = new SilosService(dao, settingsService, grainService, progressBarWorking, progressBarOn);
+        silosService = new SilosService(dao, settingsService, grainService, presentation.setProgressBar);
         observer = new WriterReader(silosService, settingsService);
         observer.errorMessage += messageHandler; //Ошибка, напримет, связанная с открытием порта
         settingsService = new SettingsService(dao);
@@ -135,9 +135,8 @@ public partial class WinUIWorker : IBisnesLogicLayer
         observer.criticalErrorMessage += observerCriticalErrorHandler; //Сообщение об ошибке, после которой останавливается опрос
         observer.beginIterationEvent += observerBeginIterationHandler; //Сообщение о начале итерации
         observer.endIterationEvent += observerEndIterationEventHandler; //Сообщение о конце итерации
-        observer.sendDataEvent += observerSendDataEventHandler; // Сообщение, которое несет в себе информацию о последнем запросе
-                                                                // ***
-        observer.progressEvent += progressBarWorking;
+        
+        observer.progressEvent += presentation.setProgressBar;
 
         scheduler = new MailSender(silosService, settingsService);
         scheduler.successSendEvent += mailSenderSuccessMessage;
@@ -147,9 +146,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         overheatTrigger = new OverheatTrigger(silosService, settingsService);
 
         allSilosesWorker = new AllSilosWorker(this, silosService, settingsService, allFillingComponentInvoke);
-        allSilosesWorker.Parent = allSilosesPanel;
-        allSilosesWorker.Dock = DockStyle.Fill;
-        allSilosesWorker.AutoSize = true;
 
         loggingRichTextBox.MinimumSize = new Size(settingsService.LogTextboxWidthHeight, settingsService.LogTextboxWidthHeight);
         hwnd1 = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
@@ -201,7 +197,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     private void messageHandler(string message)
     {
-        MessageBox.Show("Ошибка!\n" + message);
+        presentation.callMessageBox("Ошибка!\n" + message);
     }
 
 
@@ -212,9 +208,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
     private void observerAsyncHandler(string message)
     {
         //var messageBox = new MessageBoxCustomAsync(message);
-        //messageBox.Show();
+        //presentation.callMessageBox();
         //может придти сообщение о переходн в автономный режим.
-        addMessageToTextBoxLoger(message, Color.Black);
+        sendLogMessage(message, Color.Black);
         showStatus();
     }
 
@@ -224,7 +220,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// <param name="message"></param>
     private void observerBeginIterationHandler(string message)
     {
-        addMessageToTextBoxLoger(message, Color.Green);
+        sendLogMessage(message, Color.Green);
     }
 
     /// <summary>
@@ -233,10 +229,30 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// <param name="message"></param>
     private void observerEndIterationEventHandler(string message)
     {
-        addMessageToTextBoxLoger(message, Color.Green);
-        observationStatusToolStripStatusLabel.Text = message;
+        sendLogMessage(message, Color.Green);
+        presentation.setStatus( message);
         refreshSilosesTemperature();
         checkOverheat();
+    }
+
+
+    private StringBuilder createTextOverheatMessage(Dictionary<Silos, Dictionary<Wire, int>> overheatSiloses)
+    {
+        var result = new StringBuilder("");
+
+        result.Append(DateTime.Now.ToString("[HH:mm:ss]") + " Прегретые силосы:\r\n");
+        foreach (Silos s in overheatSiloses.Keys)
+        {
+            result.Append(String.Format("Силос {0}, макс температура {1}\r\n", s.Name, s.Red.ToString()));
+            foreach (KeyValuePair<Wire, int> item in overheatSiloses[s])
+            {
+                Wire w = item.Key;
+                int count = item.Value;
+                result.Append(String.Format("  Подвеска {0}, перегретых сенсоров - {1}/{2}\r\n",
+                    w.Number, count, w.SensorCount));
+            }
+        }
+        return result;
     }
 
     private void checkOverheat()
@@ -245,26 +261,14 @@ public partial class WinUIWorker : IBisnesLogicLayer
         if (overheatSiloses == null || overheatSiloses.Count == 0)
             return;
 
-        overheatMessageBox.Show(overheatSiloses, settingsService.OverheatPlaySound);
+        StringBuilder message = createTextOverheatMessage(overheatSiloses);
+
+        presentation.overheatMessageBox(message, settingsService.OverheatPlaySound);
         if (settingsService.OverheatMailSend && !settingsService.IsOnlyReadMode)
             scheduler.sendOverheatMailAsync();
     }
 
-    /// <summary>
-    /// НЕ ИСПОЛЬЗУЕТСЯ
-    /// Сообщение, которое присылает данные, считанные в ходе итерации. Не используется
-    /// </summary>
-    /// <param name="siloses">Силосы</param>
-    /// <param name="tempertures">Температуры</param>
-    private void observerSendDataEventHandler(Dictionary<int, Silos> siloses, Dictionary<int, Dictionary<int, float[]>> tempertures)
-    {
-        //Таким образом обрабатываются асинхронные сообщения
-
-        {
-            //refreshSilosesTemperatureFromMessage(siloses, tempertures);
-        }
-        ));
-    }
+    
 
     /// <summary>
     /// Сообщение о том, что произошла критическая ошибка и опрос остановлен
@@ -272,26 +276,21 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// <param name="message">Сообщение</param>
     private void observerCriticalErrorHandler(string message)
     {
-        MessageBox.Show(message);
+        presentation.callMessageBox(message);
         try
         {
 
-            addMessageToTextBoxLoger(message, Color.Red);
-            //observationStatusToolStripStatusLabel.Text = message;
-            //startObservToolStripMenuItem.Enabled = true;
-            //stopObservToolStripMenuItem.Enabled = false;
+            sendLogMessage(message, Color.Red);
             settingsService.IsObserving = false;
 
             if (settingsService.IsHighlightWhenObservStop)
             {
-                //MainMenuStrip.BackColor = Color.FromArgb(255, 90, 80);
-                loggingRichTextBox.BackColor = Color.FromArgb(255, 90, 80);
+                presentation.setStopStyleForm();
             }
-            //isObserverRuning = false;
         }
         catch
         {
-            MessageBox.Show("Критическая ошибка!\n Перезагрузите программу!");
+            presentation.callMessageBox("Критическая ошибка!\n Перезагрузите программу!");
         }
     }
 
@@ -301,17 +300,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     /// <param name="text"></param>
     /// <param name="color"></param>
-    private void addMessageToTextBoxLoger(string text, Color color)
+    private void sendLogMessage(string text, Color color)
     {
-        loggingRichTextBox.SelectionColor = color;
-        if (loggingRichTextBox.Text.Length > 20000)
-        {
-            loggingRichTextBox.Text = loggingRichTextBox.Text.Substring(10000);
-            int new_lent = loggingRichTextBox.Text.Length;
-        }
-        loggingRichTextBox.AppendText(DateTime.Now.ToString("[HH:mm:s] ") + text + "\r\n");
-
-        loggingRichTextBox.ScrollToCaret();
+        presentation.sendLogMessage(text, color);
     }
 
     /// <summary>
@@ -321,13 +312,13 @@ public partial class WinUIWorker : IBisnesLogicLayer
     {
         if (settingsService.IsOnlyReadMode)
         {
-            mainForm.Title = "Термометрия NIKA. Обзор.";
+            presentation.setStatus("Термометрия NIKA. Обзор.");
         }
         else
         {
-            mainForm.Title = "Термометрия NIKA. "
+            presentation.setStatus ("Термометрия NIKA. "
                 + (settingsService.OfflineMode ? " Автономный режим." : " Подключено к базе данных. ")
-                + (settingsService.IsAdminMode ? " Режим Администратора." : " Режим пользователя.");
+                + (settingsService.IsAdminMode ? " Режим Администратора." : " Режим пользователя."));
 
             //allSilosesWorker.refreshButton();
             //settingWorker.showStatus();
@@ -352,38 +343,27 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     private void refreshAllSiloses()
     {
-        //      oneSilosInfoWorker.refreshAll(); //Обнавляем панель с одним силосом
         allSilosesWorker.refreshAll();
-
-        //Обновляем журнал здесь, т.к. при закрытии окна настроек вызывается эта функция
-        //toolStripLogHost.
-        loggingRichTextBox.MinimumSize = new Size(settingsService.LogTextboxWidthHeight, settingsService.LogTextboxWidthHeight);
     }
 
     #region Обработка сообщений от отправщика писем
 
     /// <summary>
-    /// 
+    /// Удачная рассылка
     /// </summary>
     /// <param name="message"></param>
     private void mailSenderSuccessMessage(string message)
     {
-
-
-        addMessageToTextBoxLoger(message, Color.Green);
-
+        sendLogMessage(message, Color.Green);
     }
 
     /// <summary>
-    /// 
+    /// Неудачная рассылка
     /// </summary>
     /// <param name="message"></param>
     private void mailSenderErrorMessage(string message)
     {
-
-
-        addMessageToTextBoxLoger(message, Color.Red);
-
+        sendLogMessage(message, Color.Red);
     }
     #endregion
 
@@ -409,28 +389,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
     }
 
 
-    private void progressBarOn()
-    {
-        exportProgressBar.Parent = this;
-        exportProgressBar.BringToFront();
-        exportProgressBar.Dock = DockStyle.Bottom;
-        exportProgressBar.Visible = true;
-        exportProgressBar.Enabled = true;
-        exportProgressBar.Value = 0;
-        exportProgressBar.ProgressColor = Color.FromArgb(44, 255, 137);
-        exportProgressBar.ProgressColor2 = Color.FromArgb(139, 42, 227);
-    }
-
-    public void backAllSilosComponentShow()
-    {
-
-        if (allFillingComponent != null)
-            allFillingComponent.Hide();
-        allSilosesWorker.Visible = true;
-        logPan.Visible = true;
-
-    }
-
     private void allFillingComponentInvoke()
     {
 
@@ -447,60 +405,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     }
 
-    private void progressBarWorking(int value)
-    {
-
-        switch (value)
-        {
-            case -1:
-                progressBarOn();
-                break;
-            case -2:
-
-                exportProgressBar.ProgressColor = Color.Red;
-                exportProgressBar.ProgressColor2 = Color.DarkRed;
-                TaskbarProgress.SetState(Handle, TaskbarProgress.TaskbarStates.Error);
-                TaskbarProgress.SetValue(Handle, value, 100);
-                redTimer.Start();
-                animationTimer.Enabled = true;
-                break;
-
-            case 100:
-                TaskbarProgress.SetValue(Handle, value, 100);
-                exportProgressBar.Value = value;
-                animationTimer.Enabled = true;
-                break;
-
-            default:
-                TaskbarProgress.SetValue(Handle, value, 100);
-                exportProgressBar.Value = value;
-                break;
-        }
-
-    }
-
-    /// <summary>
-    /// Событие окончания выгрузки
-    /// </summary>
-    /// <param name="message">сообщение</param>
-    /// <param name="success">удачность</param>
-    private void exportEndEvent(string message, bool success)
-    {
-
-
-        if (success)
-        {
-            addMessageToTextBoxLoger("Выгрузка сделана успешно!", Color.Green);
-            MessageBox.Show("Выгрузка сделана успешно!");
-        }
-        else
-        {
-            MessageBox.Show("Не удалось сделать выгрузку в Файл. \n" +
-                "Возможно он открыт в другой программе");
-            addMessageToTextBoxLoger("Неудалось сделать выгрузку!", Color.Red);
-        }
-
-    }
 
     /// <summary>
     /// Запуск опроса
@@ -509,24 +413,20 @@ public partial class WinUIWorker : IBisnesLogicLayer
     {
         if (settingsService.IsOnlyReadMode)
         {
-            MessageBox.Show("Опрос невозможен в режиме \"Обзор\"");
+            presentation.callMessageBox("Опрос невозможен в режиме \"Обзор\"");
             return;
         }
 
         if (isSettingWindowOpen)
         {
-            MessageBox.Show("Закройте окно настроек!");
+            presentation.callMessageBox("Закройте окно настроек!");
             return;
         }
 
         if (observer.startAsyncObservation())
         {
-            //isObserverRuning = true;
-            //startObservToolStripMenuItem.Enabled = false;
-            //stopObservToolStripMenuItem.Enabled = true;
             settingsService.IsObserving = true;
-            //MainMenuStrip.BackColor = SystemColors.Control;
-            loggingRichTextBox.BackColor = Color.White;
+            presentation.setNormalStyleForm();
         }
     }
 
@@ -534,79 +434,21 @@ public partial class WinUIWorker : IBisnesLogicLayer
     {
         if (observer != null)
         {
-            addMessageToTextBoxLoger("Ожидание остановки опроса.", Color.Red);
-            observationStatusToolStripStatusLabel.Text = "Ожидание остановки опроса.";
+            presentation.sendLogMessage("Ожидание остановки опроса.", Color.Red);
+            presentation.setStatus("Ожидание остановки опроса.");
             observer.stopAsyncObservation();
         }
 
-        addMessageToTextBoxLoger("Опрос остановлен.", Color.Red);
-        observationStatusToolStripStatusLabel.Text = "Опрос остановлен.";
-        //isObserverRuning = false;
-        //startObservToolStripMenuItem.Enabled = true;
-        //stopObservToolStripMenuItem.Enabled = false;
+        presentation.sendLogMessage("Опрос остановлен.", Color.Red);
+        presentation.setStatus("Опрос остановлен.");
         settingsService.IsObserving = false;
 
         if (settingsService.IsHighlightWhenObservStop)
         {
-            //MainMenuStrip.BackColor = Color.FromArgb(255, 90, 80);
-            loggingRichTextBox.BackColor = Color.FromArgb(255, 90, 80);
+            presentation.setStopStyleForm();
         }
     }
 
-    public void allSilShow()
-    {
-        logPan.Visible = true;
-        allSilosesPanel.Visible = true;
-        allSilosesWorker.Parent = allSilosesPanel;
-        allSilosesWorker.Dock = DockStyle.Fill;
-        allSilosesWorker.AutoSize = true;
-        //allSilosesWorker.refreshAll();
-
-    }
-
-
-
-    private void butSil_Click(object sender, EventArgs e)
-    {
-        //if (exportProgressBar.Enabled == true)
-        //    exportProgressBar.Visible = true;
-        logPan.Visible = true;
-        allSilosesPanel.Visible = true;
-        allSilosesWorker.Parent = allSilosesPanel;
-        allSilosesWorker.Dock = DockStyle.Fill;
-        allSilosesWorker.AutoSize = true;
-        //allSilosesWorker.refreshAll();
-        backAllSilosComponentShow();
-    }
-
-
-    private bool flagObserv = false;
-    private void butRunStop_Click(object sender, EventArgs e)
-    {
-        if (!flagObserv)
-        {
-            butRunStop.Image = Properties.Resources.runGreen;
-            butRunStop.Text = "Остановить опрос";
-            flagObserv = true;
-            if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
-                if (EnterPasswordForm.enterOperator() != DialogResult.Yes)
-                    return;
-            silosService.deleteLastTemperatur();
-            startObserv();
-        }
-        else
-        {
-            flagObserv = false;
-            butRunStop.Text = "Опрос датчиков";
-            butRunStop.Image = Properties.Resources.runGrey1;
-            // Попытка ввести пароль оператора.
-            if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
-                if (EnterPasswordForm.enterOperator() != DialogResult.Yes)
-                    return;
-            progressBarWorking(-2);
-            stopObserv();
-        }
-    }
 
 
     private void refreshSetting()
@@ -616,9 +458,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
             settingWorker.RefreshAll();
         else
         {
-            if (settingWorker == null)
-                initSimpleSetting();
-
             settingWorker.refreshAll();
         }
     }
@@ -629,16 +468,14 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             if (!dao.connectToDB(FileProcessingService.getConnectionString(), settingsService.IsOnlyReadMode))
             {
-                MessageBox.Show("Не удалось подключиться!\n" +
+                presentation.callMessageBox("Не удалось подключиться!\n" +
                     "проверьте имя пользователя и пароль");
             }
             else
             {
-                MessageBox.Show("Подключение успешно!");
+                presentation.callMessageBox("Подключение успешно!");
                 silosService.synchronizeWithGettingData();
                 refreshAllSettings();
-                if (settingWorker == null)
-                    initSetting();
 
                 refreshSetting();
             }
@@ -646,11 +483,11 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Не удалось подключиться к базе данных");
+            presentation.callMessageBox("Не удалось подключиться к базе данных");
         }
     }
 
-    private void adminMode_Click(object sender, EventArgs e)
+    private void adminMode_Click()
     {
 
         if (settingsService.IsOnlyReadMode) //Выхоидм из режима обзор
@@ -660,8 +497,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             if (settingsService.IsAdminMode) // Выходим из режиема администратора
             {
-                settingWorker.Hide();
-                butSil_Click(sender, e);
                 //changeMode();
                 changeStatus();
             }
@@ -670,36 +505,36 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
     }
 
-    private void exportToExcelTime_Click(object sender, EventArgs e)
-    {
-        if (exportWorker == null)
-        {
-            exportWorker = new ExportToExcelForm(silosService, settingsService, exportEndEvent, progressBarWorking);
 
-        }
-        exportWorker.ShowDialog();
+    public bool checkOperatorPassword(string password)
+    {
+        new checkPswdHandler((pswd) =>
+        {
+            return SecurityService.checkMainOperPassword(pswd);
+        });
+        return true;
     }
 
-    private void exportToExcel_Click(object sender, EventArgs e)
+    public bool checkAdminPassword(string password)
     {
-        if (saveExcelFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            exportProgressBar.Visible = true;
-            if (saveExcelFileDialog.FileName != "")
-            {
-                if (ExportService.exportToExcelLastTemperatureAsync(saveExcelFileDialog.FileName, silosService, settingsService, exportEndEvent, progressBarWorking))
-                    addMessageToTextBoxLoger("Выгрузка началась!", Color.Black);
-                else
-                    MessageBox.Show("Выгрузка в процессе!");
-            }
-        }
+        return false;
+    }
 
+    public bool checkProviderPassword(string password)
+    {
+        return false;
+    }
+
+    private bool enterOperator()
+    {
+        presentation.openEnterForm(checkOperatorPassword);
+        return true;
     }
 
     private void simpleSet_Click(object sender, EventArgs e)
     {
         if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
-            if (EnterPasswordForm.enterOperator() != DialogResult.Yes)
+            if (enterOperator())
                 return;
 
         if (observer.IsRunning)
@@ -759,8 +594,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     private void adminEnter()
     {
-        EnterPasswordForm enterPasswordForm = new EnterPasswordForm();
-        enterPasswordForm.Activate();
+        presentation.openEnterForm(checkAdminPassword);
     }
 
     public SilosService getAllSilos() => throw new NotImplementedException();

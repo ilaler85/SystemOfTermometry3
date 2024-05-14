@@ -6,26 +6,33 @@ using System.Threading.Tasks;
 using OxyPlot;
 using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.Services;
-using SystemOfThermometry3.Services;
+using System.Drawing;
 
 namespace SystemOfThermometry3.WinUIWorker;
-public interface IPresentationLayer
+
+public delegate bool modeCheckPassword(string password);
+
+public interface IPresentationLayer 
 {
     /// <summary>
     /// Открытие окна подключения к БД
     /// </summary>
-    public void openConnectDBDialog(ref Dao dao);
+    public void openFormConnectDBDialog(ref Dao dao);
 
+
+    public void openFormConnectDBDialog();
     /// <summary>
-    /// 
+    /// закрытие формы подключения к бд
     /// </summary>
-    public void closeConnectDB();
+    public void closeFormConnectDB();
 
 
     /// <summary>
     /// Открытие окна при загрузки приложения 
     /// </summary>
     public void showWindowDownload(bool flag);
+
+    public void closeWindowDownload();
 
     /// <summary>
     /// Вызов настроек 
@@ -34,10 +41,21 @@ public interface IPresentationLayer
     public void callSettingComponent(SettingsService settingsService, bool adminSetting);
 
     /// <summary>
+    /// Метод закрытия настроек администратора при нажатии на выход из режима администратора
+    /// </summary>
+    public void closeAdminSetting();
+
+    /// <summary>
     /// Установка режим администратора
     /// </summary>
     /// <returns>true - смена успешная, false - смена неудачная</returns>
     public bool setAdminMode();
+
+    /// <summary>
+    /// Открытие окна проверки пароля 
+    /// Передается метод для проверки пароля зависит от запроса
+    /// </summary>
+    public void openEnterForm(modeCheckPassword checkPassword);
 
     /// <summary>
     /// Установка автономного режима
@@ -74,10 +92,27 @@ public interface IPresentationLayer
     public bool stopObserv();
 
     /// <summary>
+    /// Установка темы приложения при остановке опроса платы
+    /// </summary>
+    public void setStopStyleForm();
+
+    /// <summary>
+    /// Установка темы приложения при запуске опроса платы
+    /// </summary>
+    public void setNormalStyleForm();
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="message"></param>
     public void callMessageBox(string message);
+
+    /// <summary>
+    /// Сообщение в лог панели 
+    /// </summary>
+    /// <param name="message">Текст сообщения</param>
+    /// <param name="color">Цвет текста</param>
+    public void sendLogMessage(string message, Color color);
 
     /// <summary>
     /// Перезагрузить все компоненты
@@ -91,14 +126,18 @@ public interface IPresentationLayer
     public void refreshAllSilos();
 
     /// <summary>
-    /// отправка значение progress bar 
-    /// -1 активация прогресс бара
-    /// -2 ошибка выполнения задачи
-    /// 100 успешное выполнение задачи запуск таймера на исчезновение прогресс бара
-    /// другое значение - прогресс 
+    /// <para>отправка значение progress bar </para> 
+    /// <para>-1 активация прогресс бара</para>
+    /// <para>-2 ошибка выполнения задачи</para>
+    /// <para>100 успешное выполнение задачи запуск таймера на исчезновение прогресс бара </para>
+    /// <para>другое значение - прогресс </para>
     /// </summary>
     public void setProgressBar(int value);
 
+    /// <summary>
+    /// установка статуса приложения
+    /// </summary>
+    /// <param name="message"></param>
     public void setStatus(string message);
 
     /// <summary>
@@ -110,7 +149,11 @@ public interface IPresentationLayer
     /// <summary>
     /// Вызов окна с предупреждением о перегреве датчиков
     /// </summary>
-    public void overheatMessageBox();
+    public void overheatMessageBox(StringBuilder message, bool playSound);
 
-    
+    /// <summary>
+    /// Открытие форму генерации ключа
+    /// </summary>
+    public bool openFormApplyKeyForm();
+
 }

@@ -34,7 +34,7 @@ public interface IBisnesLogicLayer
     /// <summary>
     /// 
     /// </summary>
-    public void exportExcel(DateTime time);
+    public void exportExcel(DateTime time, string fileName);
 
     public void getFilling();
     /// <summary>

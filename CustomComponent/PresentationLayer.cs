@@ -87,5 +87,17 @@ public class PresentationLayerClass: IPresentationLayer
     public void openConnectDBDialog(ref Dao dao) => throw new NotImplementedException();
     public void overheatMessageBox() => throw new NotImplementedException();
     public void closeConnectDB() => throw new NotImplementedException();
+    public void openFormConnectDBDialog(ref Dao dao) => throw new NotImplementedException();
+    public void closeFormConnectDB() => throw new NotImplementedException();
+    public void closeWindowDownload() => throw new NotImplementedException();
+    public void callSettingComponent(SettingsService settingsService, bool adminSetting) => throw new NotImplementedException();
+    public void closeAdminSetting() => throw new NotImplementedException();
+    public void openEnterForm(modeCheckPassword checkPassword) => throw new NotImplementedException();
+    public bool stopObserv() => throw new NotImplementedException();
+    public void setStopStyleForm() => throw new NotImplementedException();
+    public void setNormalStyleForm() => throw new NotImplementedException();
+    public void sendLogMessage(string message, Color color) => throw new NotImplementedException();
+    public void setStatus(string message) => throw new NotImplementedException();
+    public void overheatMessageBox(StringBuilder message, bool playSound) => throw new NotImplementedException();
 }
 
