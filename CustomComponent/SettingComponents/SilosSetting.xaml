@@ -9,7 +9,26 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-
+    <Grid Name="SettingSilosPanel" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Name="SilosStack"  Orientation="Vertical" Grid.Column="1" >
+            <AppBarButton Name="addButton" Icon="Add"></AppBarButton>
+            <ListView Name="siloses">
+                
+            </ListView>
+        </StackPanel>
+        <StackPanel Name="OneSilosPanel">
+            
+        </StackPanel>
+        <StackPanel Name ="DeviceStack">
+            <ListView Name ="devices">
+                
+            </ListView>
+        </StackPanel>
     </Grid>
 </Page>

@@ -13,7 +13,7 @@ public static class MessageBox
 
     public static void Show(string message) 
     {
-        var box = new CustomComponent.MessageBox(message);
+        var box = new CustomComponent.MessageBoxWindow(message);
         box.Activate();
     }
 }

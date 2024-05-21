@@ -21,18 +21,18 @@
                 <TextBlock Margin="5, 0, 0 ,10" FontSize="18">Экспорт графиков</TextBlock>
                 <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Высота</TextBlock>
-                    <TextBox Name="BoxServer" Width="200"></TextBox>
+                    <TextBox Name="BoxHeigh" Width="200"></TextBox>
                 </StackPanel>
                 <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Ширина</TextBlock>
-                    <TextBox Name="BoxPert" Width="200"></TextBox>
+                    <TextBox Name="BoxWidth" Width="200"></TextBox>
                 </StackPanel>
             </StackPanel>
             <StackPanel>
                 <TextBlock Margin="0, 10, 0 ,10" FontSize="18">Выгрузка и отображение в Excel</TextBlock>
                 <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Имя компании</TextBlock>
-                    <TextBox Name="BoxNameDB" Width="200"></TextBox>
+                    <TextBox Name="BoxNameCompany" Width="200"></TextBox>
                 </StackPanel>
                 <RadioButtons Header="Вывод подвесок:">
                     <RadioButton GroupName="WriteWire" Name ="RadioVertical" Content="По вертикали" Checked="RadioButton_Checked" IsChecked="True"/>
@@ -41,12 +41,12 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">Цветное обозначение температур</TextBlock>
-                    <CheckBox IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+                    <CheckBox Name="CheckBoxColorExport" IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">Подсветка остановки опроса</TextBlock>
-                    <CheckBox IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+                    <CheckBox Name="CheckBoxColorStopObserv" IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
                 </StackPanel>
 
                 
@@ -55,32 +55,37 @@
                 <TextBlock Margin="0, 15, 0 ,15" FontSize="18">Превышение температуры</TextBlock>
                 
                 <StackPanel  Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <ToggleSwitch Header="Звуковой сигнал" IsOn="True" Margin="0, 0, 0, 0" VerticalAlignment="Center"></ToggleSwitch>
+                    <ToggleSwitch Name ="SwitchTemp" Header="Звуковой сигнал" IsOn="True" Margin="0, 0, 0, 0" VerticalAlignment="Center"></ToggleSwitch>
                 </StackPanel>
                 
                 <StackPanel  Margin="0,0,0,10" Orientation="Horizontal" HorizontalAlignment="Left" >
                     
                     <TextBlock Margin="0,0,15,0" VerticalAlignment="Center" HorizontalAlignment="Left">Количество перегретых сенсоров для срабатывания предупреждения</TextBlock>
-                    <TextBox></TextBox>
+                    <ComboBox Name ="BoxCountSensor" IsEditable="True" Width="200" />
                 </StackPanel>
 
                 <StackPanel  Margin="0,0,0,10" Orientation="Horizontal" HorizontalAlignment="Left">
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">Отправлять отчет на почту при превышении порога температуры</TextBlock>
-                    <CheckBox IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+                    <CheckBox Name ="CheckBoxSendMail" IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal">
                     
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">Отправлять Excel-файл</TextBlock>
-                    <CheckBox IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+                    <CheckBox  Name ="CheckBoxSendExcel" IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
                 </StackPanel>
                 
                  <StackPanel Orientation="Horizontal">
                     
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">Прикреплять графики</TextBlock>
-                    <CheckBox IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+                    <CheckBox Name ="CheckBoxSendChart" IsChecked="True" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
                 </StackPanel>
-               
+                <StackPanel  Margin="0,0,0,10" Orientation="Horizontal" HorizontalAlignment="Left" >
+
+                    <TextBlock Margin="0,0,15,0" VerticalAlignment="Center" HorizontalAlignment="Left">Время между рассылками на почту при перегреве температуры (мин)</TextBlock>
+                    <ComboBox Name ="BoxTimeOut" IsEditable="True" Width="200" />
+                </StackPanel>
+
             </StackPanel>
         </StackPanel>
 

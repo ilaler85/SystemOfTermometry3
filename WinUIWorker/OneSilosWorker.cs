@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SystemOfThermometry3.WinUIWorker;
-internal class OneSilosWorker
+public class OneSilosWorker
 {
+
 }

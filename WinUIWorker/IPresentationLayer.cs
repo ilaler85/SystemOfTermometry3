@@ -55,7 +55,7 @@ public interface IPresentationLayer
     /// Открытие окна проверки пароля 
     /// Передается метод для проверки пароля зависит от запроса
     /// </summary>
-    public void openEnterForm(modeCheckPassword checkPassword);
+    public bool openEnterForm(modeCheckPassword checkPassword);
 
     /// <summary>
     /// Установка автономного режима
@@ -156,4 +156,20 @@ public interface IPresentationLayer
     /// </summary>
     public bool openFormApplyKeyForm();
 
+    /// <summary>
+    /// открытие настроек разработчика
+    /// </summary>
+    public void openProviderSetting();
+
+    /// <summary>
+    /// обновление настроек 
+    /// </summary>
+    public void refreshSetting();
+
+    /// <summary>
+    /// обновление панели управления и настроек силосов
+    /// </summary>
+    public void refreshSilosTabControl();
+
+    public void refreshAllSilosTemperatur();
 }

@@ -7,12 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    >
 
-    <StackPanel>
-        <TextBox x:Name="NameGrain" Margin="0,0,0,10"></TextBox>
-        <TextBox x:Name="RedTemp" Margin="0,0,0,10"></TextBox>
-        <TextBox x:Name="YellowTemp" Margin="0,0,0,10"></TextBox>
-        <Button x:Name="ButtonDelete" Content="Удалить" Visibility="Collapsed" Click="ButtonDelete_Click" ></Button>
+    <StackPanel Orientation="Horizontal">
+        
+        <TextBox x:Name="BoxNameGrain" Margin="0,0,0,10"></TextBox>
+        <TextBox x:Name="BoxRedTemp" Margin="0,0,0,10"></TextBox>
+        <TextBox x:Name="BoxYellowTemp" Margin="0,0,0,10"></TextBox>
+        <AppBarButton Name="ButtonSave" Click="ButtonSave_Click" Icon="Save"> </AppBarButton>
+        <AppBarButton Name="ButtonDelete" Click="ButtonDelete_Click" Icon="Delete"></AppBarButton>
     </StackPanel>
 </Page>

@@ -13,22 +13,26 @@
         <TextBlock FontSize="18">Смена пароля</TextBlock>
         <StackPanel  Margin="0,10,0,10"  HorizontalAlignment="Left">
             <TextBlock Margin="0,0,0,5">Старый пароль</TextBlock>
-            <TextBox Name="BoxOldPassword" Width="200"></TextBox>
+            <PasswordBox Name="BoxOldPassword" Width="200" ></PasswordBox>
         </StackPanel>
         <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
             <TextBlock Margin="0,0,0,5">Новый пароль</TextBlock>
-            <TextBox Name="BoxNewPassword" Width="200"></TextBox>
+            <PasswordBox Name="BoxNewPassword" Width="200"></PasswordBox>
         </StackPanel>
         <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
             <TextBlock Margin="0,0,0,5">Повторите новый пароль</TextBlock>
-            <TextBox Name="BoxReapetNewPassword" Width="200"></TextBox>
+            <PasswordBox Name="BoxRepeatNewPassword" Width="200"></PasswordBox>
         </StackPanel>
-        <Button Content ="Сохранить"></Button>
+        <Button Content ="Сохранить" Click="Button_Click"></Button>
 
         <StackPanel  Margin="0,15,0,10" Orientation="Horizontal" HorizontalAlignment="Left">
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">Усреднять температуру для неисправных датчиков</TextBlock>
-            <CheckBox IsChecked="False" Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
+            <CheckBox Name ="chekBoxAveraginTemperatureValues" 
+                      Margin="10, 0, 0, 0" 
+                      VerticalAlignment="Center" 
+                      Checked="chekBoxAveraginTemperatureValues_Checked"
+                      Unchecked="chekBoxAveraginTemperatureValues_Checked"></CheckBox>
         </StackPanel>
-        <TextBlock FontSize="16">Рабочая папка: </TextBlock>
+        <TextBlock Name ="pathTextBox" FontSize="16"></TextBlock>
     </StackPanel>
 </Page>

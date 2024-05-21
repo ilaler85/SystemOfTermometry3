@@ -9,14 +9,15 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel x:Name="DataGridV">
-        <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
-            <TextBlock Margin="0,0,20,0" VerticalAlignment="Center">Добавить структурное подразделение</TextBlock>
-            <Button Content="Добавить еще" Click="Button_Click" VerticalAlignment="Center"/>
+        <StackPanel Margin="0,0,0,20" Orientation="Vertical">
+            <TextBlock Margin="0,0,20,0" VerticalAlignment="Center" FontSize="16">Добавить структурное подразделение</TextBlock>
+            <TextBox Name ="nameDivisions" Header="Название структурного подразделения" Text ="{Binding ElementName=listDivisions, Path=SelectedItem.ToString, Mode=TwoWay}" Width="500"/>
+            <Button Name ="ButtonSave" Content="Сохранить" Click="ButtonSave_Click" VerticalAlignment="Center"/>
+            <Button Name ="ButtonDelete" Content="Удалить" Click="ButtonDelete_Click" Visibility="Collapsed" />
         </StackPanel>
 
-        <StackPanel x:Name="ListDivision">
+        <ListView Name ="listDivisions" ItemClick="ListView_ItemClick" ItemsSource="" >
             
-
-        </StackPanel>
+        </ListView>
     </StackPanel>
 </Page>

@@ -12,20 +12,42 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using SystemOfThermometry3.WinUIWorker;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SystemOfThermometry3.CustomComponent.SettingComponents
+namespace SystemOfThermometry3.CustomComponent.SettingComponents;
+
+
+public sealed partial class SettingProvider : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SettingProvider : Page
+
+    IBisnesLogicLayer bll;
+
+    public string newPassword;
+    public SettingProvider()
     {
-        public SettingProvider()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
+        
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        if (e != null)
+            bll = e.Parameter as IBisnesLogicLayer;
+
+        pathTextBox.Text = "Рабочая папка: " + bll.getPathSaveFile();
+        chekBoxAveraginTemperatureValues.IsChecked = bll.getModeAveraginTemperatureValues();
+
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        bll.changeProviderPassword(BoxOldPassword.Text, BoxNewPassword.Text, BoxRepeatNewPassword.Text);
+
+    }
+
+    private void chekBoxAveraginTemperatureValues_Checked(object sender, RoutedEventArgs e)
+    {
+        bll.averaginTemperatureValues();
     }
 }

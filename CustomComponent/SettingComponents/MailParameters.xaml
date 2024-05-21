@@ -6,6 +6,7 @@
     xmlns:local="using:SystemOfThermometry3.CustomComponent.Setting_components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:control ="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -16,47 +17,77 @@
     VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
 
         <StackPanel Margin="0,0,0,10" HorizontalAlignment="Stretch" >
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,20">
-                <TextBlock Margin="0, 0, 0 ,0" FontSize="18" VerticalAlignment="Center">Отправка отчета об ошибках</TextBlock>
-                <CheckBox Name ="SendErrorFile" Margin="0, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
-            </StackPanel>
-
-            <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
-                <TextBlock Margin="0,0,0,5">SMTP Сервер</TextBlock>
-                <TextBox Name="BoxSMTPServer" Width="200"></TextBox>
-            </StackPanel>
-            <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
-                <TextBlock Margin="0,0,0,5">Почта отправитель</TextBlock>
-                <TextBox Name="BoxMailAddress" Width="200"></TextBox>
-            </StackPanel>
-            <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
-                <TextBlock Margin="0,0,0,5">Пароль от почты</TextBlock>
-                <TextBox Name="BoxPassword" Width="200"></TextBox>
-            </StackPanel>
-            <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
-                <TextBlock Margin="0,0,0,5">Тема письма</TextBlock>
-                <TextBox Name="BoxThemeMail" Width="200"></TextBox>
-            </StackPanel>
             
             <StackPanel>
-                <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">Отправлять в выбранное время</TextBlock>
-                <CheckBox x:Name="CheckBoxSendMail"></CheckBox>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">Прикрепить графики</TextBlock>
-                <CheckBox x:Name="CheckBoxPinCharts"></CheckBox>
-            </StackPanel>
-            <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
-                <TextBlock Margin="0,0,0,5">Период отправления</TextBlock>
-                <ComboBox></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 10">
-                <TextBlock VerticalAlignment="Center">Получатели</TextBlock>
-                
-            </StackPanel>
-            <Button Name="ButtonSave" Content="Сохранить" Margin="0, 10, 0, 10"></Button>
+                <TextBlock>Ежедневная рассылка измерений</TextBlock>
+                <ToggleSwitch Name="SwitchSendMail" ></ToggleSwitch>
+                <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">SMTP Сервер</TextBlock>
+                    <TextBox Name="BoxSMTPServer" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Почта отправитель</TextBlock>
+                    <TextBox Name="BoxMailAddress" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Пароль от почты</TextBlock>
+                    <TextBox Name="BoxPassword" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Тема письма</TextBlock>
+                    <TextBox Name="BoxThemeMail" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">Отправлять в выбранное время</TextBlock>
+                    <CheckBox x:Name="CheckBoxSendMail"></CheckBox>
+                    <ComboBox Name="BoxTimeSend"></ComboBox>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" Margin="0,0,10,0">Прикрепить графики</TextBlock>
+                    <CheckBox x:Name="CheckBoxPinCharts"></CheckBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
+                    <TextBlock VerticalAlignment="Center">Получатели</TextBlock>
+                    <control:DataGrid x:Name="gridMailRecipients" IsReadOnly="False"></control:DataGrid>
+                </StackPanel>
+                <Button Name="ButtonSave" Content="Сохранить" Margin="0, 10, 0, 10" Click="ButtonSave_Click"></Button>
 
-            <Button Name="ButtonTestSendMail" Content="Сделать тестовую отправку" Margin="0, 10, 0, 20"></Button>
+                <Button Name="ButtonTestSendMail" Content="Сделать тестовую отправку" Margin="0, 10, 0, 20" Click="ButtonTestSendMail_Click"></Button>
+            </StackPanel>
+
+            <StackPanel >
+                <TextBlock>Отправка отчетов об ошибках</TextBlock>
+                <ToggleSwitch Name="SwitchSendErrorMail" Toggled="SwitchSendErrorMail_Toggled" ></ToggleSwitch>
+                <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">SMTP Сервер</TextBlock>
+                    <TextBox Name="BoxErrorSMTPServer" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Почта отправитель</TextBlock>
+                    <TextBox Name="BoxErrorMailAddress" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Пароль от почты</TextBlock>
+                    <TextBox Name="BoxErrorPassword" Width="200"></TextBox>
+                </StackPanel>
+                
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Тема письма</TextBlock>
+                    <TextBox Name="BoxThemeErrorMail" Width="200"></TextBox>
+                </StackPanel>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Период отправления</TextBlock>
+                    <ComboBox Name="BoxPeriodSend"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
+                    <TextBlock VerticalAlignment="Center">Получатели</TextBlock>
+                    <control:DataGrid x:Name="gridErrorMailRecipients" IsReadOnly="False"  >
+                    </control:DataGrid>
+                </StackPanel>
+                <Button Name="ButtonSaveError" Content="Сохранить" Margin="0, 10, 0, 10" Click="ButtonSaveError_Click"></Button>
+
+                <Button Name="ButtonTestSendErrorMail" Content="Сделать тестовую отправку" Margin="0, 10, 0, 20" Click="ButtonTestSendErrorMail_Click"></Button>
+            </StackPanel>
         </StackPanel>
 
     </ScrollViewer>

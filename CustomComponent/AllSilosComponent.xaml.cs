@@ -14,6 +14,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using SystemOfThermometry3.CustomComponent;
 using Microsoft.UI.Xaml.Media.Animation;
+using SystemOfThermometry3.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,9 +26,17 @@ namespace SystemOfThermometry3.CustomComponent;
 /// </summary>
 public sealed partial class AllSilosComponent: Page
 {
+    SilosService silosService;
     public AllSilosComponent()
     {
         this.InitializeComponent();
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        if(e!=null)
+            silosService = (SilosService)e.Parameter;
+
     }
 
     public void navigationTop_selectChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

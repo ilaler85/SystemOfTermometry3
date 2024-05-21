@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System.ComponentModel;
 using SystemOfThermometry3.CustomComponent.SettingComponents;
 using SystemOfThermometry3.CustomComponent.Setting_components;
+using SystemOfThermometry3.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,9 +27,19 @@ namespace SystemOfThermometry3.CustomComponent;
 /// </summary>
 public sealed partial class SettingComponent : Page
 {
-    public SettingComponent()
+    private SettingsService settingsService;
+
+    public SettingComponent(SettingsService settingServices)
     {
         this.InitializeComponent();
+
+
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        settingsService = (SettingsService)e.Parameter;
+
     }
 
     private void settingNavigat_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -49,6 +60,7 @@ public sealed partial class SettingComponent : Page
         {
             case "GeneralSetting":
                 pageType = typeof(GeneralSetting);
+                
                 break;
             case "BoardParameters":
                 pageType = typeof(BoardParameters);
@@ -81,9 +93,9 @@ public sealed partial class SettingComponent : Page
                 pageType = typeof(StructuralDivisions);
                 break;
 
-            default: pageType = typeof(BoardParameters); break;
+            default: pageType = typeof(GeneralSetting); break;
         }
-        _ = contentFrame.Navigate(pageType);
+        _ = contentFrame.Navigate(pageType, settingsService);
     }
 
 

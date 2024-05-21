@@ -20,12 +20,13 @@
                         OpenPaneLength="230">
                         
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Name ="itemAllSilos" Content="Силосы" Tag="menuItem" Icon="World" IsSelected="True"/>
+                <NavigationViewItem x:Name ="itemAllSilos" Content="Силосы" Tag="menuItem" IsSelected="True"/>
                 <NavigationViewItem x:Name ="itemObserv" Content="Запустить опрос" Tag="menuItem" Icon="Play" />
-                <NavigationViewItem x:Name ="itemChart" Content="Графики" Tag="menuItem" Icon="Library" />
+                <NavigationViewItem x:Name ="itemChart" Content="Графики" Tag="menuItem" />
+
                 <NavigationViewItem x:Name ="itemSetting" Content="Настройки" Tag="menuItem" Icon="Setting" />
                 <NavigationViewItem x:Name ="itemExport" Content="Экспорт в Excel" Tag="menuItem" Icon="Save" />
-                <NavigationViewItem x:Name ="adminMode" Content="Режим администратора" Tag="menuItem" Icon="Admin" />
+                <NavigationViewItem x:Name ="itemAdminMode" Content="Включть режим администратора" Tag="menuItem" Icon="Admin" />
                 <NavigationViewItem x:Name ="refresh" Content="Переподключиться" Tag="menuItem" Icon="Refresh" />
             </NavigationView.MenuItems>
 

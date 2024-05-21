@@ -39,7 +39,13 @@
             <Grid>
                 <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Число стоп-битов</TextBlock>
-                    <TextBox Name="BoxCountSropBit" Width="200"></TextBox>
+                    <TextBox Name="BoxCountDataBit" Width="200"></TextBox>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
+                    <TextBlock Margin="0,0,0,5">Число стоп-битов</TextBlock>
+                    <TextBox Name="BoxCountStopBit" Width="200"></TextBox>
                 </StackPanel>
             </Grid>
             <Grid>
@@ -48,6 +54,7 @@
                     <TextBox Name="BoxTimeBeforeTimeOut" Width="200"></TextBox>
                 </StackPanel>
             </Grid>
+            
             <TextBlock Margin="0,30,0,10" FontSize="18">Опрос платы</TextBlock>
             <Grid HorizontalAlignment="Left">
                 <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
@@ -63,7 +70,11 @@
             </Grid>
             <Grid HorizontalAlignment="Left">
                 <StackPanel  Margin="0,0,0,10" >
-                    <TextBlock Margin="0,0,0,5">Опросить сломанную подвеску через время (мин.)?</TextBlock>
+                    <ToggleSwitch Name="SwitchTimeOutObservWire" 
+                                  
+                                  Header ="Опросить сломанную подвеску через время (мин.)?" 
+                                  IsEnabledChanged="SwitchTimeOutObservWire_IsEnabledChanged">
+                    </ToggleSwitch>
                     <TextBox Name="BoxInterrogateBrokenSuspension" Width="200" HorizontalAlignment="Left"></TextBox>
                 </StackPanel>
             </Grid>

@@ -14,6 +14,9 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using SystemOfThermometry3.CustomComponent;
 using System.Threading;
+using Microsoft.UI.Xaml.Documents;
+using System.Drawing;
+using SystemOfThermometry3.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,12 +27,29 @@ namespace SystemOfThermometry3;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
-    DispatcherTimer timer;
+    private DispatcherTimer timer = new DispatcherTimer();
+    private PresentationLayerClass presentation;
+    private SettingsService settingsService;
+    private SilosService silosService;
     public MainWindow()
     {
         this.InitializeComponent();
         timer.Interval = TimeSpan.FromMilliseconds(4000);
         timer.Tick += Timer_Tick;
+
+        setStopObservMode();
+
+        FontIcon iconAllSilos = new FontIcon();
+        iconAllSilos.Glyph = "\uF49A";
+        itemAllSilos.Icon = iconAllSilos;
+
+        setAdminMode();
+
+    }
+
+    public void setPresentation(PresentationLayerClass presentation)
+    {
+        this.presentation = presentation;
     }
 
     private void Timer_Tick(object sender, object e) 
@@ -41,6 +61,36 @@ public sealed partial class MainWindow : Window
     private void progressBarError()
     {
         timer.Start();
+    }
+
+    public void setStopObservMode()
+    {
+        FontIcon icon = new FontIcon();
+        icon.Glyph = "\uE769";
+        itemObserv.Icon = icon;
+        itemObserv.Content = "Опрос остановлен";
+    }
+
+    public void setStartObservMode()
+    {
+        FontIcon icon = new FontIcon();
+        icon.Glyph = "\uE768";
+        itemObserv.Icon = icon;
+        itemObserv.Content = "Опрос запущен";
+    }
+
+    public void setAdminMode()
+    {
+        FontIcon icon = new FontIcon();
+        icon.Glyph = "\uE785";
+        itemAdminMode.Icon = icon;
+    }
+
+    public void setNormalMode()
+    {
+        FontIcon icon = new FontIcon();
+        icon.Glyph = "\uE72E";
+        itemAdminMode.Icon = icon;
     }
 
     public void progressBarSetValue(int value)
@@ -85,17 +135,18 @@ public sealed partial class MainWindow : Window
             navOptions.IsNavigationStackEnabled = false;
         }
 
-        Type pageType; //init
+        Type pageType = typeof(AllSilosComponent); //init
         var selectedItem = (NavigationViewItem)args.SelectedItem;
 
         switch (selectedItem.Name)
         {
             case "itemAllSilos":
                 pageType = typeof(AllSilosComponent);
+                _ = contentFrame.Navigate(pageType, silosService);
                 break;
 
             case "itemObserv":
-
+                presentation.runStopObserv();
                 return;
 
             case "itemChart":
@@ -104,7 +155,8 @@ public sealed partial class MainWindow : Window
 
             case "itemSetting":
                 pageType = typeof(SettingComponent);
-                break;
+                contentFrame.Navigate(pageType, settingsService);
+                return;
 
             case "itemExport":
                 pageType = typeof(ExportExcelComponent);
@@ -113,10 +165,10 @@ public sealed partial class MainWindow : Window
                 pageType = typeof(AboutComponent);
                 break;
             case "adminMode":
-                changeMode();
+                presentation.changeMode();
                 return;
             case "refresh":
-                pageType = typeof(AboutComponent);
+                
                 //метод перезагрузки
                 break;
                 

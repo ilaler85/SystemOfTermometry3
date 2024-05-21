@@ -15,6 +15,7 @@ using SystemOfThermometry3.DAO;
 using Windows.UI.ApplicationSettings;
 using static SystemOfThermometry3.Services.SilosService;
 using System.Text;
+using System.Windows.Forms;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker : IBisnesLogicLayer
@@ -35,7 +36,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     // объекты для обработки запросов пользователя 
     private ExportExcelWorker exportWorker; //Форма с выбором времени для выгрузки.
-    private SettingWorker settingWorker;
     private AllSilosWorker allSilosesWorker; // Компонент, на котором отображаются все силосы. 
     private OneSilosWorker oneSilosInfoWorker; // Компонент с информацией об одном силосе.
     private LogPanelWorker logPanelWorker;
@@ -59,17 +59,12 @@ public partial class WinUIWorker : IBisnesLogicLayer
         this.presentation = presentation;
 
         //Показывает экран загрузки в отдельном потоке, который после загрузки мейн формы прерывается
-        splashScreenThread = presentation.showWindowDownload();
-
 
         presentation.showWindowDownload(true);
         dao = new MySQLDAO();
         presentation.openFormConnectDBDialog(ref dao);
-        dbSetingsDialog.offlineModeEvent += successStartOfflineMode;
 
         string connectionString = FileProcessingService.getConnectionString();
-        exportProgressBar.BringToFront();
-        //isObserverRuning = false;
         isSettingWindowOpen = false;
 
         if (connectionString == "") //Первое подключение
@@ -85,9 +80,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
         else // не удалось подключиться
         {
-            dbSetingsDialog.ShowDialog();
+            presentation.closeFormConnectDB();
         }
-       presentation.setStatus("Готов");
+        presentation.setStatus("Готов");
     }
 
 
@@ -135,19 +130,15 @@ public partial class WinUIWorker : IBisnesLogicLayer
         observer.criticalErrorMessage += observerCriticalErrorHandler; //Сообщение об ошибке, после которой останавливается опрос
         observer.beginIterationEvent += observerBeginIterationHandler; //Сообщение о начале итерации
         observer.endIterationEvent += observerEndIterationEventHandler; //Сообщение о конце итерации
-        
+
         observer.progressEvent += presentation.setProgressBar;
 
         scheduler = new MailSender(silosService, settingsService);
         scheduler.successSendEvent += mailSenderSuccessMessage;
         scheduler.errorSendEvent += mailSenderErrorMessage;
-        settingWorker = new SettingWorker(dao, silosService, settingsService, grainService);
-        settingWorker.changeReadMode += changeMode;
         overheatTrigger = new OverheatTrigger(silosService, settingsService);
 
-        allSilosesWorker = new AllSilosWorker(this, silosService, settingsService, allFillingComponentInvoke);
 
-        loggingRichTextBox.MinimumSize = new Size(settingsService.LogTextboxWidthHeight, settingsService.LogTextboxWidthHeight);
         hwnd1 = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
 
         refreshAllSettings();
@@ -185,12 +176,12 @@ public partial class WinUIWorker : IBisnesLogicLayer
             if (settingsService.IsAdminMode)
             {
                 settingsService.IsAdminMode = false;
-                allSilosesWorker.refreshButton();
+                presentation.setNormalMode();
             }
             else
             {
                 settingsService.IsAdminMode = true;
-                allSilosesWorker.refreshButton();
+                presentation.setAdminMode();
             }
         }
     }
@@ -230,7 +221,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     private void observerEndIterationEventHandler(string message)
     {
         sendLogMessage(message, Color.Green);
-        presentation.setStatus( message);
+        presentation.setStatus(message);
         refreshSilosesTemperature();
         checkOverheat();
     }
@@ -268,7 +259,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
             scheduler.sendOverheatMailAsync();
     }
 
-    
+
 
     /// <summary>
     /// Сообщение о том, что произошла критическая ошибка и опрос остановлен
@@ -316,7 +307,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
         else
         {
-            presentation.setStatus ("Термометрия NIKA. "
+            presentation.setStatus("Термометрия NIKA. "
                 + (settingsService.OfflineMode ? " Автономный режим." : " Подключено к базе данных. ")
                 + (settingsService.IsAdminMode ? " Режим Администратора." : " Режим пользователя."));
 
@@ -330,7 +321,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     private void refreshSilosesTemperature()
     {
-        allSilosesWorker.refreshTemperature();
+        presentation.refreshAllSilosTemperatur();
         //initOneSilosPanel();
         //oneSilosInfoWorker.showChosenSilos();
     }
@@ -343,7 +334,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     private void refreshAllSiloses()
     {
-        allSilosesWorker.refreshAll();
+        presentation.refreshAllSilos();
     }
 
     #region Обработка сообщений от отправщика писем
@@ -389,22 +380,29 @@ public partial class WinUIWorker : IBisnesLogicLayer
     }
 
 
-    private void allFillingComponentInvoke()
+    public void runStopObserv()
     {
-
-        if (allFillingComponent == null)
+        if (!settingsService.IsObserving)
         {
-            allFillingComponent = new AllFillingComponent(silosService, backAllSilosComponentShow);
-            allFillingComponent.Show();
+            if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
+                if (!presentation.openEnterForm(checkOperatorPassword))
+                    return;
+            silosService.deleteLastTemperatur();
+            startObserv();
+            presentation.runObservMode();
         }
-        allFillingComponent.refreshComponent();
-        allFillingComponent.Visible = true;
-        logPan.Visible = false;
-        allFillingComponent.Dock = DockStyle.Fill;
-        allFillingComponent.Parent = allSilosesPanel;
-
+        else
+        {
+            
+            // Попытка ввести пароль оператора.
+            if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
+                if (!presentation.openEnterForm(checkOperatorPassword))
+                    return;
+            presentation.setProgressBar(-2);
+            stopObserv();
+            presentation.stopObservMode();
+        }
     }
-
 
     /// <summary>
     /// Запуск опроса
@@ -453,13 +451,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     private void refreshSetting()
     {
-        if (settingsService.IsAdminMode)
-
-            settingWorker.RefreshAll();
-        else
-        {
-            settingWorker.refreshAll();
-        }
+        presentation.refreshSetting();
     }
 
     private void reapitConnect()
@@ -487,7 +479,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
     }
 
-    private void adminMode_Click()
+    private void changeAdminMode()
     {
 
         if (settingsService.IsOnlyReadMode) //Выхоидм из режима обзор
@@ -508,46 +500,24 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public bool checkOperatorPassword(string password)
     {
-        new checkPswdHandler((pswd) =>
-        {
-            return SecurityService.checkMainOperPassword(pswd);
-        });
-        return true;
+        return SecurityService.checkMainOperPassword(password);
     }
 
     public bool checkAdminPassword(string password)
     {
-        return false;
+        return SecurityService.checkAdminPassword(password);
     }
 
     public bool checkProviderPassword(string password)
     {
-        return false;
+        return SecurityService.checkProviderPassword(password);
     }
 
     private bool enterOperator()
     {
-        presentation.openEnterForm(checkOperatorPassword);
-        return true;
+        return presentation.openEnterForm(checkOperatorPassword); ;
     }
 
-    private void simpleSet_Click(object sender, EventArgs e)
-    {
-        if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
-            if (enterOperator())
-                return;
-
-        if (observer.IsRunning)
-        {
-            if (presentation.stopObserv() == true)
-            {
-                presentation.stopObservMode();
-                stopObserv();
-                presentation.setStatus("Опрос остановлен");
-
-            }
-        }
-    }
 
     public void changeStatus()
     {
@@ -555,40 +525,30 @@ public partial class WinUIWorker : IBisnesLogicLayer
         showStatus();
     }
 
-    private void adminSet_Click()
+    public void openSetting()
     {
-
-        if (!settingsService.IsAdminMode) // пытаемся войти как администратор
-        {
-            adminEnter();
-        }
-
-        if (!settingsService.IsAdminMode) // пытаемся войти как администратор
-        {
-            return;
-        }
-
         if (observer.IsRunning)
         {
-            if (presentation.closeSetting() == true)
+            if (presentation.stopObserv() == true)
             {
                 presentation.stopObservMode();
                 stopObserv();
                 Thread.Sleep(300);
             }
-        }
-        if (!observer.IsRunning)
-        {
-            isSettingWindowOpen = true;
-            try
-            {
-                presentation.callSettingComponent(settingsService, true);
-            }
-            catch (Exception ex)
-            {
-                MyLoger.LogError(ex.Message);
-            }
+            else
+                return;
 
+        }
+        
+
+        isSettingWindowOpen = true;
+        try
+        {
+            presentation.callSettingComponent(settingsService, settingsService.IsAdminMode);
+        }
+        catch (Exception ex)
+        {
+            MyLoger.LogError(ex.Message);
         }
     }
 
@@ -597,13 +557,29 @@ public partial class WinUIWorker : IBisnesLogicLayer
         presentation.openEnterForm(checkAdminPassword);
     }
 
-    public SilosService getAllSilos() => throw new NotImplementedException();
-    public GrainService getGrainService() => throw new NotImplementedException();
-    public void runObserv() => throw new NotImplementedException();
-    public void exportExcel() => throw new NotImplementedException();
-    public void painthart() => throw new NotImplementedException();
-    public void getFilling() => throw new NotImplementedException();
-    public void calculateFilling() => throw new NotImplementedException();
-    public void enterAdminMode() => throw new NotImplementedException();
-    public void changeTemperature() => throw new NotImplementedException();
+    public int getFilling()
+    {
+        
+    }
+    
+    public int calculateFilling(DateTime start)
+    {
+        HistoryFillingService.getFilling(silosService.getLastTemperatures(),);
+
+
+        return 1;
+    }
+    public bool enterAdminMode()
+    {
+        
+    }
+
+    public bool isAdminMode()
+    {
+        return settingsService.IsAdminMode;
+    }
+    public void changeTemperature(DateTime time)
+    {
+        
+    }
 }

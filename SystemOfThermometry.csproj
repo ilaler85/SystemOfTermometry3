@@ -30,8 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="H.OxyPlot.WinUI" Version="0.9.30" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.6" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="MySql.Data" Version="8.3.0" />
@@ -81,15 +82,17 @@
     <None Remove="CustomComponent\SettingComponents\BoardParameters.xaml" />
     <None Remove="CustomComponent\SettingComponents\DBConnect.xaml" />
     <None Remove="CustomComponent\SettingComponents\DeleteData.xaml" />
-    <None Remove="CustomComponent\SettingComponents\DivisionComponent.xaml" />
     <None Remove="CustomComponent\SettingComponents\GeneralSetting.xaml" />
     <None Remove="CustomComponent\SettingComponents\GrainSetting.xaml" />
     <None Remove="CustomComponent\SettingComponents\MailParameters.xaml" />
     <None Remove="CustomComponent\SettingComponents\OfflineMode.xaml" />
     <None Remove="CustomComponent\SettingComponents\SettingProvider.xaml" />
     <None Remove="CustomComponent\SettingComponents\SilosSetting.xaml" />
+    <None Remove="CustomComponent\SettingComponents\SilosSettingComponent\DeviceControl.xaml" />
+    <None Remove="CustomComponent\SettingComponents\SilosSettingComponent\SilosControl.xaml" />
     <None Remove="CustomComponent\SettingComponents\StructuralDivisions.xaml" />
     <None Remove="CustomComponent\SettingComponent.xaml" />
+    <None Remove="CustomComponent\SilosComponent\SilosItem.xaml" />
     <None Remove="CustomComponent\SilosComponent\SilosView.xaml" />
     <None Remove="Themes\Theme.xaml" />
   </ItemGroup>
@@ -116,6 +119,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="CustomComponent\SilosComponent\SilosItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\SettingComponents\SilosSettingComponent\DeviceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\SettingComponents\SilosSettingComponent\SilosControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="CustomComponent\DBConnect.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,11 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\GrainComponent\GrainComponent.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="CustomComponent\SettingComponents\DivisionComponent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

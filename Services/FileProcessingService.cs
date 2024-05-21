@@ -187,11 +187,11 @@ namespace SystemOfThermometry3.Services
         /// <summary>
         /// Сохраняет текущую конфигурацию в файл
         /// </summary>
-        /// <param name="filename">путь к файлу</param>
+        /// <param name="filepath">путь к файлу</param>
         /// <param name="siloses">архитектура силосов</param>
         /// <param name="devices">архитектура подвесок</param>
         /// <returns>удачность</returns>
-        static public bool serialize(string filename, Dictionary<int, Silos> siloses, Dictionary<int, Dictionary<int, Wire>> devices, Dictionary<int, StructureSubdivision> subdivs)
+        static public bool serialize(string filepath, Dictionary<int, Silos> siloses, Dictionary<int, Dictionary<int, Wire>> devices, Dictionary<int, StructureSubdivision> subdivs)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace SystemOfThermometry3.Services
                 //KeyValuePair <, > pair =
                 //new KeyValuePair<Dictionary<int, Silos>, Dictionary<int, Dictionary<int, Wire>>>(siloses, devices);
 
-                using (var fs = new FileStream(filename, FileMode.OpenOrCreate))
+                using (var fs = new FileStream(filepath, FileMode.OpenOrCreate))
                 {
                     jsonFormatter.WriteObject(fs, result);
                 }

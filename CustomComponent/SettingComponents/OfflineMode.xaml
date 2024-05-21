@@ -10,9 +10,9 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel>
-        <Button Name ="offlineModeButton" Margin="20,20,0,20" Content="Перейти в автономный режим и загрузить конфигурацию из файла"></Button>
-        <Button Name ="setOfflineModeButton" Margin="20,0,0,20" Content="Перейти в автономный режим"></Button>
-        <Button Name ="saveSettingButton" Margin="20,0,0,20" Content="Сохранить текущую конфигурацию в файл"></Button>
-        <Button Name ="downloadTemperatureFromFileButton" Margin="20,0,0,20" Content="Загрузить температуру из файла"></Button>
+        <Button Name ="offlineModeButton" Margin="20,20,0,20" Content="Перейти в автономный режим и загрузить конфигурацию из файла" Click="offlineModeButton_Click"></Button>
+        <Button Name ="setOfflineModeButton" Margin="20,0,0,20" Content="Перейти в автономный режим" Click="setOfflineModeButton_Click"></Button>
+        <Button Name ="saveSettingButton" Margin="20,0,0,20" Content="Сохранить текущую конфигурацию в файл" Click="saveSettingButton_Click"></Button>
+        <Button Name ="downloadTemperatureFromFileButton" Margin="20,0,0,20" Content="Загрузить температуру из файла" Click="downloadTemperatureFromFileButton_Click"></Button>
     </StackPanel>
 </Page>

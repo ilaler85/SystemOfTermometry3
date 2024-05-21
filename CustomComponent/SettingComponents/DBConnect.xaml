@@ -26,7 +26,7 @@
             <Grid>
                 <StackPanel  Margin="0,0,0,10" HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Порт</TextBlock>
-                    <TextBox Name="BoxPert" Width="200"></TextBox>
+                    <TextBox Name="BoxPort" Width="200"></TextBox>
                 </StackPanel>
             </Grid>
             <Grid>
@@ -52,12 +52,15 @@
                 <TextBlock VerticalAlignment="Center">Загрузить в базу данных текущую конфигурацию</TextBlock>
                 <CheckBox Margin="10, 0, 0, 0" VerticalAlignment="Center"></CheckBox>
             </StackPanel>
-            <Button Name="ButtonConnectDB" Content="Подключиться" Margin="0, 10, 0, 20"></Button>
+            <Button Name="ButtonConnectDB" Content="Подключиться" Margin="0, 10, 0, 20" Click="ButtonConnectDB_Click"></Button>
 
-            <Button Name="ButtonCalculateFilling" Content="Принудительное вычисление заполненности силосов" Margin="0, 10, 0, 20"></Button>
+            <Button Name="ButtonCalculateFilling" Content="Принудительное вычисление заполненности силосов" Margin="0, 10, 0, 20" Click="ButtonCalculateFilling_Click"></Button>
 
-            <Button Name="ButtonDropTemperature" Content="Сбросить температуру" Margin="0, 10, 0, 10"></Button>
-            <Button Name="ButtonDropDB" Content="Сбросить БД" Margin="0, 10, 0, 10"></Button>
+            <StackPanel>
+                <CalendarDatePicker Name="DateWith" PlaceholderText="Выберите дату"  CalendarIdentifier="GregorianCalendar" />
+                <Button Name="ButtonDropTemperature" Content="Сбросить температуру" Margin="0, 10, 0, 10" Click="ButtonDropTemperature_Click"></Button>
+            </StackPanel>
+            <Button Name="ButtonDropDB" Content="Сбросить БД" Margin="0, 10, 0, 10" Click="ButtonDropDB_Click"></Button>
         </StackPanel>
 
     </ScrollViewer>

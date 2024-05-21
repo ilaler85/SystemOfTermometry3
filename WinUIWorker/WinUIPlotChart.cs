@@ -46,8 +46,11 @@ public partial class WinUIWorker : IBisnesLogicLayer
     {
         PlotModel plotModel = null;
 
-        plotModel = PlotingService.plottingFilling(settingsService, silosService, , start, end, presentation.setProgressBar);
+        plotModel = PlotingService.plottingFilling(settingsService, silosService, list, start, end, presentation.setProgressBar);
 
         return plotModel;
     }
+
+    public void saveStructureSubvision() => throw new NotImplementedException();
+    void IBisnesLogicLayer.changeAdminMode() => throw new NotImplementedException();
 }
