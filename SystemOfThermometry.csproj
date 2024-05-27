@@ -11,6 +11,7 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <UseWindowsForms>False</UseWindowsForms>
+    <DefaultLanguage>ru-ru</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Service\**" />
@@ -32,7 +33,6 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
     <PackageReference Include="H.OxyPlot.WinUI" Version="0.9.30" />
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.6" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="MySql.Data" Version="8.3.0" />
@@ -70,9 +70,10 @@
     <None Remove="AllSilosComponent.xaml" />
     <None Remove="CustomComponent\AllSilosComponent.xaml" />
     <None Remove="CustomComponent\AllSilosView.xaml" />
+    <None Remove="CustomComponent\ApplyKeyForm.xaml" />
     <None Remove="CustomComponent\ChartComponent.xaml" />
     <None Remove="CustomComponent\ChartFillingComponent.xaml" />
-    <None Remove="CustomComponent\DBConnect.xaml" />
+    <None Remove="CustomComponent\DBConnectForm.xaml" />
     <None Remove="CustomComponent\EnterPasswordForm.xaml" />
     <None Remove="CustomComponent\ExportExcelComponent.xaml" />
     <None Remove="CustomComponent\GrainComponent\GrainComponent.xaml" />
@@ -81,7 +82,6 @@
     <None Remove="CustomComponent\OneSilosComponent.xaml" />
     <None Remove="CustomComponent\SettingComponents\BoardParameters.xaml" />
     <None Remove="CustomComponent\SettingComponents\DBConnect.xaml" />
-    <None Remove="CustomComponent\SettingComponents\DeleteData.xaml" />
     <None Remove="CustomComponent\SettingComponents\GeneralSetting.xaml" />
     <None Remove="CustomComponent\SettingComponents\GrainSetting.xaml" />
     <None Remove="CustomComponent\SettingComponents\MailParameters.xaml" />
@@ -92,6 +92,7 @@
     <None Remove="CustomComponent\SettingComponents\SilosSettingComponent\SilosControl.xaml" />
     <None Remove="CustomComponent\SettingComponents\StructuralDivisions.xaml" />
     <None Remove="CustomComponent\SettingComponent.xaml" />
+    <None Remove="CustomComponent\SilosComponent\LoadingForm.xaml" />
     <None Remove="CustomComponent\SilosComponent\SilosItem.xaml" />
     <None Remove="CustomComponent\SilosComponent\SilosView.xaml" />
     <None Remove="Themes\Theme.xaml" />
@@ -119,6 +120,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="CustomComponent\ApplyKeyForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\SilosComponent\LoadingForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="CustomComponent\SilosComponent\SilosItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -134,7 +145,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="CustomComponent\DBConnect.xaml">
+    <Page Update="CustomComponent\DBConnectForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -170,11 +181,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\SettingComponents\GeneralSetting.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="CustomComponent\SettingComponents\DeleteData.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

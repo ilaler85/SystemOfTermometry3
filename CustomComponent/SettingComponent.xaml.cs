@@ -16,6 +16,7 @@ using System.ComponentModel;
 using SystemOfThermometry3.CustomComponent.SettingComponents;
 using SystemOfThermometry3.CustomComponent.Setting_components;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.WinUIWorker;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,8 +28,8 @@ namespace SystemOfThermometry3.CustomComponent;
 /// </summary>
 public sealed partial class SettingComponent : Page
 {
-    private SettingsService settingsService;
-
+    private IBisnesLogicLayer bll;
+    private Type pageType;
     public SettingComponent(SettingsService settingServices)
     {
         this.InitializeComponent();
@@ -38,9 +39,44 @@ public sealed partial class SettingComponent : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        settingsService = (SettingsService)e.Parameter;
 
+        bll = (IBisnesLogicLayer)e.Parameter;
+        if (!bll.isAdminMode())
+            initNormalSettingMode();
+        else
+            initAdminSettingMode();
     }
+
+    public void changeModeSetting()
+    {
+        if (!bll.isAdminMode())
+            initNormalSettingMode();
+        else
+            initAdminSettingMode();
+    }
+
+    private void initNormalSettingMode()
+    {
+        DBConnect.IsEnabled = false;
+        SettingProvider.IsEnabled = false;
+        GrainSetting.IsEnabled = false;
+        SilosSetting.IsEnabled = false;
+        StructuralDivisions.IsEnabled = false;
+        OfflineMode.IsEnabled = false;
+        But.IsEnabled = true;
+    }
+
+    private void initAdminSettingMode()
+    {
+        DBConnect.IsEnabled = true;
+        SettingProvider.IsEnabled = true;
+        GrainSetting.IsEnabled = true;
+        SilosSetting.IsEnabled = true;
+        StructuralDivisions.IsEnabled = true;
+        OfflineMode.IsEnabled = true;
+        But.IsEnabled = false;
+    }
+
 
     private void settingNavigat_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
@@ -52,7 +88,7 @@ public sealed partial class SettingComponent : Page
             navOptions.IsNavigationStackEnabled = false;
         }
 
-        Type pageType; //init
+         //init
         var selectedItem = (NavigationViewItem)args.SelectedItem;
         settingNavigat.Header = selectedItem.Content;
         
@@ -95,8 +131,12 @@ public sealed partial class SettingComponent : Page
 
             default: pageType = typeof(GeneralSetting); break;
         }
-        _ = contentFrame.Navigate(pageType, settingsService);
+        _ = contentFrame.Navigate(pageType, bll);
     }
 
-
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        if(bll.enterAdminMode())
+            initAdminSettingMode();
+    }
 }

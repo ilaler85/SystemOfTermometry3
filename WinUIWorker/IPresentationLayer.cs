@@ -17,15 +17,14 @@ public interface IPresentationLayer
     /// <summary>
     /// Открытие окна подключения к БД
     /// </summary>
-    public void openFormConnectDBDialog(ref Dao dao);
-
-
     public void openFormConnectDBDialog();
+
     /// <summary>
     /// закрытие формы подключения к бд
     /// </summary>
     public void closeFormConnectDB();
 
+    public void startMainForm();
 
     /// <summary>
     /// Открытие окна при загрузки приложения 
@@ -70,6 +69,16 @@ public interface IPresentationLayer
     public bool setNormalMode();
 
     /// <summary>
+    /// открваем обычные настройки
+    /// </summary>
+    public void openNormalSetting();
+
+    /// <summary>
+    /// открываем настройки Администратора
+    /// </summary>
+    public void openAdminSetting();
+
+    /// <summary>
     /// установка модификации с подключением к БД
     /// </summary>
     /// <returns></returns>
@@ -89,7 +98,7 @@ public interface IPresentationLayer
     /// Вызывает окно с вопросом остановки опроса датчиков
     /// </summary>
     /// <returns>true можно остановить опрос, false не останавливать</returns>
-    public bool stopObserv();
+    public bool stopObserv(); 
 
     /// <summary>
     /// Установка темы приложения при остановке опроса платы
@@ -156,10 +165,6 @@ public interface IPresentationLayer
     /// </summary>
     public bool openFormApplyKeyForm();
 
-    /// <summary>
-    /// открытие настроек разработчика
-    /// </summary>
-    public void openProviderSetting();
 
     /// <summary>
     /// обновление настроек 

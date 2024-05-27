@@ -12,8 +12,7 @@ using SystemOfThermometry3.Services;
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker : IBisnesLogicLayer
 {
-
-
+    
     public PlotModel getChart(int modeTime, IEnumerable<Wire> list)
     {
         PlotModel plotModel = null;
@@ -51,6 +50,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         return plotModel;
     }
 
-    public void saveStructureSubvision() => throw new NotImplementedException();
-    void IBisnesLogicLayer.changeAdminMode() => throw new NotImplementedException();
+   
+    
 }

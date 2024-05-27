@@ -52,12 +52,9 @@ public partial class WinUIWorker
     #endregion
 
     #region настройки провайдера
-    public void enterOpenSettingProvider()
+    public bool attemptOpenSetttingProvider()
     {
-        if (presentation.openEnterForm(checkProviderPassword))
-        {
-            presentation.openProviderSetting();
-        }
+        return presentation.openEnterForm(checkProviderPassword);
     }
     #endregion
 

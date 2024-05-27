@@ -27,6 +27,7 @@
             <NavigationViewItem Name = "DBConnect" Content="Настройка БД" Tag="Setting"  />
             <NavigationViewItem Name = "MailSetting" Content="Настройка почты" Tag="Setting" />
             <NavigationViewItem Name = "SettingProvider" Content="Настройки разработочика" Tag="Setting" />
+            <Button Name ="But" Content ="Войти в режим Администратора" Click="Button_Click"></Button>
         </NavigationView.MenuItems>
         
         <Frame x:Name="contentFrame" Margin="15"/>

@@ -26,14 +26,10 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        m_window = new MainWindow();
-        m_window.Activate();
-        WinUIWorker.WinUIWorker mainForm;
-        PresentationLayerClass presentation = new PresentationLayerClass(m_window);
-        mainForm = new WinUIWorker.WinUIWorker(presentation);
+        PresentationLayerClass presentation = new PresentationLayerClass();
+        WinUIWorker.WinUIWorker mainForm = new WinUIWorker.WinUIWorker(presentation);
         presentation.setIBLL(mainForm);
         
     }
 
-    public Window m_window;
 }

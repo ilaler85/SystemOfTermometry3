@@ -26,7 +26,7 @@ public sealed partial class GrainComponent : Page
     Grain grain {get; set; }
     public delegate void DelegateEvent(Grain grain);
     public event DelegateEvent save;
-    \public delegate void DelegateEventDelete(Grain grain, object sender);
+    public delegate void DelegateEventDelete(Grain grain, object sender);
     public event DelegateEventDelete delete;
     public GrainComponent(Grain grain)
     {

@@ -1,84 +1,69 @@
 ﻿using System;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CustomComponent;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SystemOfThermometry3.CustomComponent.SilosComponent;
 using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.Services;
 using SystemOfThermometry3.WinUIWorker;
 using Windows.UI.Popups;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SystemOfThermometry3.CustomComponent;
 public class PresentationLayerClass : IPresentationLayer
 {
+
+    RichTextBox rich = new RichTextBox();
     private MainWindow window;
-    private IBisnesLogicLayer BLL;
     private bool isObservMode;
-    private DBConnect dbConnect;
+    private bool isAdminMode = false;
+    private DBConnectForm dbConnect;
     private bool result = false;
-    public PresentationLayerClass(Window window)
+    private IBisnesLogicLayer bll;
+    private LoadingForm loading;
+    private Thread thread;
+    public PresentationLayerClass()
     {
-        this.window = window as MainWindow;
     }
+
 
     public void setIBLL(IBisnesLogicLayer bll)
     {
-        this.BLL = bll;
+        window.setIBLL(bll);
+        this.bll = bll;
     }
 
-    #region вызов Бизес логики
-    public void changeMode()
+    public void startMainForm()
     {
-        BLL.changeAdminMode();
-    }
-
-    public void paintChart()
-    {
-    
-    
-    }
-
-    public void runStopObserv()
-    {
-        BLL.runStopObserv();
-    }
-
-    public void saveExcelFile(DateTime time, string filename)
-    {
-        BLL.exportExcel(time, filename);
-    }
-
-    public void openSetting()
-    { BLL.openSetting(); }
-
-    #endregion
-
-    public void callSettingComponent(SettingsService settingsService)
-    {
-        
+       window = new MainWindow();
     }
 
     public bool setAdminMode()
     {
+        window.setAdminMode();
         return true;
 
     }
 
     public bool setOfflineMode()
     {
-
+        window.setOfflineMode();
         return true;
 
     }
     public bool setNormalMode()
     {
-
+        window.setNormalMode();
         return true;
     }
     public bool setConnectDB_Mode()
     {
+        window.setTitleText("Термометрия Nika. Подключено к БД");
         return true;
     }
     public void runObservMode()
@@ -91,70 +76,141 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public async void callMessageBox(string message)
     {
+        ContentDialog dialog = new ContentDialog();
+        
+        dialog.Content = message;
+        dialog.PrimaryButtonText = "Ок";
+        dialog.Title = "сообщение";
+
         var messageBox = new MessageDialog(message);
         await messageBox.ShowAsync();
     }
     public void refreshALL()
     {
-
+        window.refreshAll();
     }
     public void refreshAllSilos()
     {
-
+        window.refreshAllSilosComponent();
     }
 
     public void openFormConnectDBDialog()
     {
-        dbConnect = new DBConnect();
+        dbConnect = new DBConnectForm(bll);
         dbConnect.Activate();
 
     }
-    public void showWindowDownload(bool flag) => throw new NotImplementedException();
+    public async void showWindowDownload(bool flag)
+    {
+
+        loading = new LoadingForm();
+        loading.Activate();
+    }
 
 
     public void setProgressBar(int value)
     {
         window.progressBarSetValue(value);
     }
-    public bool closeSetting()
+
+    private async Task<bool> askCloseSetting()
     {
-       return true;
+        ContentDialog dialog = new ContentDialog();
+        dialog.Title ="Чтобы начать опрос необходимо закрыть настройки";
+        dialog.Content = "Закрыть настройки?";
+        dialog.PrimaryButtonText = "Закрыть";
+        dialog.SecondaryButtonText = "Отмена";
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            window.closeSetting();
+            return true;
+        }
+        else
+            return false;
     }
 
-    public void openConnectDBDialog(ref Dao dao) => throw new NotImplementedException();
-    public void overheatMessageBox() => throw new NotImplementedException();
-    public void openFormConnectDBDialog(ref Dao dao) => throw new NotImplementedException();
+    public bool closeSetting()
+    {
+        return askCloseSetting().Result;
+    }
+
     public void closeFormConnectDB()
     {
         dbConnect.Close();
     }
-    public void closeWindowDownload() => throw new NotImplementedException();
-    public void callSettingComponent(SettingsService settingsService, bool adminSetting) => throw new NotImplementedException();
-    public void closeAdminSetting() => throw new NotImplementedException();
-    public void openEnterForm(modeCheckPassword checkPassword) => throw new NotImplementedException();
+    public void closeWindowDownload()
+    { 
+        loading.Close();
+    }
+    public void callSettingComponent(SettingsService settingsService, bool adminSetting)
+    {
+        bll.openSetting();
+    }
+    public void closeAdminSetting()
+    {
+        isAdminMode = false;
+        window.setNormalSetting();
+    }
     public bool stopObserv()
     {
         DialogShow("Требуется подтверждение", "Остановить опрос плат?");
         return result;
     }
-    public void setStopStyleForm() => throw new NotImplementedException();
-    public void setNormalStyleForm() => throw new NotImplementedException();
-    public void sendLogMessage(string message, Color color) => throw new NotImplementedException();
+    public void setStopStyleForm()
+    {
+        window.setStopObservMode();
+    }
+    public void setNormalStyleForm()
+    {
+        window.setStartObservMode();
+    }
+
+
+    private void refreshLogPannel()
+    {
+        window.refreshLogPannel(rich);
+    }
+
+    public void sendLogMessage(string message, Color color)
+    {
+        rich.SelectionStart = 0;
+        rich.SelectionLength = 0;
+        rich.SelectionColor = color;
+        rich.SelectedText = message;
+        refreshLogPannel();
+
+    }
     public void setStatus(string message)
     {
         window.Title = "Термометрия NIKA " + message;
     }
-    public void overheatMessageBox(StringBuilder message, bool playSound) => throw new NotImplementedException();
-    bool IPresentationLayer.openEnterForm(modeCheckPassword checkPassword) => throw new NotImplementedException();
-    public bool openFormApplyKeyForm()
+    public void overheatMessageBox(StringBuilder message, bool playSound){
+    
+    
+    }
+    public bool openEnterForm(modeCheckPassword checkPassword)
     {
+
         return true;
     }
+    public bool openFormApplyKeyForm()
+    {
+       return ApplyKeyForm.EnterKey(bll);
+    }
 
-    public void openProviderSetting() => throw new NotImplementedException();
-    public void refreshSetting() => throw new NotImplementedException();
-    public void refreshSilosTabControl() => throw new NotImplementedException();
-    public void refreshAllSilosTemperatur() => throw new NotImplementedException();
+    public void refreshSetting(){
+        window.refreshSetting();
+    }
+    public void refreshSilosTabControl()
+    { 
+        
+    }
+    public void refreshAllSilosTemperatur()
+    {
+        
+    }
 
     private async void DialogShow(string title, string content)
     {
@@ -168,6 +224,15 @@ public class PresentationLayerClass : IPresentationLayer
         ContentDialogResult dialogResult = await deleteFileDialog.ShowAsync();
         result = dialogResult == ContentDialogResult.Primary;
 
+    }
+
+    public void openNormalSetting()
+    {
+        window.changeSetting();
+    }
+    public void openAdminSetting()
+    {
+        window.changeSetting();
     }
 }
 

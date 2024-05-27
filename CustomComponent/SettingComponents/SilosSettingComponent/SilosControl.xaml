@@ -11,9 +11,9 @@
     <Grid>
        
         <Image Name="imageSilos" > </Image>
-        <TextBox Name="BoxName" Text="{Binding Source=silos, Path=}"></TextBox>
+        <TextBox Name="BoxName" Text=""></TextBox>
         <ComboBox Name="ComboGrain"></ComboBox>
-        <ComboBox Name="ComboGrain"></ComboBox>
+        <ComboBox Name="ComboDivision"></ComboBox>
         <TextBox Name="BoxYellowTemp"></TextBox>
         <TextBox Name="BoxRedTemp"></TextBox>
     </Grid>

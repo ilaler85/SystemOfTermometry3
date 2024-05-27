@@ -16,6 +16,9 @@ using Windows.UI.ApplicationSettings;
 using static SystemOfThermometry3.Services.SilosService;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.UI.Composition;
+using System.Diagnostics;
+using System.Windows.Forms.Design;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker : IBisnesLogicLayer
@@ -44,54 +47,78 @@ public partial class WinUIWorker : IBisnesLogicLayer
     private int value;
     private Thread splashScreenThread; // Поток, в котором запускается форма загрузки
                                        // private AllFillingComponent allFillingComponent;
-    private bool isSettingWindowOpen;
+    private bool isSettingWindowOpen = false;
     private bool flagStrelka = true;
 
     #endregion
 
     public WinUIWorker(IPresentationLayer presentation)
     {
-        if (presentation.openFormApplyKeyForm())
-        {
-            CustomClose();
-            //return;
-        }
         this.presentation = presentation;
 
-        //Показывает экран загрузки в отдельном потоке, который после загрузки мейн формы прерывается
+        checkApplyKey();
 
-        presentation.showWindowDownload(true);
+        connectDB();
+
+        this.presentation.showWindowDownload(true);
+
+        this.presentation.closeFormConnectDB();
+
+        startMainForm();
+
+
+        
+            
+        presentation.setStatus("Готов");
+    }
+
+
+    private void checkApplyKey()
+    {
+        if (!SecurityService.IsActivate())
+        {
+            if (!this.presentation.openFormApplyKeyForm())
+                CustomClose();
+        }
+    }
+
+    private void connectDB()
+    {
         dao = new MySQLDAO();
-        presentation.openFormConnectDBDialog(ref dao);
-
         string connectionString = FileProcessingService.getConnectionString();
-        isSettingWindowOpen = false;
+
 
         if (connectionString == "") //Первое подключение
         {
             presentation.openFormConnectDBDialog();
-            //dbSetingsDialog.Focus();
         }
         else
+        {
             if (dao.connectToDB(connectionString, SettingsService.IsOnlyReadModeS) && (
-                SettingsService.IsOnlyReadModeS || dao.DBisCorrect())) // попытка подключения
-        {
-            successStartWithDB(); //удачный старт
+                    SettingsService.IsOnlyReadModeS || dao.DBisCorrect())) // попытка подключения
+            {
+                successStartWithDB(); //удачный старт
+            }
+            else // не удалось подключиться
+            {
+                presentation.closeFormConnectDB();
+            }
         }
-        else // не удалось подключиться
-        {
-            presentation.closeFormConnectDB();
-        }
-        presentation.setStatus("Готов");
     }
 
+    private void startMainForm()
+    {
+        
+    }
+
+    
 
     public void successStartWithDB()
     {
         settingsService = new SettingsService(dao);
         settingsService.OfflineMode = false;
         initCustomComponent();
-        if (settingsService.OfflineMode)
+        /*if (settingsService.OfflineMode)
             presentation.setOfflineMode();
         else
         {
@@ -99,7 +126,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
                 presentation.setAdminMode();
             else
                 presentation.setNormalMode();
-        }
+        }*/
         presentation.closeWindowDownload();
     }
 
@@ -393,7 +420,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
         else
         {
-            
+
             // Попытка ввести пароль оператора.
             if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
                 if (!presentation.openEnterForm(checkOperatorPassword))
@@ -479,7 +506,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
     }
 
-    private void changeAdminMode()
+    public void changeAdminMode()
     {
 
         if (settingsService.IsOnlyReadMode) //Выхоидм из режима обзор
@@ -513,11 +540,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         return SecurityService.checkProviderPassword(password);
     }
 
-    private bool enterOperator()
-    {
-        return presentation.openEnterForm(checkOperatorPassword); ;
-    }
-
 
     public void changeStatus()
     {
@@ -539,12 +561,13 @@ public partial class WinUIWorker : IBisnesLogicLayer
                 return;
 
         }
-        
-
-        isSettingWindowOpen = true;
         try
         {
-            presentation.callSettingComponent(settingsService, settingsService.IsAdminMode);
+            isSettingWindowOpen = true;
+            if (settingsService.IsAdminMode)
+                presentation.openAdminSetting();
+            else
+                presentation.openNormalSetting();
         }
         catch (Exception ex)
         {
@@ -557,21 +580,31 @@ public partial class WinUIWorker : IBisnesLogicLayer
         presentation.openEnterForm(checkAdminPassword);
     }
 
-    public int getFilling()
+    public int getFilling(int silosId)
     {
-        
-    }
-    
-    public int calculateFilling(DateTime start)
-    {
-        HistoryFillingService.getFilling(silosService.getLastTemperatures(),);
+        Silos silos = silosService.getSilos(silosId);
+        Dictionary<int, float[]> temperature = new Dictionary<int, float[]>();
+        Dictionary<int, Wire> wires = silos.getSortedByNumberWires();
 
 
-        return 1;
+        foreach (Wire w in wires.Values)
+            if (temperature.ContainsKey(w.Id))
+                temperature[w.Id] = silosService.getLastTempForWire(w);
+            else
+                temperature.Add(w.Id, silosService.getLastTempForWire(w));
+
+        int result = HistoryFillingService.getFilling(temperature, wires);
+        return result;
     }
+
+
+    /// <summary>
+    /// пока не сделал
+    /// </summary>
+    /// <returns></returns>
     public bool enterAdminMode()
     {
-        
+        return true;
     }
 
     public bool isAdminMode()
@@ -580,6 +613,241 @@ public partial class WinUIWorker : IBisnesLogicLayer
     }
     public void changeTemperature(DateTime time)
     {
-        
+        silosService.refreshTemperature(time);
     }
+
+    public Dictionary<int, string[]> getFillingChart()
+    {
+        Dictionary<int, string[]> result = new Dictionary<int, string[]>();
+        DateTime time = silosService.LastTempTime;
+        silosService.getTime(ref time);
+        foreach (Silos silos in silosService.getAllSiloses().Values)
+        {
+            string[] fil = silosService.getFillingAndGrain(silos.Id, time);
+            if (fil == null)
+            {
+                result.Add(silos.Id, new string[2] { "0", "-" });
+                continue;
+            }
+            if (fil[0] != "0")
+            {
+                result.Add(silos.Id, new string[2] { "0", "-" });
+                continue;
+            }
+            if (fil[1] == "-1")
+            {
+                result.Add(silos.Id, new string[2] { fil[0], "-" });
+                continue;
+            }
+            result.Add(silos.Id, new string[2] { fil[0], fil[1] });
+        }
+        return null;
+    }
+    public Dictionary<int, float[]> getDataGridTemp(int silosId)
+    {
+        Dictionary<int, float[]> temp = new Dictionary<int, float[]>();
+        Dictionary<int, Wire> wires;
+        Silos silos = silosService.getSilos(silosId);
+        if (settingsService.IsSortWiresX)
+            wires = silos.getSortedByXWires();
+        else
+            wires = silos.getSortedByNumberWires();
+
+        foreach (Wire w in wires.Values)
+            if (temp.ContainsKey(w.Id))
+                temp[w.Id] = silosService.getLastTempForWire(w);
+            else
+                temp.Add(w.Id, silosService.getLastTempForWire(w));
+        return temp;
+    }
+
+    public Dictionary<int, Silos> getTempMaxMidMin()
+    {
+        Dictionary<int, Silos> result = silosService.getAllSiloses();
+
+        return result;
+    }
+    public bool attemptChangeImageBackGround(string fileName)
+    {
+        if (settingsService.IsAdminMode)
+        {
+            settingsService.SilosBackgroundFilePath = fileName;
+            return true;
+        }
+        return false;
+    }
+    public bool attemptDragSilos()
+    {
+        return settingsService.IsAdminMode;
+    }
+    public int getFilling(int silosId, DateTime time)
+    {
+        silosService.getFillingAndGrain(silosId, time);
+
+        return 0;
+    }
+    public void refreshConnect()
+    {
+        try
+        {
+            if (!dao.connectToDB(FileProcessingService.getConnectionString(), settingsService.IsOnlyReadMode))
+            {
+                presentation.callMessageBox("Не удалось подключиться!\n" +
+                    "проверьте имя пользователя и пароль");
+            }
+            else
+            {
+                presentation.callMessageBox("Подключение успешно!");
+                silosService.synchronizeWithGettingData();
+                refreshAllSettings();
+                refreshSetting();
+            }
+            showStatus();
+        }
+        catch (Exception ex)
+        {
+            presentation.callMessageBox("Не удалось подключиться к базе данных");
+        }
+    }
+    public Dictionary<int, Grain> getGrains()
+    {
+
+        return grainService.getGrains();
+    }
+    public Grain addGrain()
+    {
+        return grainService.addGrain();
+    }
+    public void updateGrain(Grain g)
+    {
+        grainService.updateGrains(g);
+    }
+    public void deleteGrain(Grain g)
+    {
+        grainService.deleteGrains(g);
+    }
+    public Dictionary<int, string> getListDivision()
+    {
+        Dictionary<int, StructureSubdivision> divisions = silosService.getSubdivisions();
+        Dictionary<int, string> result = new Dictionary<int, string>();
+        foreach (StructureSubdivision item in divisions.Values)
+        {
+            result.Add(item.Id, item.Name);
+        }
+        return result;
+    }
+    public int addDivision(string name)
+    {
+        silosService.addSubdivision(name);
+        return 0;
+    }
+    public void updateDivision(int id, string name)
+    {
+        StructureSubdivision subdivision = new StructureSubdivision(id, name);
+
+        silosService.updateSubdivisions(subdivision);
+    }
+    public void deleteDivision(int id)
+    {
+        silosService.deleteSubdivision(id);
+    }
+    public void averaginTemperatureValues()
+    {
+        settingsService.IsGetMidValueForBrokenSensor = !settingsService.IsGetMidValueForBrokenSensor;
+    }
+    public bool getModeAveraginTemperatureValues()
+    {
+        return settingsService.IsGetMidValueForBrokenSensor;
+    }
+    public string getPathSaveFile()
+    {
+        return FileProcessingService.ExportDir;
+    }
+    public void changeProviderPassword(string oldPassword, string newPassword, string newRepeatPassword)
+    {
+
+    }
+    public string[][] getMailAdress()
+    {
+        return settingsService.getMailDestinationsWithNotes();
+    }
+    public void getSettingMail(out string mailSMTPtextBox, out string mailSenderTextBox, out string mailPasswordTextBox, out string mailCaptionTextBox,
+        out bool addPlotsCheckBox, out int mailTimeNumericUpDown, out bool mailSEndByTimeCheckBox)
+    {
+        mailSMTPtextBox = settingsService.MailSmtpServer;
+        mailSenderTextBox = settingsService.MailSender;
+        mailPasswordTextBox = settingsService.MailSenderPassword;
+        mailCaptionTextBox = settingsService.MailCaption;
+        addPlotsCheckBox = settingsService.MailIsSendPlot;
+        mailTimeNumericUpDown = settingsService.MailSendingHour;
+        mailSEndByTimeCheckBox = settingsService.MailSendByTimer;
+    }
+    public string[][] getErrorMailAdress()
+    {
+        return settingsService.MailErrorDestination;
+    }
+    public void getSettingErrorMail(out string MailErrorSmtpServer, out string MailErrorSender, out string MailErrorSenderPassword,
+        out string MailErrorCaption, out bool MailErrorSendByTimer, out int MailErrorSendingPeriod)
+    {
+        MailErrorSmtpServer = settingsService.MailErrorSmtpServer;
+        MailErrorSender = settingsService.MailErrorSender;
+        MailErrorSenderPassword = settingsService.MailErrorSenderPassword;
+        MailErrorCaption = settingsService.MailErrorCaption;
+        MailErrorSendByTimer = settingsService.MailErrorSendByTimer;
+        MailErrorSendingPeriod = settingsService.MailErrorSendingPeriod;
+
+    }
+
+    public void connectDB(string connectionString)
+    {
+        if (!dao.connectToDB(getConnectionString(), settingsService.IsOnlyReadMode))
+        {
+            presentation.callMessageBox("Не удалось подключиться!\n" +
+                "проверьте имя пользователя и пароль");
+        }
+        else
+        {
+            presentation.callMessageBox("Подключение успешно!");
+            FileProcessingService.setConnectionString(getConnectionString());
+            silosService.synchronizeWithGettingData();
+            //connectedEvent?.Invoke();
+            //silosTabControl.tryToGetInformFromDB(); //Обновляем
+            //RefreshAll();
+        }
+        showStatus();
+    }
+
+    public string getConnectionString()
+    {
+        return FileProcessingService.getConnectionString();
+    }
+
+    float[][] IBisnesLogicLayer.getDataGridTemp(int silosId) => throw new NotImplementedException();
+    public bool attemptChangeImageBackGround()
+    {
+        return true;
+    }
+
+
+    public int calculateFilling(DateTime start)
+    {
+        return 0;
+    }
+
+
+    public void saveStructureSubvision()
+    {
+
+    }
+
+    public string getSSHKey()
+    {
+        return SecurityService.GetActivateKeyRequestFromHardware();
+    }
+
+    public bool checkSSHKey(string ssh)
+    {
+        return SecurityService.CheckActivateKey(ssh);
+    }
+
 }

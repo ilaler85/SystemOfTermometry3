@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using MySqlX.XDevAPI.Common;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.WinUIWorker;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -24,14 +25,8 @@ namespace SystemOfThermometry3.CustomComponent.Setting_components;
 /// </summary>
 public sealed partial class DBConnect : Page
 {
-    SettingsService settingsService;
-    public delegate void ConnectDelegate(string server, string port, string user, string name, string password);
-    public delegate void EmptyDelegate();
-    public delegate void DropTempDelegate(DateTime date);
-    public event ConnectDelegate connectDB;
-    public event EmptyDelegate calculateFilling;
-    public event DropTempDelegate dropTemperature;
-    public event EmptyDelegate dropDB;
+    IBisnesLogicLayer bll;
+   
     public DBConnect()
     {
         this.InitializeComponent();
@@ -43,9 +38,10 @@ public sealed partial class DBConnect : Page
     /// <param name="e"></param>
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        settingsService = (SettingsService)e.Parameter;
+        if(e != null)
+            bll = (IBisnesLogicLayer)e.Parameter;
 
-        string conStr = FileProcessingService.getConnectionString();
+        string conStr = bll.getConnectionString();
         if (conStr != null && conStr != "")
         {
             string[] splitedStr = conStr.Split(';', '=');
@@ -68,34 +64,45 @@ public sealed partial class DBConnect : Page
     {
         if (checkTextBox())
         {
-            connectDB?.Invoke(BoxServer.Text, BoxPort.Text, BoxUser.Text, BoxNameDB.Text, BoxPassword.Text);
+
+            bll.connectDB(getConnectionString());
         }
         else
         {
-            ContentDialog deleteFileDialog = new ContentDialog()
+            ContentDialog messageDialog = new ContentDialog()
             {
                 Title = "Внимание",
                 Content = "Ошибка ввода порта",
                 PrimaryButtonText = "ОК"
             };
-            await deleteFileDialog.ShowAsync();
+            await messageDialog.ShowAsync();
         }
         
     }
 
     private void ButtonCalculateFilling_Click(object sender, RoutedEventArgs e)
     {
-        calculateFilling?.Invoke();
+        DateTime date = DateWith.Date.Value.Date;
+        bll.calculateFillingSilosesTable(date);
     }
 
     private void ButtonDropTemperature_Click(object sender, RoutedEventArgs e)
     {
         DateTime date = DateWith.Date.Value.Date;
-        dropTemperature?.Invoke(date);
+        bll.dropTemperature(getConnectionString(), date);
+    }
+
+    private string getConnectionString()
+    {
+        return "server=" + BoxServer.Text
+            + ";port=" + BoxPort.Text
+            + ";user=" + BoxUser.Text
+            + ";database=" + BoxNameDB.Text
+            + ";password=" + BoxPassword.Text;
     }
 
     private void ButtonDropDB_Click(object sender, RoutedEventArgs e)
     {
-        dropDB?.Invoke();
+        bll.dropDB(getConnectionString());
     }
 }

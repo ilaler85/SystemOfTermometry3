@@ -21,7 +21,7 @@
         </StackPanel>
         <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
             <TextBlock Margin="0,0,0,5">Повторите новый пароль</TextBlock>
-            <PasswordBox Name="BoxRepeatNewPassword" Width="200"></PasswordBox>
+            <PasswordBox Name="BoxRepeatNewPassword" Width="200" ></PasswordBox>
         </StackPanel>
         <Button Content ="Сохранить" Click="Button_Click"></Button>
 

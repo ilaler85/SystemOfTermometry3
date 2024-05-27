@@ -42,7 +42,7 @@ public sealed partial class SettingProvider : Page
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        bll.changeProviderPassword(BoxOldPassword.Text, BoxNewPassword.Text, BoxRepeatNewPassword.Text);
+        bll.changeProviderPassword(BoxOldPassword.Password, BoxNewPassword.Password, BoxRepeatNewPassword.Password);
 
     }
 

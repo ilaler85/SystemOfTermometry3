@@ -72,4 +72,9 @@ public sealed partial class GeneralSetting : Page
     {
 
     }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

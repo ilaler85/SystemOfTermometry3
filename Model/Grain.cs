@@ -14,27 +14,19 @@ public class Grain
 
     [DataMember]
     public int ID
-    {
-        get => id; set => id = value;
-    }
+    {get => id; set => id = value;}
 
     [DataMember]
     public string Name
-    {
-        get => name; set => name = value;
-    }
+    { get => name; set => name = value;}
 
     [DataMember]
     public float RedTemp
-    {
-        get => redTemp; set => redTemp = value;
-    }
+    {get => redTemp; set => redTemp = value;}
 
     [DataMember]
     public float YellowTemp
-    {
-        get => yellowTemp; set => yellowTemp = value;
-    }
+    {get => yellowTemp; set => yellowTemp = value;}
 
     public override string ToString()
     {

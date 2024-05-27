@@ -65,7 +65,7 @@ public sealed partial class GrainSetting : Page
     public void deleteGrain(Grain grain, object sender)
     {
         grainComponents.RemoveAt(grainComponents.IndexOf(sender as GrainItem));  
-        bll.deleteGrain(grain.ID);
+        bll.deleteGrain(grain);
         
     }
 }

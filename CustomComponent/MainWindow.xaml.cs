@@ -17,6 +17,9 @@ using System.Threading;
 using Microsoft.UI.Xaml.Documents;
 using System.Drawing;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.WinUIWorker;
+using System.Reflection;
+using System.Windows.Forms;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,9 +31,8 @@ namespace SystemOfThermometry3;
 public sealed partial class MainWindow : Window
 {
     private DispatcherTimer timer = new DispatcherTimer();
-    private PresentationLayerClass presentation;
-    private SettingsService settingsService;
-    private SilosService silosService;
+    IBisnesLogicLayer bll;
+    Type pageType = typeof(AllSilosComponent);
     public MainWindow()
     {
         this.InitializeComponent();
@@ -42,14 +44,15 @@ public sealed partial class MainWindow : Window
         FontIcon iconAllSilos = new FontIcon();
         iconAllSilos.Glyph = "\uF49A";
         itemAllSilos.Icon = iconAllSilos;
-
-        setAdminMode();
+        setNormalMode();
+        //setAdminMode();
 
     }
 
-    public void setPresentation(PresentationLayerClass presentation)
+
+    public void setIBLL(IBisnesLogicLayer bll)
     {
-        this.presentation = presentation;
+        this.bll = bll;
     }
 
     private void Timer_Tick(object sender, object e) 
@@ -79,11 +82,59 @@ public sealed partial class MainWindow : Window
         itemObserv.Content = "Опрос запущен";
     }
 
+    public void changeSetting()
+    {
+        MethodInfo info = pageType.GetMethod("changeModeSetting");
+        info.Invoke(pageType, parameters: null);
+    }
+
+
+    public void refreshLogPannel(RichTextBox richTextBox )
+    {
+        _ = contentFrame.Navigate(typeof(AllSilosComponent), bll);
+    }
+
+    public void setTitleText(string message)
+    {
+        this.Title = message;
+    }
+
+    public void setAdminSetting()
+    {
+        _ = contentFrame.Navigate(typeof(SettingComponent), bll);
+    }
+
+    public void setNormalSetting()
+    {
+        _ = contentFrame.Navigate(typeof(SettingComponent), bll);
+    }
+
+    public void refreshAll()
+    {
+        _ = contentFrame.Navigate(pageType, bll);
+    }
+
+
+    public void refreshSetting()
+    {
+        _ = contentFrame.Navigate(pageType, bll);
+    }
+
+    public void refreshAllSilosComponent()
+    {
+        _ = contentFrame.Navigate(pageType, bll);
+    }
+    public void closeSetting()
+    {
+        contentFrame.Navigate(typeof(AllSilosComponent), bll);
+    }
+
     public void setAdminMode()
     {
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE785";
         itemAdminMode.Icon = icon;
+        setTitleText("Термометрия Nika. Режим Администратора");
     }
 
     public void setNormalMode()
@@ -91,6 +142,8 @@ public sealed partial class MainWindow : Window
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE72E";
         itemAdminMode.Icon = icon;
+        itemAdminMode.Content = "";
+        setTitleText("Термометрия Nika. Режим оператора");
     }
 
     public void progressBarSetValue(int value)
@@ -111,6 +164,16 @@ public sealed partial class MainWindow : Window
                 progressBar.Value = value;
                 break;
         }
+    }
+
+    public void setOfflineMode()
+    {
+        FontIcon icon = new FontIcon();
+        icon.Glyph = "\uE822";
+        itemAdminMode.Icon = icon;
+        itemAdminMode.Content = "Выйти из режима обзора";
+        setTitleText("Термометрия Nika. Offline режим");
+        
     }
 
 
@@ -135,42 +198,46 @@ public sealed partial class MainWindow : Window
             navOptions.IsNavigationStackEnabled = false;
         }
 
-        Type pageType = typeof(AllSilosComponent); //init
+
+        pageType = typeof(AllSilosComponent); //init
         var selectedItem = (NavigationViewItem)args.SelectedItem;
 
         switch (selectedItem.Name)
         {
             case "itemAllSilos":
                 pageType = typeof(AllSilosComponent);
-                _ = contentFrame.Navigate(pageType, silosService);
-                break;
+                _ = contentFrame.Navigate(pageType, bll);
+                return;
 
             case "itemObserv":
-                presentation.runStopObserv();
+                bll.runStopObserv();
                 return;
 
             case "itemChart":
                 pageType = typeof(ChartComponent);
-                break;
+                contentFrame.Navigate(pageType, bll);
+                return;
 
             case "itemSetting":
-                pageType = typeof(SettingComponent);
-                contentFrame.Navigate(pageType, settingsService);
+                bll.openSetting();
                 return;
 
             case "itemExport":
                 pageType = typeof(ExportExcelComponent);
-                break;
+                contentFrame.Navigate(pageType, bll);
+                return;
+
             case "itemAbout":
                 pageType = typeof(AboutComponent);
                 break;
+
             case "adminMode":
-                presentation.changeMode();
+                bll.changeAdminMode();
                 return;
+
             case "refresh":
-                
-                //метод перезагрузки
-                break;
+                bll.refreshConnect();
+                return;
                 
             default:  pageType= typeof(AllSilosComponent); break;
         }
@@ -186,6 +253,7 @@ public sealed partial class MainWindow : Window
 
         return true;
     }
+
 
 
     private void changeMode()

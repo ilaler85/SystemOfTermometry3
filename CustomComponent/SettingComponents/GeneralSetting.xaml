@@ -85,7 +85,8 @@
                     <TextBlock Margin="0,0,15,0" VerticalAlignment="Center" HorizontalAlignment="Left">Время между рассылками на почту при перегреве температуры (мин)</TextBlock>
                     <ComboBox Name ="BoxTimeOut" IsEditable="True" Width="200" />
                 </StackPanel>
-
+                <TextBox Name="BoxComPort" Header="Имя COM порта" Width="200" ></TextBox>
+                <Button Content="Применить" Click="Button_Click"></Button>
             </StackPanel>
         </StackPanel>
 

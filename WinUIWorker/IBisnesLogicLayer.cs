@@ -12,6 +12,17 @@ namespace SystemOfThermometry3.WinUIWorker;
 public interface IBisnesLogicLayer
 {
 
+    #region генерецая ключа 
+    /// <summary>
+    /// генеация ключа 
+    /// </summary>
+    /// <returns></returns>
+    public string getSSHKey();
+    
+    public bool checkSSHKey(string ssh);
+
+    #endregion
+
     #region подкулючение к БД
     public void CustomClose();
 
@@ -29,8 +40,8 @@ public interface IBisnesLogicLayer
     /// <summary>
     /// Получить 
     /// </summary>
-    /// <returns></returns>
-    public int[] getFillingChart();
+    /// <returns>Возвращает коллекцию где ключ это id силосаб а значение процентр заполнения зерном</returns>
+    public Dictionary<int, string[]> getFillingChart();
 
     /// <summary>
     /// 
@@ -44,7 +55,7 @@ public interface IBisnesLogicLayer
     /// получение информации о минимальных максимальных и среднихтемпературах
     /// </summary>
     /// <returns></returns>
-    public Dictionary<int, float[]> getTempMaxMidMin();
+    public Dictionary<int, Silos> getTempMaxMidMin();
 
     /// <summary>
     /// Попытка смены изображения
@@ -52,12 +63,18 @@ public interface IBisnesLogicLayer
     /// <returns></returns>
     public bool attemptChangeImageBackGround();
 
+    /// <summary>
+    /// Попытка перетащить силос на панеле силосов
+    /// </summary>
+    /// <returns></returns>
+    public bool attemptDragSilos();
 
     /// <summary>
     /// получение уровня заполненности 
     /// </summary>
     /// <returns></returns>
-    public int getFilling();
+    public int getFilling(int silosId, DateTime time);
+
     #endregion
 
     #region Построение графиков
@@ -176,7 +193,7 @@ public interface IBisnesLogicLayer
     /// Удаление типа зерна
     /// </summary>
     /// <param name="idGrain"></param>
-    public void deleteGrain(int idGrain);
+    public void deleteGrain(Grain g);
     #endregion
 
 
@@ -241,7 +258,9 @@ public interface IBisnesLogicLayer
 
     #region настройки разработчика
 
-    
+
+    public bool attemptOpenSetttingProvider();
+
     /// <summary>
     /// включение/отключение режима усреднения температур на сломанных датчиках
     /// </summary>
@@ -299,7 +318,6 @@ public interface IBisnesLogicLayer
     /// <summary>
     /// открытие формы настроек разработчика
     /// </summary>
-    public void enterOpenSettingProvider();
 
 
     public void saveStructureSubvision(List<StructureSubdivision> subdivisions);
@@ -311,9 +329,34 @@ public interface IBisnesLogicLayer
 
     #region управление БД
 
+    /// <summary>
+    /// Получение строки подключени к БД
+    /// </summary>
+    /// <returns></returns>
+    public string getConnectionString();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connectString"></param>
+    /// <param name="user"></param>
     public void connectDBAndGetData(string connectString, string user);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connectString"></param>
     public void connectAndSetData(string connectString);
+
+    /// <summary>
+    /// подключение к БД
+    /// </summary>
+    /// <param name="server"></param>
+    /// <param name="port"></param>
+    /// <param name="user"></param>
+    /// <param name="nameDb"></param>
+    /// <param name="password"></param>
+    public void connectDB(string connectionString);
 
     /// <summary>
     /// удаление таблиц
