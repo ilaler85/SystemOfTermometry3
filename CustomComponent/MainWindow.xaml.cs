@@ -36,8 +36,15 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+
+        WinUIWorker.WinUIWorker worker = new WinUIWorker.WinUIWorker(this);
+        bll = worker;
+        
+
+
         timer.Interval = TimeSpan.FromMilliseconds(4000);
         timer.Tick += Timer_Tick;
+        timer.Stop();
 
         setStopObservMode();
 
@@ -48,6 +55,8 @@ public sealed partial class MainWindow : Window
         //setAdminMode();
 
     }
+
+
 
 
     public void setIBLL(IBisnesLogicLayer bll)
@@ -66,6 +75,12 @@ public sealed partial class MainWindow : Window
         timer.Start();
     }
 
+    public bool openConnectDB()
+    {
+        
+        return true;
+    }
+
     public void setStopObservMode()
     {
         FontIcon icon = new FontIcon();
@@ -80,6 +95,11 @@ public sealed partial class MainWindow : Window
         icon.Glyph = "\uE768";
         itemObserv.Icon = icon;
         itemObserv.Content = "Опрос запущен";
+    }
+
+    public bool openApply()
+    {
+        return true;
     }
 
     public void changeSetting()

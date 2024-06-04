@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window
+<Page
     x:Class="SystemOfThermometry3.CustomComponent.DBConnectForm"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
         <StackPanel Orientation="Horizontal">
             <Image Name="imageLogo"></Image>
             <TextBlock>Подключение к БД</TextBlock>
@@ -26,4 +26,4 @@
             <Button x:Name="ButCancel" Content="Отмена" Click="ButCancel_Click"></Button>
         </StackPanel>
     </StackPanel>
-</Window>
+</Page>

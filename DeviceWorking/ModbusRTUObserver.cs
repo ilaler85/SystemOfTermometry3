@@ -35,7 +35,7 @@ namespace SystemOfThermometry3.DeviceWorking
         public override PortExceptionEnum ConnectComPort(string r_ComPort, int r_BaudRate, Parity r_parity, int r_DataBits, StopBits r_StopBits, int r_Timeout)
         {
             var result = base.ConnectComPort(r_ComPort, r_BaudRate, r_parity, r_DataBits, r_StopBits, r_Timeout);
-            modbusMasterRTU = ModbusSerialMaster.CreateRtu(port);
+            modbusMasterRTU =  ModbusSerialMaster.CreateRtu(port);
             return result;
         }
 

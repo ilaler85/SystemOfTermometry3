@@ -11,6 +11,7 @@ using SystemOfThermometry3.Services;
 namespace SystemOfThermometry3.WinUIWorker;
 public interface IBisnesLogicLayer
 {
+    
 
     #region генерецая ключа 
     /// <summary>
@@ -20,6 +21,8 @@ public interface IBisnesLogicLayer
     public string getSSHKey();
     
     public bool checkSSHKey(string ssh);
+
+    
 
     #endregion
 

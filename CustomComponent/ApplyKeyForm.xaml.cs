@@ -25,7 +25,7 @@ namespace CustomComponent;
 /// </summary>
 public sealed partial class ApplyKeyForm : Window
 {
-    private bool passwordCorrect = false;
+    private bool passwordCorrect;
     private IBisnesLogicLayer bll;
     string hash = "";
     private ApplyKeyForm(IBisnesLogicLayer bll)
@@ -34,23 +34,18 @@ public sealed partial class ApplyKeyForm : Window
         this.bll = bll;
     }
 
+    
 
-    public static bool EnterKey(IBisnesLogicLayer bll)
-    {
-        ApplyKeyForm form = new ApplyKeyForm(bll);
-        form.Activate();
-        return form.passwordCorrect;
-                
-    }
+
     private void ButtonGeneric_Click(object sender, RoutedEventArgs e)
     {
         hash = bll.getSSHKey();
         BoxQuest.Text = hash;
-
+        
     }
     private void ButtonOk_Clic(object sender, RoutedEventArgs e)
     {
-        if (bll.checkSSHKey(hash))
+        if (bll.checkSSHKey(BoxKey.Text.Trim()))
         {
             passwordCorrect = true;
             Close();

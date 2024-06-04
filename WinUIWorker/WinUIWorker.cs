@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Threading;
-using Microsoft.UI.Xaml;
 using System.Drawing;
-using NPOI.HPSF;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Utilities;
+using System.Text;
+using System.Threading;
 using SystemOfThermometry3.CustomComponent;
+using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.DeviceWorking;
 using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
-using SystemOfThermometry3.DAO;
-using Windows.UI.ApplicationSettings;
-using static SystemOfThermometry3.Services.SilosService;
-using System.Text;
-using System.Windows.Forms;
-using Microsoft.UI.Composition;
-using System.Diagnostics;
-using System.Windows.Forms.Design;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker : IBisnesLogicLayer
@@ -35,26 +24,35 @@ public partial class WinUIWorker : IBisnesLogicLayer
     private MailSender scheduler; //Отправляет письма
     private OverheatTrigger overheatTrigger; //Класс для обнаружения перегрева.
     private IntPtr hwnd1;
-    //private DataBaseSettings dbSetingsDialog; // Форма с настройками подключения к бд, вызывается, если нет файла с строкой подключения
-
-    // объекты для обработки запросов пользователя 
-    private ExportExcelWorker exportWorker; //Форма с выбором времени для выгрузки.
-    private AllSilosWorker allSilosesWorker; // Компонент, на котором отображаются все силосы. 
-    private OneSilosWorker oneSilosInfoWorker; // Компонент с информацией об одном силосе.
-    private LogPanelWorker logPanelWorker;
+    private PresentationLayerClass presentationLayer;
 
 
     private int value;
-    private Thread splashScreenThread; // Поток, в котором запускается форма загрузки
-                                       // private AllFillingComponent allFillingComponent;
     private bool isSettingWindowOpen = false;
     private bool flagStrelka = true;
 
     #endregion
 
+
+    public WinUIWorker()
+    {
+        presentationLayer = new PresentationLayerClass(this);
+        presentation = presentationLayer;
+    }
+
+    public WinUIWorker(MainWindow mainWindow)
+    {
+        presentation = new PresentationLayerClass(mainWindow, this);
+        loadProgram();
+    }
+
     public WinUIWorker(IPresentationLayer presentation)
     {
         this.presentation = presentation;
+    }
+
+    public void loadProgram()
+    {
 
         checkApplyKey();
 
@@ -64,19 +62,16 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         this.presentation.closeFormConnectDB();
 
-        startMainForm();
+       // startMainForm();
 
-
-        
-            
         presentation.setStatus("Готов");
     }
-
-
     private void checkApplyKey()
     {
+        MyLoger.Log("Is active system: "+ SecurityService.IsActivate());
         if (!SecurityService.IsActivate())
         {
+            
             if (!this.presentation.openFormApplyKeyForm())
                 CustomClose();
         }
@@ -108,7 +103,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     private void startMainForm()
     {
-        
+        presentation.startMainForm();
     }
 
     
@@ -169,7 +164,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         hwnd1 = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
 
         refreshAllSettings();
-        refreshSilosesTemperature();
+        //refreshSilosesTemperature();
 
         //sendMailTimer.Enabled = true;
         //changeMode();
@@ -338,7 +333,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
                 + (settingsService.OfflineMode ? " Автономный режим." : " Подключено к базе данных. ")
                 + (settingsService.IsAdminMode ? " Режим Администратора." : " Режим пользователя."));
 
-            //allSilosesWorker.refreshButton();
             //settingWorker.showStatus();
         }
     }
@@ -401,9 +395,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         isSettingWindowOpen = false;
         //settingWorker.refreshAll();
-        refreshAllSiloses();
+        //refreshAllSiloses();
 
-        showStatus();
+        //showStatus();
     }
 
 

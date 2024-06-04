@@ -18,6 +18,8 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
+        //WinUIWorker.WinUIWorker mainForm = new WinUIWorker.WinUIWorker();
+        //mainForm.loadProgram();
     }
 
     /// <summary>
@@ -26,10 +28,12 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        PresentationLayerClass presentation = new PresentationLayerClass();
-        WinUIWorker.WinUIWorker mainForm = new WinUIWorker.WinUIWorker(presentation);
-        presentation.setIBLL(mainForm);
-        
+        //WinUIWorker.WinUIWorker worker  = new WinUIWorker.WinUIWorker();
+        //worker.loadProgram();
+
+        m_window = new MainWindow();
+        m_window.Activate();
     }
 
+    private Window m_window;
 }

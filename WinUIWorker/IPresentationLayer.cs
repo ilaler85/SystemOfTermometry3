@@ -24,8 +24,13 @@ public interface IPresentationLayer
     /// </summary>
     public void closeFormConnectDB();
 
+
+    /// <summary>
+    /// Инициализация Главной формы
+    /// </summary>
     public void startMainForm();
 
+    public void setIBLL(IBisnesLogicLayer bll);
     /// <summary>
     /// Открытие окна при загрузки приложения 
     /// </summary>

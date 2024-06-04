@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using CustomComponent;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -12,13 +11,12 @@ using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.Services;
 using SystemOfThermometry3.WinUIWorker;
 using Windows.UI.Popups;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace SystemOfThermometry3.CustomComponent;
 public class PresentationLayerClass : IPresentationLayer
 {
 
-    RichTextBox rich = new RichTextBox();
+    //RichTextBox rich = new RichTextBox();
     private MainWindow window;
     private bool isObservMode;
     private bool isAdminMode = false;
@@ -29,18 +27,30 @@ public class PresentationLayerClass : IPresentationLayer
     private Thread thread;
     public PresentationLayerClass()
     {
+
     }
 
+    public PresentationLayerClass(MainWindow mainWindow, IBisnesLogicLayer bll)
+    {   
+        this.bll = bll;
+        this.window = mainWindow;
+    }
 
-    public void setIBLL(IBisnesLogicLayer bll)
+    public PresentationLayerClass(IBisnesLogicLayer bll)
     {
-        window.setIBLL(bll);
         this.bll = bll;
     }
 
+    public void setIBLL(IBisnesLogicLayer bll)
+    {
+        this.bll = bll;
+    }
+
+
     public void startMainForm()
     {
-       window = new MainWindow();
+        window = new MainWindow();
+        window.setIBLL(bll);
     }
 
     public bool setAdminMode()
@@ -77,7 +87,7 @@ public class PresentationLayerClass : IPresentationLayer
     public async void callMessageBox(string message)
     {
         ContentDialog dialog = new ContentDialog();
-        
+
         dialog.Content = message;
         dialog.PrimaryButtonText = "Ок";
         dialog.Title = "сообщение";
@@ -96,13 +106,11 @@ public class PresentationLayerClass : IPresentationLayer
 
     public void openFormConnectDBDialog()
     {
-        dbConnect = new DBConnectForm(bll);
-        dbConnect.Activate();
+        //window;
 
     }
     public async void showWindowDownload(bool flag)
     {
-
         loading = new LoadingForm();
         loading.Activate();
     }
@@ -116,7 +124,7 @@ public class PresentationLayerClass : IPresentationLayer
     private async Task<bool> askCloseSetting()
     {
         ContentDialog dialog = new ContentDialog();
-        dialog.Title ="Чтобы начать опрос необходимо закрыть настройки";
+        dialog.Title = "Чтобы начать опрос необходимо закрыть настройки";
         dialog.Content = "Закрыть настройки?";
         dialog.PrimaryButtonText = "Закрыть";
         dialog.SecondaryButtonText = "Отмена";
@@ -138,11 +146,12 @@ public class PresentationLayerClass : IPresentationLayer
 
     public void closeFormConnectDB()
     {
-        dbConnect.Close();
+        
     }
     public void closeWindowDownload()
-    { 
-        loading.Close();
+    {
+        if(loading!=null)
+            loading.Close();
     }
     public void callSettingComponent(SettingsService settingsService, bool adminSetting)
     {
@@ -170,25 +179,27 @@ public class PresentationLayerClass : IPresentationLayer
 
     private void refreshLogPannel()
     {
-        window.refreshLogPannel(rich);
+        //window.refreshLogPannel(rich);
     }
 
     public void sendLogMessage(string message, Color color)
     {
+        /*
         rich.SelectionStart = 0;
         rich.SelectionLength = 0;
         rich.SelectionColor = color;
         rich.SelectedText = message;
-        refreshLogPannel();
+        refreshLogPannel();*/
 
     }
     public void setStatus(string message)
     {
         window.Title = "Термометрия NIKA " + message;
     }
-    public void overheatMessageBox(StringBuilder message, bool playSound){
-    
-    
+    public void overheatMessageBox(StringBuilder message, bool playSound)
+    {
+
+
     }
     public bool openEnterForm(modeCheckPassword checkPassword)
     {
@@ -197,19 +208,20 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public bool openFormApplyKeyForm()
     {
-       return ApplyKeyForm.EnterKey(bll);
+       return window.openApply();
     }
 
-    public void refreshSetting(){
+    public void refreshSetting()
+    {
         window.refreshSetting();
     }
     public void refreshSilosTabControl()
-    { 
-        
+    {
+
     }
     public void refreshAllSilosTemperatur()
     {
-        
+
     }
 
     private async void DialogShow(string title, string content)
