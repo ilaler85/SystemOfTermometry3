@@ -54,13 +54,14 @@ public partial class WinUIWorker : IBisnesLogicLayer
     public void loadProgram()
     {
 
+
         checkApplyKey();
 
         connectDB();
 
-        this.presentation.showWindowDownload(true);
+        //this.presentation.showWindowDownload(true);
 
-        this.presentation.closeFormConnectDB();
+        //this.presentation.closeFormConnectDB();
 
        // startMainForm();
 

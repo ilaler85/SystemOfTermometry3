@@ -36,7 +36,7 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
-
+        this.Activate();
         WinUIWorker.WinUIWorker worker = new WinUIWorker.WinUIWorker(this);
         bll = worker;
         
@@ -77,7 +77,9 @@ public sealed partial class MainWindow : Window
 
     public bool openConnectDB()
     {
-        
+        Frame frame = Window.Current.Content as Frame;
+        frame.Navigate(typeof(DBConnectForm), bll);
+
         return true;
     }
 
