@@ -11,18 +11,24 @@
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
         <StackPanel Orientation="Horizontal">
             <Image Name="imageLogo"></Image>
-            <TextBlock>Подключение к БД</TextBlock>
+            <TextBlock FontSize="16">Подключение к БД</TextBlock>
         </StackPanel>
 
-        <TextBox x:Name="BoxServer" Header="Сервер" Text="localhost"></TextBox>
-        <TextBlock>Порт</TextBlock>
-        <TextBox x:Name="BoxPort" Header="Порт" Text="3306"></TextBox>
-        <TextBox x:Name="BoxNameDB" Header="Имя БД" Text="viktherm"></TextBox>
-        <TextBox x:Name="BoxUser" Header="Пользователь" Text="root"></TextBox>
-        <PasswordBox x:Name="BoxPassword" Header="Пароль" ></PasswordBox>
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="ButConnect" Content="Подключиться" Click="ButConnect_Click"></Button>
-            <Button x:Name="ButAutoConnect" Content="Авто" Click="ButAutoConnect_Click"></Button>
+        <TextBox x:Name="BoxServer" Header="Сервер" Text="localhost" Margin="0, 16, 0, 0"></TextBox>
+        <TextBox x:Name="BoxPort" Header="Порт" Text="3306" Margin="0, 16, 0, 0"></TextBox>
+        <TextBox x:Name="BoxNameDB" Header="Имя БД" Text="viktherm" Margin="0, 16, 0, 0"></TextBox>
+        <TextBox x:Name="BoxUser" Header="Пользователь" Text="root" Margin="0, 16, 0, 0"></TextBox>
+        <PasswordBox x:Name="BoxPassword" Header="Пароль"  Margin="0, 16, 0, 0"></PasswordBox>
+        <StackPanel Orientation="Horizontal" Margin="0, 16, 0, 0">
+            <Button x:Name="ButConnect" Content="Подключиться" Click="ButConnect_Click" Margin="0, 0, 10, 0"></Button>
+            <TeachingTip x:Name="ToggleThemeTeachingTip1"
+                Title="Есть пустые строки"
+                >
+                <TeachingTip.IconSource>
+                    <SymbolIconSource Symbol="Cancel" />
+                </TeachingTip.IconSource>
+            </TeachingTip>
+            <Button x:Name="ButAutoConnect" Content="Авто" Click="ButAutoConnect_Click" Margin="0, 0, 10, 0"></Button>
             <Button x:Name="ButCancel" Content="Отмена" Click="ButCancel_Click"></Button>
         </StackPanel>
     </StackPanel>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Threading;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using SystemOfThermometry3.CustomComponent;
 using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.DeviceWorking;
@@ -34,6 +36,12 @@ public partial class WinUIWorker : IBisnesLogicLayer
     #endregion
 
 
+   /* public WinUIWorker(Frame frame)
+    {
+        presentationLayer = new PresentationLayerClass(frame, this);
+        presentation = presentationLayer;
+    }*/
+
     public WinUIWorker()
     {
         presentationLayer = new PresentationLayerClass(this);
@@ -43,7 +51,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     public WinUIWorker(MainWindow mainWindow)
     {
         presentation = new PresentationLayerClass(mainWindow, this);
-        loadProgram();
+        //loadProgram();
     }
 
     public WinUIWorker(IPresentationLayer presentation)
@@ -54,28 +62,28 @@ public partial class WinUIWorker : IBisnesLogicLayer
     public void loadProgram()
     {
 
-
-        checkApplyKey();
+        //checkApplyKey();
 
         connectDB();
-
-        //this.presentation.showWindowDownload(true);
-
-        //this.presentation.closeFormConnectDB();
-
-       // startMainForm();
-
-        presentation.setStatus("Готов");
+        //presentation.setStatus("Готов");
     }
     private void checkApplyKey()
     {
-        MyLoger.Log("Is active system: "+ SecurityService.IsActivate());
         if (!SecurityService.IsActivate())
         {
-            
-            if (!this.presentation.openFormApplyKeyForm())
-                CustomClose();
+            presentation.openFormApplyKeyForm();
         }
+    }
+
+
+    public void successfulActivation()
+    {
+        connectDB();
+    }
+
+    public void failedActivation()
+    {
+        CustomClose();
     }
 
     private void connectDB()
@@ -107,10 +115,11 @@ public partial class WinUIWorker : IBisnesLogicLayer
         presentation.startMainForm();
     }
 
-    
+
 
     public void successStartWithDB()
     {
+        presentation.showWindowDownload(true);
         settingsService = new SettingsService(dao);
         settingsService.OfflineMode = false;
         initCustomComponent();
@@ -795,21 +804,40 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public void connectDB(string connectionString)
     {
-        if (!dao.connectToDB(getConnectionString(), settingsService.IsOnlyReadMode))
+        if (!dao.connectToDB(getConnectionString(), SettingsService.IsOnlyReadModeS))
         {
             presentation.callMessageBox("Не удалось подключиться!\n" +
-                "проверьте имя пользователя и пароль");
+                "проверьте имя пользователя и пароль"); 
         }
         else
         {
-            presentation.callMessageBox("Подключение успешно!");
-            FileProcessingService.setConnectionString(getConnectionString());
-            silosService.synchronizeWithGettingData();
-            //connectedEvent?.Invoke();
-            //silosTabControl.tryToGetInformFromDB(); //Обновляем
-            //RefreshAll();
+            if (!dao.DBisCorrect() && !SettingsService.IsOnlyReadModeS)
+            {
+                bool result = presentation.askDialogShow("Настройки базы данных не корректна.\n" +
+                        "Хотите сбросить и создать новую?").Result;
+
+                if (result)
+                {
+                    if (dao.dropAndCreateDB())
+                    {
+                        presentation.callMessageBox("Подключение успешно!");
+                        FileProcessingService.setConnectionString(getConnectionString());
+                        silosService.synchronizeWithGettingData();
+                    }
+                    else
+                    {
+                        presentation.callMessageBox("Не удалось подключиться и настроить базу данных");
+                    }
+                }
+            }
+            else
+            {
+                presentation.callMessageBox("Подключение успешно!");
+                FileProcessingService.setConnectionString(getConnectionString());
+                silosService.synchronizeWithGettingData();
+            }
         }
-        showStatus();
+        //showStatus();
     }
 
     public string getConnectionString()

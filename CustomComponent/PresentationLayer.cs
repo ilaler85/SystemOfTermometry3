@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using CustomComponent;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SystemOfThermometry3.CustomComponent.SilosComponent;
-using SystemOfThermometry3.DAO;
 using SystemOfThermometry3.Services;
 using SystemOfThermometry3.WinUIWorker;
 using Windows.UI.Popups;
@@ -25,10 +23,12 @@ public class PresentationLayerClass : IPresentationLayer
     private IBisnesLogicLayer bll;
     private LoadingForm loading;
     private Thread thread;
+
     public PresentationLayerClass()
     {
 
     }
+
 
     public PresentationLayerClass(MainWindow mainWindow, IBisnesLogicLayer bll)
     {   
@@ -49,77 +49,93 @@ public class PresentationLayerClass : IPresentationLayer
 
     public void startMainForm()
     {
-        window = new MainWindow();
-        window.setIBLL(bll);
+        window = new MainWindow(bll);
     }
 
     public bool setAdminMode()
     {
-        window.setAdminMode();
+        window.getMethod("setAdminMode");
         return true;
 
     }
 
     public bool setOfflineMode()
     {
-        window.setOfflineMode();
+        window.getMethod("setOfflineMode");
         return true;
 
     }
     public bool setNormalMode()
     {
-        window.setNormalMode();
+        window.getMethod("setNormalMode");
         return true;
     }
     public bool setConnectDB_Mode()
     {
-        window.setTitleText("Термометрия Nika. Подключено к БД");
+        window.getMethod("setTitleText", new object[] { "Термометрия Nika. Подключено к БД" });
         return true;
     }
     public void runObservMode()
     {
-        window.setStartObservMode();
+        window.getMethod("setStartObservMode");
     }
     public void stopObservMode()
     {
-        window.setStopObservMode();
+        window.getMethod("setStopObservMode");
     }
+
+    public async Task<bool> askDialogShow(string message)
+    {
+        ContentDialog dialog = new ContentDialog();
+
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        dialog.Title = "";
+        dialog.PrimaryButtonText = "Да";
+        dialog.SecondaryButtonText = "Нет";
+        dialog.Content = new ContentDialogPage(message);
+
+        var result = await dialog.ShowAsync();
+        return result == ContentDialogResult.Primary;
+    }
+
     public async void callMessageBox(string message)
     {
         ContentDialog dialog = new ContentDialog();
 
-        dialog.Content = message;
-        dialog.PrimaryButtonText = "Ок";
+        
+        dialog.PrimaryButtonText = "Ок"; 
         dialog.Title = "сообщение";
 
-        var messageBox = new MessageDialog(message);
-        await messageBox.ShowAsync();
+        dialog.Content = new MessageDialog(message);
+        await dialog.ShowAsync();
     }
     public void refreshALL()
     {
-        window.refreshAll();
+        //window.refreshAll();
     }
     public void refreshAllSilos()
     {
-        window.refreshAllSilosComponent();
+        //window.refreshAllSilosComponent();
     }
 
     public void openFormConnectDBDialog()
     {
-        //window;
-
+        window.setFrame(typeof(DBConnectForm));
+        //frame.Navigate(typeof(DBConnectForm), bll);
     }
     public async void showWindowDownload(bool flag)
     {
-        loading = new LoadingForm();
-        loading.Activate();
+        window.setFrame(typeof(LoadingForm));
+        //frame.Navigate(typeof(LoadingForm));
     }
 
 
     public void setProgressBar(int value)
     {
-        window.progressBarSetValue(value);
+        window.getMethod("progressBarSetValue", new object[] { value });
     }
+
+
 
     private async Task<bool> askCloseSetting()
     {
@@ -132,7 +148,7 @@ public class PresentationLayerClass : IPresentationLayer
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            window.closeSetting();
+            window.getMethod("closeSetting");
             return true;
         }
         else
@@ -149,9 +165,8 @@ public class PresentationLayerClass : IPresentationLayer
         
     }
     public void closeWindowDownload()
-    {
-        if(loading!=null)
-            loading.Close();
+    {window.setFrame(typeof(MainWindow));
+       // frame.Navigate(typeof(MainWindow));
     }
     public void callSettingComponent(SettingsService settingsService, bool adminSetting)
     {
@@ -160,7 +175,7 @@ public class PresentationLayerClass : IPresentationLayer
     public void closeAdminSetting()
     {
         isAdminMode = false;
-        window.setNormalSetting();
+        window.getMethod("setNormalSetting");
     }
     public bool stopObserv()
     {
@@ -169,11 +184,11 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public void setStopStyleForm()
     {
-        window.setStopObservMode();
+        window.getMethod("setStopObservMode");
     }
     public void setNormalStyleForm()
     {
-        window.setStartObservMode();
+        window.getMethod("setStartObservMode");
     }
 
 
@@ -194,7 +209,7 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public void setStatus(string message)
     {
-        window.Title = "Термометрия NIKA " + message;
+        //window.Title = "Термометрия NIKA " + message;
     }
     public void overheatMessageBox(StringBuilder message, bool playSound)
     {
@@ -206,14 +221,14 @@ public class PresentationLayerClass : IPresentationLayer
 
         return true;
     }
-    public bool openFormApplyKeyForm()
+    public void openFormApplyKeyForm()
     {
-       return window.openApply();
+        window.setFrame(typeof(ApplyKeyForm));
     }
 
     public void refreshSetting()
     {
-        window.refreshSetting();
+        window.getMethod("refreshSetting");
     }
     public void refreshSilosTabControl()
     {
@@ -240,11 +255,11 @@ public class PresentationLayerClass : IPresentationLayer
 
     public void openNormalSetting()
     {
-        window.changeSetting();
+        window.getMethod("changeSetting");
     }
     public void openAdminSetting()
     {
-        window.changeSetting();
+        window.getMethod("changeSetting");
     }
 }
 

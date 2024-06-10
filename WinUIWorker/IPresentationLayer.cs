@@ -116,6 +116,13 @@ public interface IPresentationLayer
     public void setNormalStyleForm();
 
     /// <summary>
+    /// Вы
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public Task<bool> askDialogShow(string message);
+
+    /// <summary>
     /// 
     /// </summary>
     /// <param name="message"></param>
@@ -168,7 +175,7 @@ public interface IPresentationLayer
     /// <summary>
     /// Открытие форму генерации ключа
     /// </summary>
-    public bool openFormApplyKeyForm();
+    public void openFormApplyKeyForm();
 
 
     /// <summary>

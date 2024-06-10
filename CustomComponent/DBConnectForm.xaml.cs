@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,10 +26,17 @@ namespace SystemOfThermometry3.CustomComponent;
 public sealed partial class DBConnectForm : Page
 {
     private IBisnesLogicLayer bll;
-    public DBConnectForm(IBisnesLogicLayer bll)
+    private string error;
+    public DBConnectForm()
     {
         this.InitializeComponent();
-        this.bll = bll;
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        if (e != null)
+            bll = (IBisnesLogicLayer)e.Parameter;
+
     }
 
     private string getConnectionString()
@@ -40,9 +48,39 @@ public sealed partial class DBConnectForm : Page
             + ";password=" + BoxPassword.Password.Trim();
     }
 
+    private List<string> checkingForEmptyLines()
+    {
+        List <string> errorLines = new List<string>();
+        if (BoxServer.Text.Trim() == "")
+            errorLines.Add("сервера");
+        if (BoxPort.Text.Trim() == "")
+            errorLines.Add("порта");
+        if (BoxUser.Text.Trim() == "")
+            errorLines.Add("пользователя");
+        if (BoxNameDB.Text.Trim() == "")
+            errorLines.Add("имени БД");
+        if (BoxPassword.Password.Trim() == "")
+            errorLines.Add("пароля");
+
+        return errorLines;
+    }
+
     private void ButConnect_Click(object sender, RoutedEventArgs e)
     {
-        bll.connectDB(getConnectionString());
+        List<string> errorMessage = checkingForEmptyLines();
+        if (errorMessage.Count == 0)
+            bll.connectDB(getConnectionString());
+        else
+        {
+            error = "Пустое поле ";
+            foreach (string line in errorMessage)
+            {
+                error += line + ", ";   
+            }
+            error = error.Remove(error.Length-2);
+            ToggleThemeTeachingTip1.Subtitle = error;
+            ToggleThemeTeachingTip1.IsOpen = true;
+        }    
     }
 
     private void ButAutoConnect_Click(object sender, RoutedEventArgs e)

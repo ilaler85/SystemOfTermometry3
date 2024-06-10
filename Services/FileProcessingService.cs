@@ -14,8 +14,8 @@ namespace SystemOfThermometry3.Services;
 /// </summary>
 static public class FileProcessingService
 {
-    private static string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
+    //private static string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+    private static string appData = "D:\\";
     private static string settingsFolder 
     { 
         get => Path.Combine(WorkingDir, ".folder");

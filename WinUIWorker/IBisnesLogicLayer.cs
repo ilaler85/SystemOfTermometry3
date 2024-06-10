@@ -22,7 +22,9 @@ public interface IBisnesLogicLayer
     
     public bool checkSSHKey(string ssh);
 
-    
+    public void successfulActivation();
+
+    public void failedActivation();
 
     #endregion
 

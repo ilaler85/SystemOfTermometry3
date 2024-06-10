@@ -24,8 +24,7 @@ public partial class App : Application
     public App()
     {
         this.InitializeComponent();
-        Windows.UI.ViewManagement.ApplicationView appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-        appView.SetPreferredMinSize(new Size(500, 300));
+        
         //WinUIWorker.WinUIWorker mainForm = new WinUIWorker.WinUIWorker();
         //mainForm.loadProgram();
     }
@@ -36,28 +35,12 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        Frame rootFrame = Window.Current.Content as Frame;
 
-        if (rootFrame == null)
-        {
-            // Create a Frame to act as the navigation context and navigate to the first page
-            rootFrame = new Frame();
-
-            rootFrame.NavigationFailed += OnNavigationFailed;
-
-            
-
-            // Place the frame in the current Window
-            Window.Current.Content = rootFrame;
-        }
-        if (rootFrame.Content == null)
-        {
-            // Переход во фрейме к странице MainPage
-            rootFrame.Navigate(typeof(MainWindow), args.Arguments);
-        }
-        Window.Current.Activate();
-
-        
+        //worker = new WinUIWorker.WinUIWorker();
+        window = new MainWindow();
+        window.Activate();
+        window.startBLL();
+        //worker.loadProgram();
         //WinUIWorker.WinUIWorker worker  = new WinUIWorker.WinUIWorker();
         //worker.loadProgram();
 
@@ -69,6 +52,5 @@ public partial class App : Application
     {
         throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
     }
-
-    private Window m_window;
+    private MainWindow window;
 }

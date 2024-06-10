@@ -73,12 +73,15 @@
     <None Remove="CustomComponent\ApplyKeyForm.xaml" />
     <None Remove="CustomComponent\ChartComponent.xaml" />
     <None Remove="CustomComponent\ChartFillingComponent.xaml" />
+    <None Remove="CustomComponent\ContentDialogPage.xaml" />
     <None Remove="CustomComponent\DBConnectForm.xaml" />
     <None Remove="CustomComponent\EnterPasswordForm.xaml" />
     <None Remove="CustomComponent\ExportExcelComponent.xaml" />
     <None Remove="CustomComponent\GrainComponent\GrainComponent.xaml" />
     <None Remove="CustomComponent\itemAboutComponent.xaml" />
+    <None Remove="CustomComponent\MainWindow.xaml" />
     <None Remove="CustomComponent\MessageBoxWindow.xaml" />
+    <None Remove="CustomComponent\MessageDialog.xaml" />
     <None Remove="CustomComponent\OneSilosComponent.xaml" />
     <None Remove="CustomComponent\SettingComponents\BoardParameters.xaml" />
     <None Remove="CustomComponent\SettingComponents\DBConnect.xaml" />
@@ -118,6 +121,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\ApplyKeyForm.xaml">
@@ -256,6 +264,17 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\AllSilosComponent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="CustomComponent\ContentDialogPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Remove="CustomComponent\ContentDialogPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\MessageDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
