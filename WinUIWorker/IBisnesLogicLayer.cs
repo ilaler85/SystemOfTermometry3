@@ -11,7 +11,7 @@ using SystemOfThermometry3.Services;
 namespace SystemOfThermometry3.WinUIWorker;
 public interface IBisnesLogicLayer
 {
-    
+
 
     #region генерецая ключа 
     /// <summary>
@@ -19,20 +19,40 @@ public interface IBisnesLogicLayer
     /// </summary>
     /// <returns></returns>
     public string getSSHKey();
-    
+
+    /// <summary>
+    /// Проверка SSH ключа на подлинность
+    /// </summary>
+    /// <param name="ssh"></param>
+    /// <returns></returns>
     public bool checkSSHKey(string ssh);
 
+    /// <summary>
+    /// Удачная активация приложения
+    /// </summary>
     public void successfulActivation();
 
+    /// <summary>
+    /// Ошибка активации приложения
+    /// </summary>
     public void failedActivation();
 
     #endregion
 
     #region подкулючение к БД
+    /// <summary>
+    /// Завершение работы программы
+    /// </summary>
     public void CustomClose();
 
+    /// <summary>
+    /// Запуск программы в режиме офлайн режима
+    /// </summary>
     public void successStartOfflineMode();
 
+    /// <summary>
+    /// Запуск программы с подключение к БД
+    /// </summary>
     public void successStartWithDB();
     #endregion
 
@@ -243,7 +263,7 @@ public interface IBisnesLogicLayer
     /// Добавляет подразделение
     /// </summary>
     /// <param name="name"></param>
-    public int addDivision( string name);
+    public int addDivision(string name);
 
     /// <summary>
     /// обновление подразделения
@@ -327,7 +347,7 @@ public interface IBisnesLogicLayer
 
     public void saveStructureSubvision(List<StructureSubdivision> subdivisions);
 
-    
+
     public void savePortSettings(string portName, int portBoundRate,
         Parity portParity, int portDataBits, StopBits portStopBits, int portTimeOut);
     #endregion
@@ -361,7 +381,7 @@ public interface IBisnesLogicLayer
     /// <param name="user"></param>
     /// <param name="nameDb"></param>
     /// <param name="password"></param>
-    public void connectDB(string connectionString);
+    public Task connectDB(string connectionString);
 
     /// <summary>
     /// удаление таблиц
@@ -462,7 +482,7 @@ public interface IBisnesLogicLayer
     public void getSettingErrorMail(out string MailErrorSmtpServer, out string MailErrorSender, out string MailErrorSenderPassword,
         out string MailErrorCaption, out bool MailErrorSendByTimer, out int MailErrorSendingPeriod);
 
-    
+
     #endregion
 
 

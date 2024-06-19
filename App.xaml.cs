@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -35,17 +36,9 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-
-        //worker = new WinUIWorker.WinUIWorker();
         window = new MainWindow();
         window.Activate();
         window.startBLL();
-        //worker.loadProgram();
-        //WinUIWorker.WinUIWorker worker  = new WinUIWorker.WinUIWorker();
-        //worker.loadProgram();
-
-        //m_window = new MainWindow();
-
     }
 
     void OnNavigationFailed(object sender, NavigationFailedEventArgs e)

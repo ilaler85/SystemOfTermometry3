@@ -6,6 +6,7 @@ using SystemOfThermometry3.WinUIWorker;
 using Windows.Foundation;
 using SystemOfThermometry3.CustomComponent;
 using Mysqlx.Notice;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,8 +23,9 @@ public sealed partial class MainWindow : Window
     {
         //frame = new Frame();
         this.InitializeComponent();
-        Windows.UI.ViewManagement.ApplicationView appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-        appView.SetPreferredMinSize(new Size(600, 500));
+        
+        //Windows.UI.ViewManagement.ApplicationView appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+        //appView.SetPreferredMinSize(new Size(600, 500));
         this.bll = bll;
 
 
@@ -32,15 +34,18 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
-        //frame.Navigate(typeof(Conn));
-        worker = new WinUIWorker.WinUIWorker(this);
-        bll = worker;
         
+        worker = new WinUIWorker.WinUIWorker(this);
+
+        bll = worker;
+        frame.Navigate(typeof(MainPage), bll);
+        //setFrame(typeof(MainPage));
         //_ = frame.Navigate(typeof(MainPage), bll);
     }
 
     public void startBLL()
     {
+        //setFrame(typeof(MainPage));
         worker.loadProgram();
     }
 

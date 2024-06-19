@@ -17,7 +17,9 @@ public interface IPresentationLayer
     /// <summary>
     /// Открытие окна подключения к БД
     /// </summary>
-    public void openFormConnectDBDialog();
+    public Task<string> openFormConnectDBDialog();
+
+    public void openFormConnectDBDialog2();
 
     /// <summary>
     /// закрытие формы подключения к бд
@@ -176,6 +178,12 @@ public interface IPresentationLayer
     /// Открытие форму генерации ключа
     /// </summary>
     public void openFormApplyKeyForm();
+
+    /// <summary>
+    /// Запрос на SSH ключ от формы
+    /// </summary>
+    /// <returns></returns>
+    public string returnKeyApplyKeyForm();
 
 
     /// <summary>

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SystemOfThermometry3.CustomComponent;
@@ -36,11 +38,11 @@ public partial class WinUIWorker : IBisnesLogicLayer
     #endregion
 
 
-   /* public WinUIWorker(Frame frame)
-    {
-        presentationLayer = new PresentationLayerClass(frame, this);
-        presentation = presentationLayer;
-    }*/
+    /* public WinUIWorker(Frame frame)
+     {
+         presentationLayer = new PresentationLayerClass(frame, this);
+         presentation = presentationLayer;
+     }*/
 
     public WinUIWorker()
     {
@@ -61,18 +63,34 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public void loadProgram()
     {
-
-        //checkApplyKey();
+        checkApplyKey();
 
         connectDB();
-        //presentation.setStatus("Готов");
     }
     private void checkApplyKey()
     {
-        if (!SecurityService.IsActivate())
+        string hash = "";
+        bool flag = true;
+
+        if (SecurityService.IsActivate())
+            return;
+
+        presentation.openFormApplyKeyForm();
+        while (flag)
         {
-            presentation.openFormApplyKeyForm();
+            hash = presentation.returnKeyApplyKeyForm();
+            if (hash == "exit")
+            {
+                flag = false;
+                CustomClose();
+            }
+            else
+            if (checkSSHKey(hash))
+                flag = false;
+            else
+                presentation.callMessageBox("Ошибка SSH ключа");
         }
+
     }
 
 
@@ -94,7 +112,8 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         if (connectionString == "") //Первое подключение
         {
-            presentation.openFormConnectDBDialog();
+            var connestString = presentation.openFormConnectDBDialog().Result;
+            asyncConnectDB(connestString);
         }
         else
         {
@@ -156,7 +175,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         silosService = new SilosService(dao, settingsService, grainService, presentation.setProgressBar);
         observer = new WriterReader(silosService, settingsService);
         observer.errorMessage += messageHandler; //Ошибка, напримет, связанная с открытием порта
-        settingsService = new SettingsService(dao);
+        //settingsService = new SettingsService(dao);
         //Сообщения из другого потока, обрабатываются специальным образом
         observer.asyncMessage += observerAsyncHandler; //Некоторое сообщение, которое не должно останавливать опрос
         observer.criticalErrorMessage += observerCriticalErrorHandler; //Сообщение об ошибке, после которой останавливается опрос
@@ -802,42 +821,61 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     }
 
-    public void connectDB(string connectionString)
+    private async Task asyncConnectDB(string connectionString)
     {
-        if (!dao.connectToDB(getConnectionString(), SettingsService.IsOnlyReadModeS))
+        try
         {
-            presentation.callMessageBox("Не удалось подключиться!\n" +
-                "проверьте имя пользователя и пароль"); 
-        }
-        else
-        {
-            if (!dao.DBisCorrect() && !SettingsService.IsOnlyReadModeS)
+            if (!dao.connectToDB(connectionString, SettingsService.IsOnlyReadModeS))
             {
-                bool result = presentation.askDialogShow("Настройки базы данных не корректна.\n" +
-                        "Хотите сбросить и создать новую?").Result;
-
-                if (result)
-                {
-                    if (dao.dropAndCreateDB())
-                    {
-                        presentation.callMessageBox("Подключение успешно!");
-                        FileProcessingService.setConnectionString(getConnectionString());
-                        silosService.synchronizeWithGettingData();
-                    }
-                    else
-                    {
-                        presentation.callMessageBox("Не удалось подключиться и настроить базу данных");
-                    }
-                }
+                presentation.callMessageBox("Не удалось подключиться!\n" +
+                    "проверьте имя пользователя и пароль");
             }
             else
             {
-                presentation.callMessageBox("Подключение успешно!");
-                FileProcessingService.setConnectionString(getConnectionString());
-                silosService.synchronizeWithGettingData();
+                if (!dao.DBisCorrect() && !SettingsService.IsOnlyReadModeS)
+                {
+                    bool result = presentation.askDialogShow("Настройки базы данных не корректна.\n" +
+                            "Хотите сбросить и создать новую?").Result;
+
+                    if (result)
+                    {
+                        if (dao.dropAndCreateDB())
+                        {
+                            presentation.callMessageBox("Подключение успешно!");
+                            FileProcessingService.setConnectionString(getConnectionString());
+                            successStartWithDB();
+                        }
+                        else
+                        {
+                            presentation.callMessageBox("Не удалось подключиться и настроить базу данных");
+                        }
+                    }
+                }
+                else
+                {
+                    presentation.callMessageBox("Подключение успешно!");
+                    FileProcessingService.setConnectionString(getConnectionString());
+                    successStartWithDB();
+                }
             }
         }
-        //showStatus();
+        catch
+        {
+            throw new Exception("AsuncException");
+        }
+    }
+
+    public async Task connectDB(string connectionString)
+    {
+        try
+        {
+            await Task.Run(() => asyncConnectDB(connectionString));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
+
     }
 
     public string getConnectionString()

@@ -23,7 +23,7 @@ public class PresentationLayerClass : IPresentationLayer
     private IBisnesLogicLayer bll;
     private LoadingForm loading;
     private Thread thread;
-
+    private ApplyKeyForm applyKeyForm;
     public PresentationLayerClass()
     {
 
@@ -31,7 +31,7 @@ public class PresentationLayerClass : IPresentationLayer
 
 
     public PresentationLayerClass(MainWindow mainWindow, IBisnesLogicLayer bll)
-    {   
+    {
         this.bll = bll;
         this.window = mainWindow;
     }
@@ -86,28 +86,32 @@ public class PresentationLayerClass : IPresentationLayer
 
     public async Task<bool> askDialogShow(string message)
     {
-        ContentDialog dialog = new ContentDialog();
 
-        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-        dialog.Title = "";
-        dialog.PrimaryButtonText = "Да";
-        dialog.SecondaryButtonText = "Нет";
-        dialog.Content = new ContentDialogPage(message);
+        ContentDialog deleteFileDialog = new ContentDialog
+        {
+            Title = "Вопрос",
+            Content = message,
+            PrimaryButtonText = "Да",
+            CloseButtonText = "Нет"
+        };
 
-        var result = await dialog.ShowAsync();
+        ContentDialogResult result = await deleteFileDialog.ShowAsync();
+
         return result == ContentDialogResult.Primary;
     }
 
     public async void callMessageBox(string message)
     {
-        ContentDialog dialog = new ContentDialog();
+        ContentDialog noWifiDialog = new ContentDialog
+        {
+            Title = "Сообщение",
+            Content = message,
+            CloseButtonText = "OK"
+        };
+
+        ContentDialogResult result = await noWifiDialog.ShowAsync();
 
         
-        dialog.PrimaryButtonText = "Ок"; 
-        dialog.Title = "сообщение";
-
-        dialog.Content = new MessageDialog(message);
-        await dialog.ShowAsync();
     }
     public void refreshALL()
     {
@@ -118,12 +122,20 @@ public class PresentationLayerClass : IPresentationLayer
         //window.refreshAllSilosComponent();
     }
 
-    public void openFormConnectDBDialog()
+    public async Task<string> openFormConnectDBDialog()
+    {
+        DBConnectForm form = new DBConnectForm(bll);
+        form.Activate();
+        var resultConnect = await form.ShowAsync();
+        return resultConnect;
+    }
+
+    public void openFormConnectDBDialog2()
     {
         window.setFrame(typeof(DBConnectForm));
         //frame.Navigate(typeof(DBConnectForm), bll);
     }
-    public async void showWindowDownload(bool flag)
+    public void showWindowDownload(bool flag)
     {
         window.setFrame(typeof(LoadingForm));
         //frame.Navigate(typeof(LoadingForm));
@@ -162,11 +174,12 @@ public class PresentationLayerClass : IPresentationLayer
 
     public void closeFormConnectDB()
     {
-        
+
     }
     public void closeWindowDownload()
-    {window.setFrame(typeof(MainWindow));
-       // frame.Navigate(typeof(MainWindow));
+    {
+        window.setFrame(typeof(MainPage));
+        // frame.Navigate(typeof(MainWindow));
     }
     public void callSettingComponent(SettingsService settingsService, bool adminSetting)
     {
@@ -221,9 +234,20 @@ public class PresentationLayerClass : IPresentationLayer
 
         return true;
     }
+
+    
     public void openFormApplyKeyForm()
     {
-        window.setFrame(typeof(ApplyKeyForm));
+        applyKeyForm = new ApplyKeyForm();
+        applyKeyForm.Activate();
+       
+        //window.setFrame(typeof(ApplyKeyForm));
+    }
+
+    public string returnKeyApplyKeyForm()
+    {
+        var hash = applyKeyForm.ShowAsync(bll);
+        return hash.GetAwaiter().GetResult();
     }
 
     public void refreshSetting()

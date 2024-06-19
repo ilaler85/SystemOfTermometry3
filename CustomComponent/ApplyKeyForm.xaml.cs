@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -11,11 +14,13 @@ namespace SystemOfThermometry3.CustomComponent;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class ApplyKeyForm : Page
+public sealed partial class ApplyKeyForm : Window
 {
     private bool passwordCorrect;
     private IBisnesLogicLayer bll;
     string hash = "";
+    private static AutoResetEvent Locker = new AutoResetEvent(false);
+
 
     public ApplyKeyForm()
     {
@@ -24,11 +29,22 @@ public sealed partial class ApplyKeyForm : Page
     }
 
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        if (e != null)
-            bll = (IBisnesLogicLayer)e.Parameter;
+    /* protected override void OnNavigatedTo(NavigationEventArgs e)
+     {
+         if (e != null)
+             bll = (IBisnesLogicLayer)e.Parameter;
 
+     }*/
+
+    public async Task<string> ShowAsync(IBisnesLogicLayer bll)
+    {
+        this.bll = bll;
+
+        await Task.Run(() => {
+            Locker.WaitOne();  //Wait a singal
+        });
+        
+        return hash;
     }
 
     private void ButtonGeneric_Click(object sender, RoutedEventArgs e)
@@ -39,8 +55,13 @@ public sealed partial class ApplyKeyForm : Page
     }
     private void ButtonOk_Clic(object sender, RoutedEventArgs e)
     {
-        if (bll.checkSSHKey(BoxKey.Text.Trim()))
+        hash = BoxKey.Text.Trim();
+        Locker.Set();
+
+       /* if (bll.checkSSHKey(BoxKey.Text.Trim()))
         {
+            
+            // переделать
             bll.successfulActivation();
         }
         else
@@ -49,11 +70,13 @@ public sealed partial class ApplyKeyForm : Page
             dialog.PrimaryButtonText = "OK";
             dialog.Content = "Неверный Ключ Активации!";
             dialog.Title = "Неудача";
-        }
+        }*/
     }
     private void ButtonExit_Click(object sender, RoutedEventArgs e)
     {
-        bll.failedActivation();
+        hash = "exit";
+        Locker.Set();
+        //bll.failedActivation();
     }
 
     private async  void TextPaste_event(object sender, TextControlPasteEventArgs e)
