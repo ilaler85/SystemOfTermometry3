@@ -7,6 +7,8 @@ using Windows.Foundation;
 using SystemOfThermometry3.CustomComponent;
 using Mysqlx.Notice;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,7 +40,7 @@ public sealed partial class MainWindow : Window
         worker = new WinUIWorker.WinUIWorker(this);
 
         bll = worker;
-        frame.Navigate(typeof(MainPage), bll);
+        //frame.Navigate(typeof(MainPage), bll);
         //setFrame(typeof(MainPage));
         //_ = frame.Navigate(typeof(MainPage), bll);
     }
@@ -65,10 +67,42 @@ public sealed partial class MainWindow : Window
         method.Invoke(method, objects);
     }
 
-    public void getMethod(string nameMethod)
+    public async void getMethod(string nameMethod)
+    {
+        try
+        {
+            
+            var method = frame.Content.GetType().GetMethod(nameMethod);
+            method?.Invoke(frame.Content, parameters: null);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+    }
+
+
+    public object getReturnMethod(string nameMethod)
     {
         MethodInfo method = frame.GetType().GetMethod(nameMethod);
-        method?.Invoke(method, parameters: null);
+
+        return method?.Invoke(frame.Content, parameters: null);
+    }
+
+    private ContentDialog dialog;
+
+    public async Task callMessageBox(string message)
+    {
+        dialog = new ContentDialog
+        {
+            Title = "Сообщение",
+            Content = message,
+            CloseButtonText = "OK"
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+
     }
 
 }

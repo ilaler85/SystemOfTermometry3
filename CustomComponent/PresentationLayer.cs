@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Threading;
@@ -24,6 +25,7 @@ public class PresentationLayerClass : IPresentationLayer
     private LoadingForm loading;
     private Thread thread;
     private ApplyKeyForm applyKeyForm;
+    private ContentDialog dialog;
     public PresentationLayerClass()
     {
 
@@ -87,7 +89,7 @@ public class PresentationLayerClass : IPresentationLayer
     public async Task<bool> askDialogShow(string message)
     {
 
-        ContentDialog deleteFileDialog = new ContentDialog
+        dialog = new ContentDialog
         {
             Title = "Вопрос",
             Content = message,
@@ -95,21 +97,29 @@ public class PresentationLayerClass : IPresentationLayer
             CloseButtonText = "Нет"
         };
 
-        ContentDialogResult result = await deleteFileDialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowAsync();
 
         return result == ContentDialogResult.Primary;
     }
 
-    public async void callMessageBox(string message)
+    public async Task callMessageBox(string message)
     {
-        ContentDialog noWifiDialog = new ContentDialog
+        try
+        {
+            await window.callMessageBox(message);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+        /*dialog = new ContentDialog
         {
             Title = "Сообщение",
             Content = message,
             CloseButtonText = "OK"
         };
 
-        ContentDialogResult result = await noWifiDialog.ShowAsync();
+        ContentDialogResult result = await dialog.ShowAsync();*/
 
         
     }
@@ -125,7 +135,7 @@ public class PresentationLayerClass : IPresentationLayer
     public async Task<string> openFormConnectDBDialog()
     {
         DBConnectForm form = new DBConnectForm(bll);
-        form.Activate();
+        //form.Activate();
         var resultConnect = await form.ShowAsync();
         return resultConnect;
     }
@@ -133,12 +143,10 @@ public class PresentationLayerClass : IPresentationLayer
     public void openFormConnectDBDialog2()
     {
         window.setFrame(typeof(DBConnectForm));
-        //frame.Navigate(typeof(DBConnectForm), bll);
     }
     public void showWindowDownload(bool flag)
     {
         window.setFrame(typeof(LoadingForm));
-        //frame.Navigate(typeof(LoadingForm));
     }
 
 
@@ -151,7 +159,7 @@ public class PresentationLayerClass : IPresentationLayer
 
     private async Task<bool> askCloseSetting()
     {
-        ContentDialog dialog = new ContentDialog();
+        dialog = new ContentDialog();
         dialog.Title = "Чтобы начать опрос необходимо закрыть настройки";
         dialog.Content = "Закрыть настройки?";
         dialog.PrimaryButtonText = "Закрыть";
@@ -160,7 +168,7 @@ public class PresentationLayerClass : IPresentationLayer
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            window.getMethod("closeSetting");
+            await window.getMethod("closeSetting");
             return true;
         }
         else
@@ -181,7 +189,7 @@ public class PresentationLayerClass : IPresentationLayer
         window.setFrame(typeof(MainPage));
         // frame.Navigate(typeof(MainWindow));
     }
-    public void callSettingComponent(SettingsService settingsService, bool adminSetting)
+    public async void callSettingComponent()
     {
         bll.openSetting();
     }
@@ -238,16 +246,19 @@ public class PresentationLayerClass : IPresentationLayer
     
     public void openFormApplyKeyForm()
     {
+        /*
         applyKeyForm = new ApplyKeyForm();
-        applyKeyForm.Activate();
+        applyKeyForm.Activate();*/
        
-        //window.setFrame(typeof(ApplyKeyForm));
+        window.setFrame(typeof(ApplyKeyForm));
     }
 
     public string returnKeyApplyKeyForm()
     {
-        var hash = applyKeyForm.ShowAsync(bll);
-        return hash.GetAwaiter().GetResult();
+        //var hash = applyKeyForm.ShowAsync(bll);
+        var hash = window.getReturnMethod("ShowAsync");
+        //return hash.GetAwaiter().GetResult();
+        return hash.ToString();
     }
 
     public void refreshSetting()
@@ -265,23 +276,30 @@ public class PresentationLayerClass : IPresentationLayer
 
     private async void DialogShow(string title, string content)
     {
-        ContentDialog deleteFileDialog = new ContentDialog()
+        dialog = new ContentDialog()
         {
             Title = title,
             Content = content,
             PrimaryButtonText = "ОК",
             SecondaryButtonText = "Отмена"
         };
-        ContentDialogResult dialogResult = await deleteFileDialog.ShowAsync();
+        ContentDialogResult dialogResult = await dialog.ShowAsync();
         result = dialogResult == ContentDialogResult.Primary;
 
     }
 
-    public void openNormalSetting()
+    public async Task openNormalSetting()
     {
-        window.getMethod("changeSetting");
+        try
+        {
+            await window.getMethod("changeSetting");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+        }
     }
-    public void openAdminSetting()
+    public async Task openAdminSetting()
     {
         window.getMethod("changeSetting");
     }

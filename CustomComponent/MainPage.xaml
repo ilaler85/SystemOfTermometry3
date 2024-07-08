@@ -17,7 +17,7 @@
                         IsBackButtonVisible="Collapsed"
                         PaneDisplayMode="Auto"
                         OpenPaneLength="230">
-                        
+
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name ="itemAllSilos" Content="Силосы" Tag="menuItem" IsSelected="True"/>
                 <NavigationViewItem x:Name ="itemObserv" Content="Запустить опрос" Tag="menuItem" Icon="Play" />

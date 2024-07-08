@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using OxyPlot;
 using SystemOfThermometry3.WinUIWorker;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
+using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,7 +17,7 @@ namespace SystemOfThermometry3.CustomComponent;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class ApplyKeyForm : Window
+public sealed partial class ApplyKeyForm : Page
 {
     private bool passwordCorrect;
     private IBisnesLogicLayer bll;
@@ -25,16 +28,17 @@ public sealed partial class ApplyKeyForm : Window
     public ApplyKeyForm()
     {
         this.InitializeComponent();
+        
         bll = null;
     }
 
 
-    /* protected override void OnNavigatedTo(NavigationEventArgs e)
+     protected override void OnNavigatedTo(NavigationEventArgs e)
      {
          if (e != null)
              bll = (IBisnesLogicLayer)e.Parameter;
 
-     }*/
+     }
 
     public async Task<string> ShowAsync(IBisnesLogicLayer bll)
     {
@@ -53,33 +57,37 @@ public sealed partial class ApplyKeyForm : Window
         BoxQuest.Text = hash;
         
     }
-    private void ButtonOk_Clic(object sender, RoutedEventArgs e)
+    private async void ButtonOk_Clic(object sender, RoutedEventArgs e)
     {
         hash = BoxKey.Text.Trim();
-        Locker.Set();
+        //bll.checkSSHKey(hash);
+       // Locker.Set();
 
-       /* if (bll.checkSSHKey(BoxKey.Text.Trim()))
+        if (bll.checkSSHKey(BoxKey.Text.Trim()))
         {
-            
-            // переделать
-            bll.successfulActivation();
+            await bll.successfulActivation();
         }
         else
         {
-            ContentDialog dialog = new ContentDialog();
-            dialog.PrimaryButtonText = "OK";
-            dialog.Content = "Неверный Ключ Активации!";
-            dialog.Title = "Неудача";
-        }*/
+            BoxKey.Text = "";
+            ToggleThemeTeachingTip1.IsOpen = true;
+            /*ContentDialog contentDialog = new ContentDialog()
+            {
+                Title = "Неудача",
+                Content = "Неверный Ключ Активации!",
+                CloseButtonText = "ОК"
+            };*/
+            //var result  = await contentDialog.ShowAsync();
+        }
     }
     private void ButtonExit_Click(object sender, RoutedEventArgs e)
     {
         hash = "exit";
-        Locker.Set();
-        //bll.failedActivation();
+        //Locker.Set();
+        bll.failedActivation();
     }
 
-    private async  void TextPaste_event(object sender, TextControlPasteEventArgs e)
+    private void TextPaste_event(object sender, TextControlPasteEventArgs e)
     {
         DataPackage dataPackage = new DataPackage();
         dataPackage.RequestedOperation = DataPackageOperation.Copy;

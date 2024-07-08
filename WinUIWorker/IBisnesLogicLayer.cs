@@ -30,7 +30,7 @@ public interface IBisnesLogicLayer
     /// <summary>
     /// Удачная активация приложения
     /// </summary>
-    public void successfulActivation();
+    public Task successfulActivation();
 
     /// <summary>
     /// Ошибка активации приложения

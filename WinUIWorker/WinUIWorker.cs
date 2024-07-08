@@ -63,7 +63,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public void loadProgram()
     {
-        checkApplyKey();
+        //checkApplyKey();
 
         connectDB();
     }
@@ -76,6 +76,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
             return;
 
         presentation.openFormApplyKeyForm();
+        /*
         while (flag)
         {
             hash = presentation.returnKeyApplyKeyForm();
@@ -90,13 +91,21 @@ public partial class WinUIWorker : IBisnesLogicLayer
             else
                 presentation.callMessageBox("Ошибка SSH ключа");
         }
+        */
 
     }
 
 
-    public void successfulActivation()
+    public async Task successfulActivation()
     {
-        connectDB();
+        try
+        {
+            await connectDB();
+        }
+        catch 
+        {
+            throw new Exception("Error async");
+        }
     }
 
     public void failedActivation()
@@ -104,7 +113,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         CustomClose();
     }
 
-    private void connectDB()
+    private async Task connectDB()
     {
         dao = new MySQLDAO();
         string connectionString = FileProcessingService.getConnectionString();
@@ -112,8 +121,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         if (connectionString == "") //Первое подключение
         {
-            var connestString = presentation.openFormConnectDBDialog().Result;
-            asyncConnectDB(connestString);
+            presentation.openFormConnectDBDialog2();
+            /*var connestString = presentation.openFormConnectDBDialog().Result;
+            asyncConnectDB(connestString);*/
         }
         else
         {
@@ -572,30 +582,39 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public void openSetting()
     {
-        if (observer.IsRunning)
+       Action action =  new Action(async () =>
         {
-            if (presentation.stopObserv() == true)
-            {
-                presentation.stopObservMode();
-                stopObserv();
-                Thread.Sleep(300);
-            }
-            else
-                return;
 
-        }
-        try
+            if (observer.IsRunning)
+            {
+                if (presentation.stopObserv() == true)
+                {
+                    presentation.stopObservMode();
+                    stopObserv();
+                    Thread.Sleep(300);
+                }
+                else
+                    return;
+
+            }
+            try
+            {
+                isSettingWindowOpen = true;
+                if (settingsService.IsAdminMode)
+                    await presentation.openAdminSetting();
+                else
+                    await presentation.openNormalSetting();
+            }
+            catch (Exception ex)
+            {
+                MyLoger.LogError(ex.Message);
+            }
+        });
+        /*catch (Exception ex)
         {
-            isSettingWindowOpen = true;
-            if (settingsService.IsAdminMode)
-                presentation.openAdminSetting();
-            else
-                presentation.openNormalSetting();
-        }
-        catch (Exception ex)
-        {
-            MyLoger.LogError(ex.Message);
-        }
+            Debug.WriteLine(ex.Message);
+        }*/
+        action.Invoke();
     }
 
     private void adminEnter()
@@ -827,7 +846,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             if (!dao.connectToDB(connectionString, SettingsService.IsOnlyReadModeS))
             {
-                presentation.callMessageBox("Не удалось подключиться!\n" +
+                await presentation.callMessageBox("Не удалось подключиться!\n" +
                     "проверьте имя пользователя и пароль");
             }
             else
@@ -835,33 +854,33 @@ public partial class WinUIWorker : IBisnesLogicLayer
                 if (!dao.DBisCorrect() && !SettingsService.IsOnlyReadModeS)
                 {
                     bool result = presentation.askDialogShow("Настройки базы данных не корректна.\n" +
-                            "Хотите сбросить и создать новую?").Result;
+                            "Хотите сбросить и создать новую?").GetAwaiter().GetResult();
 
                     if (result)
                     {
                         if (dao.dropAndCreateDB())
                         {
-                            presentation.callMessageBox("Подключение успешно!");
+                            await presentation.callMessageBox("Подключение успешно!");
                             FileProcessingService.setConnectionString(getConnectionString());
                             successStartWithDB();
                         }
                         else
                         {
-                            presentation.callMessageBox("Не удалось подключиться и настроить базу данных");
+                            await presentation.callMessageBox("Не удалось подключиться и настроить базу данных");
                         }
                     }
                 }
                 else
                 {
-                    presentation.callMessageBox("Подключение успешно!");
-                    FileProcessingService.setConnectionString(getConnectionString());
+                    //await presentation.callMessageBox("Подключение успешно!");
+                    FileProcessingService.setConnectionString(connectionString);
                     successStartWithDB();
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
-            throw new Exception("AsuncException");
+            Debug.WriteLine(ex.Message);
         }
     }
 
@@ -869,7 +888,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
     {
         try
         {
-            await Task.Run(() => asyncConnectDB(connectionString));
+            await asyncConnectDB(connectionString);
         }
         catch (Exception ex)
         {

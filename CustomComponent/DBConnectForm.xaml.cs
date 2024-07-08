@@ -25,7 +25,7 @@ namespace SystemOfThermometry3.CustomComponent;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class DBConnectForm : Window
+public sealed partial class DBConnectForm : Page
 {
     private IBisnesLogicLayer bll;
     private string error;
@@ -37,6 +37,11 @@ public sealed partial class DBConnectForm : Window
         this.bll = bll;
     }
 
+    public DBConnectForm()
+    {
+        this.InitializeComponent(); 
+    }
+
     public async Task<string> ShowAsync()
     {
         
@@ -46,13 +51,13 @@ public sealed partial class DBConnectForm : Window
         return getConnectionString();
     }
 
-    /*protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         if (e != null)
             bll = (IBisnesLogicLayer)e.Parameter;
 
     }
-    */
+    
 
     private string getConnectionString()
     {
@@ -86,8 +91,8 @@ public sealed partial class DBConnectForm : Window
         if (errorMessage.Count == 0)
         {
             Locker.Set();
-            this.Close();
-            //await bll.connectDB(connectString);
+            //this.Close();
+            await bll.connectDB(getConnectionString());
         }
         else
         {

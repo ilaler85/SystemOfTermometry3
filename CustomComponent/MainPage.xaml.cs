@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.UI.Xaml;
@@ -88,8 +89,9 @@ public sealed partial class MainPage : Page
 
     public void changeSetting()
     {
-        MethodInfo info = pageType.GetMethod("changeModeSetting");
-        info.Invoke(pageType, parameters: null);
+        contentFrame.Navigate(typeof(SettingComponent), bll);
+        MethodInfo info = contentFrame.Content.GetType().GetMethod("changeModeSetting");
+        info?.Invoke(contentFrame.Content, parameters: null); 
     }
 
 
@@ -192,61 +194,68 @@ public sealed partial class MainPage : Page
         progressBar.Visibility = Visibility.Collapsed;
     }
 
-    private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        FrameNavigationOptions navOptions = new FrameNavigationOptions();
-        navOptions.TransitionInfoOverride = args.RecommendedNavigationTransitionInfo;
-
-        if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Left)
+        try
         {
-            navOptions.IsNavigationStackEnabled = false;
+            FrameNavigationOptions navOptions = new FrameNavigationOptions();
+            navOptions.TransitionInfoOverride = args.RecommendedNavigationTransitionInfo;
+
+            if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Left)
+            {
+                navOptions.IsNavigationStackEnabled = false;
+            }
+
+
+            pageType = typeof(AllSilosComponent); //init
+            var selectedItem = (NavigationViewItem)args.SelectedItem;
+
+            switch (selectedItem.Name)
+            {
+                case "itemAllSilos":
+                    pageType = typeof(AllSilosComponent);
+                    _ = contentFrame.Navigate(pageType, bll);
+                    return;
+
+                case "itemObserv":
+                    bll.runStopObserv();
+                    return;
+
+                case "itemChart":
+                    pageType = typeof(ChartComponent);
+                    contentFrame.Navigate(pageType, bll);
+                    return;
+
+                case "itemSetting":
+                    bll.openSetting();
+                    return;
+
+                case "itemExport":
+                    pageType = typeof(ExportExcelComponent);
+                    contentFrame.Navigate(pageType, bll);
+                    return;
+
+                case "itemAbout":
+                    pageType = typeof(AboutComponent);
+                    break;
+
+                case "adminMode":
+                    bll.changeAdminMode();
+                    return;
+
+                case "refresh":
+                    bll.refreshConnect();
+                    return;
+
+                default: pageType = typeof(AllSilosComponent); break;
+            }
+            _ = contentFrame.Navigate(pageType);
+            //_ = contentFrame.NavigateToType(pageType, null, navOptions);
         }
-
-
-        pageType = typeof(AllSilosComponent); //init
-        var selectedItem = (NavigationViewItem)args.SelectedItem;
-
-        switch (selectedItem.Name)
+        catch (Exception ex)
         {
-            case "itemAllSilos":
-                pageType = typeof(AllSilosComponent);
-                _ = contentFrame.Navigate(pageType, bll);
-                return;
-
-            case "itemObserv":
-                bll.runStopObserv();
-                return;
-
-            case "itemChart":
-                pageType = typeof(ChartComponent);
-                contentFrame.Navigate(pageType, bll);
-                return;
-
-            case "itemSetting":
-                bll.openSetting();
-                return;
-
-            case "itemExport":
-                pageType = typeof(ExportExcelComponent);
-                contentFrame.Navigate(pageType, bll);
-                return;
-
-            case "itemAbout":
-                pageType = typeof(AboutComponent);
-                break;
-
-            case "adminMode":
-                bll.changeAdminMode();
-                return;
-
-            case "refresh":
-                bll.refreshConnect();
-                return;
-                
-            default:  pageType= typeof(AllSilosComponent); break;
+            Debug.WriteLine(ex);
         }
-        _ = contentFrame.Navigate(pageType);
-        //_ = contentFrame.NavigateToType(pageType, null, navOptions);
     }
 
 

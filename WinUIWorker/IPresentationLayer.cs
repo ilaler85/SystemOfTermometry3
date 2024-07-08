@@ -44,7 +44,7 @@ public interface IPresentationLayer
     /// Вызов настроек 
     /// </summary>
     /// <param name="settingsService"></param>
-    public void callSettingComponent(SettingsService settingsService, bool adminSetting);
+    public void callSettingComponent();
 
     /// <summary>
     /// Метод закрытия настроек администратора при нажатии на выход из режима администратора
@@ -78,12 +78,12 @@ public interface IPresentationLayer
     /// <summary>
     /// открваем обычные настройки
     /// </summary>
-    public void openNormalSetting();
+    public Task openNormalSetting();
 
     /// <summary>
     /// открываем настройки Администратора
     /// </summary>
-    public void openAdminSetting();
+    public Task openAdminSetting();
 
     /// <summary>
     /// установка модификации с подключением к БД
@@ -128,7 +128,7 @@ public interface IPresentationLayer
     /// 
     /// </summary>
     /// <param name="message"></param>
-    public void callMessageBox(string message);
+    public Task callMessageBox(string message);
 
     /// <summary>
     /// Сообщение в лог панели 

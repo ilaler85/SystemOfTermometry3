@@ -30,21 +30,16 @@ public sealed partial class SettingComponent : Page
 {
     private IBisnesLogicLayer bll;
     private Type pageType;
-    public SettingComponent(SettingsService settingServices)
+    public SettingComponent()
     {
         this.InitializeComponent();
-
-
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-
-        bll = (IBisnesLogicLayer)e.Parameter;
-        if (!bll.isAdminMode())
-            initNormalSettingMode();
-        else
-            initAdminSettingMode();
+        if(e!=null)
+            bll = (IBisnesLogicLayer) e.Parameter;
+       
     }
 
     public void changeModeSetting()

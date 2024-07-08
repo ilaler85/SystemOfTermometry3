@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window
+<Page
     x:Class="SystemOfThermometry3.CustomComponent.ApplyKeyForm"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <TextBox Name="BoxQuest" Header="Запрос" Text="{Binding Source=hash}" Paste="TextPaste_event" Margin="0, 0, 0, 10" Width="400"></TextBox>
+        <TextBox Name="BoxQuest" Header="Запрос" PlaceholderText ="Код компьютера"  Paste="TextPaste_event" Margin="0, 0, 0, 10" Width="400"></TextBox>
         <TeachingTip x:Name="ToggleThemeTeachingTip2"
 	                Title="Скопировано"
 	                Subtitle="Ключ скопирован"
@@ -23,7 +23,13 @@
         <TextBox Name="BoxKey" Header="Ключ" Margin="0, 0, 0, 10"  Width="400"></TextBox>
         <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0" >
             <Button Name="ButtonOk" Content="Принять" Click="ButtonOk_Clic" Margin="0, 0, 10, 0"></Button>
+            <TeachingTip x:Name="ToggleThemeTeachingTip1"
+                Title="Неверный ключ">
+            <TeachingTip.IconSource>
+                <SymbolIconSource Symbol="Cancel" />
+            </TeachingTip.IconSource>
+            </TeachingTip>
             <Button Name="ButtonExit" Content="Выход" Click="ButtonExit_Click" Margin="10, 0, 0, 0"></Button>
         </StackPanel>
         </StackPanel>
-</Window>
+</Page>
