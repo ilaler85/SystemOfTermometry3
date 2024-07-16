@@ -61,119 +61,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         this.presentation = presentation;
     }
 
-    public void loadProgram()
-    {
-        //checkApplyKey();
-
-        connectDB();
-    }
-    private void checkApplyKey()
-    {
-        string hash = "";
-        bool flag = true;
-
-        if (SecurityService.IsActivate())
-            return;
-
-        presentation.openFormApplyKeyForm();
-        /*
-        while (flag)
-        {
-            hash = presentation.returnKeyApplyKeyForm();
-            if (hash == "exit")
-            {
-                flag = false;
-                CustomClose();
-            }
-            else
-            if (checkSSHKey(hash))
-                flag = false;
-            else
-                presentation.callMessageBox("Ошибка SSH ключа");
-        }
-        */
-
-    }
-
-
-    public async Task successfulActivation()
-    {
-        try
-        {
-            await connectDB();
-        }
-        catch 
-        {
-            throw new Exception("Error async");
-        }
-    }
-
-    public void failedActivation()
-    {
-        CustomClose();
-    }
-
-    private async Task connectDB()
-    {
-        dao = new MySQLDAO();
-        string connectionString = FileProcessingService.getConnectionString();
-
-
-        if (connectionString == "") //Первое подключение
-        {
-            presentation.openFormConnectDBDialog2();
-            /*var connestString = presentation.openFormConnectDBDialog().Result;
-            asyncConnectDB(connestString);*/
-        }
-        else
-        {
-            if (dao.connectToDB(connectionString, SettingsService.IsOnlyReadModeS) && (
-                    SettingsService.IsOnlyReadModeS || dao.DBisCorrect())) // попытка подключения
-            {
-                successStartWithDB(); //удачный старт
-            }
-            else // не удалось подключиться
-            {
-                presentation.closeFormConnectDB();
-            }
-        }
-    }
-
-    private void startMainForm()
-    {
-        presentation.startMainForm();
-    }
-
-
-
-    public void successStartWithDB()
-    {
-        presentation.showWindowDownload(true);
-        settingsService = new SettingsService(dao);
-        settingsService.OfflineMode = false;
-        initCustomComponent();
-        /*if (settingsService.OfflineMode)
-            presentation.setOfflineMode();
-        else
-        {
-            if (settingsService.IsAdminMode)
-                presentation.setAdminMode();
-            else
-                presentation.setNormalMode();
-        }*/
-        presentation.closeWindowDownload();
-    }
-
-    /// <summary>
-    /// Вызывается, если работа начата в автономном режиме, т.е. без базы данных.
-    /// </summary>
-    public void successStartOfflineMode()
-    {
-        settingsService = new SettingsService(dao);
-        settingsService.OfflineMode = true;
-
-        initCustomComponent();
-    }
 
     /// <summary>
     /// Иницилизирует все компоненты, делает привязку событий и тд.
@@ -214,10 +101,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
     /// </summary>
     public void CustomClose()
     {
-        //stopObserv();
-        //this.Close();
+        stopObserv();
         System.Environment.Exit(0);
-        //Application.Exit();
+        //Application.();
     }
 
     /// <summary>
@@ -453,7 +339,6 @@ public partial class WinUIWorker : IBisnesLogicLayer
         }
         else
         {
-
             // Попытка ввести пароль оператора.
             if (settingsService.IsBlockUserSettingsAndObservWithPSWD)
                 if (!presentation.openEnterForm(checkOperatorPassword))
@@ -485,6 +370,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             settingsService.IsObserving = true;
             presentation.setNormalStyleForm();
+            presentation.setStatus("Опрос запущен");
         }
     }
 
@@ -499,6 +385,10 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
         presentation.sendLogMessage("Опрос остановлен.", Color.Red);
         presentation.setStatus("Опрос остановлен.");
+
+        if (settingsService == null) 
+            return;
+
         settingsService.IsObserving = false;
 
         if (settingsService.IsHighlightWhenObservStop)
@@ -582,39 +472,32 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     public void openSetting()
     {
-       Action action =  new Action(async () =>
-        {
 
-            if (observer.IsRunning)
-            {
-                if (presentation.stopObserv() == true)
-                {
-                    presentation.stopObservMode();
-                    stopObserv();
-                    Thread.Sleep(300);
-                }
-                else
-                    return;
-
-            }
-            try
-            {
-                isSettingWindowOpen = true;
-                if (settingsService.IsAdminMode)
-                    await presentation.openAdminSetting();
-                else
-                    await presentation.openNormalSetting();
-            }
-            catch (Exception ex)
-            {
-                MyLoger.LogError(ex.Message);
-            }
-        });
-        /*catch (Exception ex)
+        if (observer.IsRunning)
         {
-            Debug.WriteLine(ex.Message);
-        }*/
-        action.Invoke();
+            if (presentation.stopObserv() == true)
+            {
+                presentation.stopObservMode();
+                stopObserv();
+                Thread.Sleep(300);
+            }
+            else
+                return;
+
+        }
+        try
+        {
+            isSettingWindowOpen = true;
+            if (settingsService.IsAdminMode)
+                presentation.openAdminSetting();
+            else
+                presentation.openNormalSetting();
+        }
+        catch (Exception ex)
+        {
+            MyLoger.LogError(ex.Message);
+        }
+
     }
 
     private void adminEnter()

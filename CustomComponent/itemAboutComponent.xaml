@@ -9,29 +9,30 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Margin="10, 40, 0, 0">
+    <StackPanel Margin="40, 40, 0, 0">
         <TextBlock FontSize="26" Margin="0,0,0,20">O нас</TextBlock>
         <TextBlock Name ="textNameProduct" FontSize="16" Margin="0,0,0,10">
         </TextBlock>
         <TextBlock Name ="textNameProduct2" FontSize="16" Margin="0,0,0,10"></TextBlock>
         <TextBlock FontSize="16" Margin="0,0,0,30">Все права защищены Ⓒ</TextBlock>
-        <StackPanel Margin="0,0,0,10">
-            <Image />
+        
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <SymbolIcon Symbol="MapPin"/>
             <HyperlinkButton Content="394088, г. Воронеж, ул. Электросигнальная, д. 13/4" NavigateUri="https://yandex.ru/maps/-/CDbafSMg" />
         </StackPanel>
-        <StackPanel Margin="12,0,0,10">
-            <Image />
-            <TextBlock Name ="number" Text="+7 (473) 203-06-04"></TextBlock>
-        </StackPanel>
-
         
-
-        <StackPanel Margin="12,0,0,10">
-            <Image />
-            <TextBlock Name ="mail" Text="info@vrn-vik.ru"></TextBlock>
+        <StackPanel Margin="0,0,0,10"  Orientation="Horizontal">
+            <SymbolIcon Symbol="Phone"/>
+            <TextBlock Name ="number" Text="+7 (473) 203-06-04" Margin="10, 0, 0, 0"></TextBlock>
         </StackPanel>
-        <StackPanel Margin="0,0,0,10">
-            <Image />
+
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <SymbolIcon Symbol="Mail"/>
+            <TextBlock Name ="mail" Text="info@vrn-vik.ru" Margin="10, 0, 0, 0"></TextBlock>
+        </StackPanel>
+            
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <SymbolIcon Symbol="World"/>
             <HyperlinkButton Content="www.vrn-vik.ru" NavigateUri="http://www.vrn-vik.ru" />
         </StackPanel>
         <Image Name ="imageQRCode"></Image>

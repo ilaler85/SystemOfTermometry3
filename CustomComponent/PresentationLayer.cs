@@ -121,7 +121,7 @@ public class PresentationLayerClass : IPresentationLayer
 
         ContentDialogResult result = await dialog.ShowAsync();*/
 
-        
+
     }
     public void refreshALL()
     {
@@ -140,9 +140,10 @@ public class PresentationLayerClass : IPresentationLayer
         return resultConnect;
     }
 
-    public void openFormConnectDBDialog2()
+    public async Task<bool> openFormConnectDBDialog2()
     {
         window.setFrame(typeof(DBConnectForm));
+        return true;
     }
     public void showWindowDownload(bool flag)
     {
@@ -168,7 +169,7 @@ public class PresentationLayerClass : IPresentationLayer
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            await window.getMethod("closeSetting");
+            window.getMethod("closeSetting");
             return true;
         }
         else
@@ -189,7 +190,7 @@ public class PresentationLayerClass : IPresentationLayer
         window.setFrame(typeof(MainPage));
         // frame.Navigate(typeof(MainWindow));
     }
-    public async void callSettingComponent()
+    public void callSettingComponent()
     {
         bll.openSetting();
     }
@@ -198,18 +199,23 @@ public class PresentationLayerClass : IPresentationLayer
         isAdminMode = false;
         window.getMethod("setNormalSetting");
     }
+
     public bool stopObserv()
     {
         DialogShow("Требуется подтверждение", "Остановить опрос плат?");
         return result;
     }
+
     public void setStopStyleForm()
     {
         window.getMethod("setStopObservMode");
+        window.setStyle("Опрос остановлен");
     }
+
     public void setNormalStyleForm()
     {
         window.getMethod("setStartObservMode");
+        window.setStyle("Обычные настройки");
     }
 
 
@@ -230,6 +236,7 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public void setStatus(string message)
     {
+        window.setStyle("Термометрия NIKA " + message);
         //window.Title = "Термометрия NIKA " + message;
     }
     public void overheatMessageBox(StringBuilder message, bool playSound)
@@ -243,14 +250,16 @@ public class PresentationLayerClass : IPresentationLayer
         return true;
     }
 
-    
+
     public void openFormApplyKeyForm()
     {
         /*
         applyKeyForm = new ApplyKeyForm();
         applyKeyForm.Activate();*/
-       
+
         window.setFrame(typeof(ApplyKeyForm));
+        // window.getMethod<bool>("ShowAsync");
+        //return await ApplyKeyForm.ShowAsync();
     }
 
     public string returnKeyApplyKeyForm()
@@ -283,23 +292,17 @@ public class PresentationLayerClass : IPresentationLayer
             PrimaryButtonText = "ОК",
             SecondaryButtonText = "Отмена"
         };
-        ContentDialogResult dialogResult = await dialog.ShowAsync();
-        result = dialogResult == ContentDialogResult.Primary;
+        await dialog.ShowAsync();
+        //ContentDialogResult dialogResult = await dialog.ShowAsync();
+        //result = dialogResult == ContentDialogResult.Primary;
 
     }
 
-    public async Task openNormalSetting()
+    public void openNormalSetting()
     {
-        try
-        {
-            await window.getMethod("changeSetting");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.Message);
-        }
+        window.getMethod("changeSetting");
     }
-    public async Task openAdminSetting()
+    public void openAdminSetting()
     {
         window.getMethod("changeSetting");
     }

@@ -37,9 +37,11 @@ public sealed partial class SettingComponent : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if(e!=null)
-            bll = (IBisnesLogicLayer) e.Parameter;
-       
+        if (e != null)
+        {
+            bll = (IBisnesLogicLayer)e.Parameter;
+            changeModeSetting();
+        }
     }
 
     public void changeModeSetting()

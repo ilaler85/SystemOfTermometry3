@@ -21,6 +21,7 @@ public sealed partial class ApplyKeyForm : Page
 {
     private bool passwordCorrect;
     private IBisnesLogicLayer bll;
+    static bool result = false;
     string hash = "";
     private static AutoResetEvent Locker = new AutoResetEvent(false);
 
@@ -30,7 +31,7 @@ public sealed partial class ApplyKeyForm : Page
         this.InitializeComponent();
         
         bll = null;
-    }
+    } 
 
 
      protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -40,15 +41,13 @@ public sealed partial class ApplyKeyForm : Page
 
      }
 
-    public async Task<string> ShowAsync(IBisnesLogicLayer bll)
+    public async Task<bool> ShowAsync()
     {
-        this.bll = bll;
-
         await Task.Run(() => {
             Locker.WaitOne();  //Wait a singal
         });
         
-        return hash;
+        return result;
     }
 
     private void ButtonGeneric_Click(object sender, RoutedEventArgs e)
@@ -57,7 +56,7 @@ public sealed partial class ApplyKeyForm : Page
         BoxQuest.Text = hash;
         
     }
-    private async void ButtonOk_Clic(object sender, RoutedEventArgs e)
+    private void ButtonOk_Clic(object sender, RoutedEventArgs e)
     {
         hash = BoxKey.Text.Trim();
         //bll.checkSSHKey(hash);
@@ -65,7 +64,9 @@ public sealed partial class ApplyKeyForm : Page
 
         if (bll.checkSSHKey(BoxKey.Text.Trim()))
         {
-            await bll.successfulActivation();
+            result = true;
+            //Locker.Set();
+            bll.successfulActivation();
         }
         else
         {
@@ -82,9 +83,9 @@ public sealed partial class ApplyKeyForm : Page
     }
     private void ButtonExit_Click(object sender, RoutedEventArgs e)
     {
-        hash = "exit";
-        //Locker.Set();
+        result =false;
         bll.failedActivation();
+        //bll.failedActivation();
     }
 
     private void TextPaste_event(object sender, TextControlPasteEventArgs e)

@@ -9,6 +9,8 @@ using Mysqlx.Notice;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Diagnostics;
+using Windows.UI.ViewManagement;
+using Microsoft.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,31 +25,21 @@ public sealed partial class MainWindow : Window
     private WinUIWorker.WinUIWorker worker;
     public MainWindow(IBisnesLogicLayer bll)
     {
-        //frame = new Frame();
         this.InitializeComponent();
-        
-        //Windows.UI.ViewManagement.ApplicationView appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-        //appView.SetPreferredMinSize(new Size(600, 500));
         this.bll = bll;
-
 
     }
 
     public MainWindow()
     {
         this.InitializeComponent();
-        
-        worker = new WinUIWorker.WinUIWorker(this);
 
+        worker = new WinUIWorker.WinUIWorker(this);
         bll = worker;
-        //frame.Navigate(typeof(MainPage), bll);
-        //setFrame(typeof(MainPage));
-        //_ = frame.Navigate(typeof(MainPage), bll);
     }
 
     public void startBLL()
     {
-        //setFrame(typeof(MainPage));
         worker.loadProgram();
     }
 
@@ -63,29 +55,26 @@ public sealed partial class MainWindow : Window
 
     public void getMethod(string nameMethod, object[] objects)
     {
-        MethodInfo method = frame.GetType().GetMethod(nameMethod);
-        method.Invoke(method, objects);
+        MethodInfo method = frame.Content.GetType().GetMethod(nameMethod);
+        method.Invoke(frame.Content, objects);
     }
 
-    public async void getMethod(string nameMethod)
+    public T getMethod<T>(string nameMethod) where T : struct
     {
-        try
-        {
-            
-            var method = frame.Content.GetType().GetMethod(nameMethod);
-            method?.Invoke(frame.Content, parameters: null);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-        }
+        MethodInfo method = frame.Content.GetType().GetMethod(nameMethod);
+        return (T)method?.Invoke(frame.Content, parameters: null);
     }
 
+    public void getMethod(string nameMethod)
+    {
+
+        MethodInfo method = frame.Content.GetType().GetMethod(nameMethod);
+        method?.Invoke(frame.Content, parameters: null);
+    }
 
     public object getReturnMethod(string nameMethod)
     {
-        MethodInfo method = frame.GetType().GetMethod(nameMethod);
-
+        MethodInfo method = frame.Content.GetType().GetMethod(nameMethod);
         return method?.Invoke(frame.Content, parameters: null);
     }
 
@@ -100,9 +89,29 @@ public sealed partial class MainWindow : Window
             CloseButtonText = "OK"
         };
 
-        ContentDialogResult result = await dialog.ShowAsync();
+        await dialog.ShowAsync();
 
 
+    }
+
+    public void setStyle(string title)
+    {
+        ApplicationView.GetForCurrentView().Title = title;
+        var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+        titleBar.ForegroundColor = Colors.White;
+        titleBar.BackgroundColor = Colors.Green;
+        titleBar.ButtonForegroundColor = Colors.White;
+        titleBar.ButtonBackgroundColor = Colors.SeaGreen;
+        titleBar.ButtonHoverForegroundColor = Colors.White;
+        titleBar.ButtonHoverBackgroundColor = Colors.DarkSeaGreen;
+        titleBar.ButtonPressedForegroundColor = Colors.Gray;
+        titleBar.ButtonPressedBackgroundColor = Colors.LightGreen;
+
+        // Set inactive window colors
+        titleBar.InactiveForegroundColor = Colors.Gainsboro;
+        titleBar.InactiveBackgroundColor = Colors.SeaGreen;
+        titleBar.ButtonInactiveForegroundColor = Colors.Gainsboro;
+        titleBar.ButtonInactiveBackgroundColor = Colors.SeaGreen;
     }
 
 }

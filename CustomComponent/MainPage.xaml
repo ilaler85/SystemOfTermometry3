@@ -27,6 +27,7 @@
                 <NavigationViewItem x:Name ="itemExport" Content="Экспорт в Excel" Tag="menuItem" Icon="Save" />
                 <NavigationViewItem x:Name ="itemAdminMode" Content="Включть режим администратора" Tag="menuItem" Icon="Admin" />
                 <NavigationViewItem x:Name ="refresh" Content="Переподключиться" Tag="menuItem" Icon="Refresh" />
+                
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>

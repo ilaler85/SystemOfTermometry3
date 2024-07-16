@@ -7,6 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Frame x:Name="frame"/>
-    
+    <Grid>
+        <Border x:Name="AppTitleBar" Grid.Column="1" VerticalAlignment="Top">
+            <TextBlock x:Name="AppTitle" VerticalAlignment="Top" Margin="0,8,0,0" />
+        </Border>
+
+        <Frame x:Name="frame" Grid.Column="2"/>
+    </Grid>
+
 </Window>

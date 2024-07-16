@@ -89,9 +89,9 @@ public sealed partial class MainPage : Page
 
     public void changeSetting()
     {
-        contentFrame.Navigate(typeof(SettingComponent), bll);
-        MethodInfo info = contentFrame.Content.GetType().GetMethod("changeModeSetting");
-        info?.Invoke(contentFrame.Content, parameters: null); 
+        _ = contentFrame.Navigate(typeof(SettingComponent), bll);
+        //MethodInfo info = contentFrame.Content.GetType().GetMethod("changeModeSetting");
+        //info?.Invoke(contentFrame.Content, parameters: null); 
     }
 
 
@@ -140,6 +140,7 @@ public sealed partial class MainPage : Page
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE785";
         itemAdminMode.Icon = icon;
+        itemAdminMode.Content = "Выйти из режима администратора";
         setTitleText("Термометрия Nika. Режим Администратора");
     }
 
@@ -148,7 +149,7 @@ public sealed partial class MainPage : Page
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE72E";
         itemAdminMode.Icon = icon;
-        itemAdminMode.Content = "";
+        itemAdminMode.Content = "Включить режим администратора";
         setTitleText("Термометрия Nika. Режим оператора");
     }
 
@@ -194,7 +195,7 @@ public sealed partial class MainPage : Page
         progressBar.Visibility = Visibility.Collapsed;
     }
 
-    private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         try
         {

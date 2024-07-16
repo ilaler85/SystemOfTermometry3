@@ -19,7 +19,7 @@ public interface IPresentationLayer
     /// </summary>
     public Task<string> openFormConnectDBDialog();
 
-    public void openFormConnectDBDialog2();
+    public Task<bool> openFormConnectDBDialog2();
 
     /// <summary>
     /// закрытие формы подключения к бд
@@ -78,12 +78,12 @@ public interface IPresentationLayer
     /// <summary>
     /// открваем обычные настройки
     /// </summary>
-    public Task openNormalSetting();
+    public void openNormalSetting();
 
     /// <summary>
     /// открываем настройки Администратора
     /// </summary>
-    public Task openAdminSetting();
+    public void openAdminSetting();
 
     /// <summary>
     /// установка модификации с подключением к БД
