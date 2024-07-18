@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.WinUIWorker;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,7 +25,7 @@ namespace SystemOfThermometry3.CustomComponent.SettingComponents;
 /// </summary>
 public sealed partial class GeneralSetting : Page
 {
-    SettingsService settingsService;
+    IBisnesLogicLayer bll;
     public GeneralSetting()
     {
         this.InitializeComponent();
@@ -32,7 +33,8 @@ public sealed partial class GeneralSetting : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        settingsService = (SettingsService)e.Parameter;
+        if(e!=null)
+            bll = (IBisnesLogicLayer)e.Parameter;
         BoxHeigh.Text = settingsService.PlotHeight.ToString();
         BoxWidth.Text = settingsService.PlotWidth.ToString();
         BoxNameCompany.Text = settingsService.CompanyName;
