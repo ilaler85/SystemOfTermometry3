@@ -21,9 +21,7 @@
         <PasswordBox x:Name="BoxPassword" Header="Пароль"  Margin="0, 16, 0, 0"></PasswordBox>
         <StackPanel Orientation="Horizontal" Margin="0, 16, 0, 0">
             <Button x:Name="ButConnect" Content="Подключиться" Click="ButConnect_Click" Margin="0, 0, 10, 0"></Button>
-            <TeachingTip x:Name="ToggleThemeTeachingTip1"
-                Title="Есть пустые строки"
-                >
+            <TeachingTip x:Name="ToggleThemeTeachingTip1" Title="Есть пустые строки">
                 <TeachingTip.IconSource>
                     <SymbolIconSource Symbol="Cancel" />
                 </TeachingTip.IconSource>

@@ -18,22 +18,22 @@
         
         <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
             <SymbolIcon Symbol="MapPin"/>
-            <HyperlinkButton Content="394088, г. Воронеж, ул. Электросигнальная, д. 13/4" NavigateUri="https://yandex.ru/maps/-/CDbafSMg" />
+            <HyperlinkButton Content="394088, г. Воронеж, ул. Электросигнальная, д. 13/4" Margin="5,0,0,0" NavigateUri="https://yandex.ru/maps/-/CDbafSMg" />
         </StackPanel>
         
         <StackPanel Margin="0,0,0,10"  Orientation="Horizontal">
             <SymbolIcon Symbol="Phone"/>
-            <TextBlock Name ="number" Text="+7 (473) 203-06-04" Margin="10, 0, 0, 0"></TextBlock>
+            <TextBlock Name ="number" Text="+7 (473) 203-06-04" Margin="15, 0, 0, 0"></TextBlock>
         </StackPanel>
 
         <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
             <SymbolIcon Symbol="Mail"/>
-            <TextBlock Name ="mail" Text="info@vrn-vik.ru" Margin="10, 0, 0, 0"></TextBlock>
+            <TextBlock Name ="mail" Text="info@vrn-vik.ru" Margin="15, 0, 0, 0"></TextBlock>
         </StackPanel>
             
         <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
             <SymbolIcon Symbol="World"/>
-            <HyperlinkButton Content="www.vrn-vik.ru" NavigateUri="http://www.vrn-vik.ru" />
+            <HyperlinkButton Content="www.vrn-vik.ru" NavigateUri="http://www.vrn-vik.ru" Margin="5,0,0,0"/>
         </StackPanel>
         <Image Name ="imageQRCode"></Image>
     </StackPanel>

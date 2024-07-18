@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -87,9 +89,12 @@ public sealed partial class MainPage : Page
         return true;
     }
 
-    public void changeSetting()
+    public async Task changeSetting()
     {
-        _ = contentFrame.Navigate(typeof(SettingComponent), bll);
+        _ = Task.Run(() =>
+        {
+            _ = contentFrame.Navigate(typeof(SettingComponent), bll);
+        });
         //MethodInfo info = contentFrame.Content.GetType().GetMethod("changeModeSetting");
         //info?.Invoke(contentFrame.Content, parameters: null); 
     }
@@ -132,13 +137,14 @@ public sealed partial class MainPage : Page
     }
     public void closeSetting()
     {
-        contentFrame.Navigate(typeof(AllSilosComponent), bll);
+        _ = contentFrame.Navigate(typeof(AllSilosComponent), bll);
     }
 
     public void setAdminMode()
     {
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE785";
+        //iconAdminMode.Symbol = Symbol.Admin;
         itemAdminMode.Icon = icon;
         itemAdminMode.Content = "Выйти из режима администратора";
         setTitleText("Термометрия Nika. Режим Администратора");
@@ -148,6 +154,7 @@ public sealed partial class MainPage : Page
     {
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE72E";
+        //iconAdminMode.Symbol = Symbol.Emoji;
         itemAdminMode.Icon = icon;
         itemAdminMode.Content = "Включить режим администратора";
         setTitleText("Термометрия Nika. Режим оператора");
@@ -178,6 +185,7 @@ public sealed partial class MainPage : Page
         FontIcon icon = new FontIcon();
         icon.Glyph = "\uE822";
         itemAdminMode.Icon = icon;
+        //iconAdminMode.Symbol = Symbol.Important;
         itemAdminMode.Content = "Выйти из режима обзора";
         setTitleText("Термометрия Nika. Offline режим");
         
@@ -255,7 +263,7 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            //Debug.WriteLine(ex);
         }
     }
 
@@ -275,16 +283,9 @@ public sealed partial class MainPage : Page
         adminEnter();
     }
 
-    private void aboutSelfButton_Click(object sender, RoutedEventArgs e)
-    {
-        
-    }
-
-
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         if (e != null)
             bll = (IBisnesLogicLayer)e.Parameter;
     }
-
 }

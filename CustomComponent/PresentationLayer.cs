@@ -108,9 +108,9 @@ public class PresentationLayerClass : IPresentationLayer
         {
             await window.callMessageBox(message);
         }
-        catch (Exception ex)
+        catch 
         {
-            Debug.WriteLine(ex);
+            //Debug.WriteLine(ex);
         }
         /*dialog = new ContentDialog
         {
@@ -200,10 +200,16 @@ public class PresentationLayerClass : IPresentationLayer
         window.getMethod("setNormalSetting");
     }
 
-    public bool stopObserv()
+    public Task<bool> stopObserv()
     {
-        DialogShow("Требуется подтверждение", "Остановить опрос плат?");
-        return result;
+        try
+        {
+            return DialogShow("Требуется подтверждение", "Остановить опрос плат?");
+        }
+        catch 
+        {
+            throw new Exception("Error forms");
+        }
     }
 
     public void setStopStyleForm()
@@ -283,7 +289,7 @@ public class PresentationLayerClass : IPresentationLayer
 
     }
 
-    private async void DialogShow(string title, string content)
+    private async Task<bool> DialogShow(string title, string content)
     {
         dialog = new ContentDialog()
         {
@@ -292,19 +298,19 @@ public class PresentationLayerClass : IPresentationLayer
             PrimaryButtonText = "ОК",
             SecondaryButtonText = "Отмена"
         };
-        await dialog.ShowAsync();
-        //ContentDialogResult dialogResult = await dialog.ShowAsync();
-        //result = dialogResult == ContentDialogResult.Primary;
-
+        //await dialog.ShowAsync();
+        ContentDialogResult dialogResult = await dialog.ShowAsync();
+        result = dialogResult == ContentDialogResult.Primary;
+        return result;
     }
 
-    public void openNormalSetting()
+    public async Task openNormalSetting()
     {
-        window.getMethod("changeSetting");
+       await Task.Run(()=> window.getMethod("changeSetting"));
     }
-    public void openAdminSetting()
+    public async Task openAdminSetting()
     {
-        window.getMethod("changeSetting");
+        await Task.Run(() => window.getMethod("changeSetting"));
     }
 }
 

@@ -78,12 +78,12 @@ public interface IPresentationLayer
     /// <summary>
     /// открваем обычные настройки
     /// </summary>
-    public void openNormalSetting();
+    public Task openNormalSetting();
 
     /// <summary>
     /// открываем настройки Администратора
     /// </summary>
-    public void openAdminSetting();
+    public Task openAdminSetting();
 
     /// <summary>
     /// установка модификации с подключением к БД
@@ -105,7 +105,7 @@ public interface IPresentationLayer
     /// Вызывает окно с вопросом остановки опроса датчиков
     /// </summary>
     /// <returns>true можно остановить опрос, false не останавливать</returns>
-    public bool stopObserv(); 
+    public Task<bool> stopObserv(); 
 
     /// <summary>
     /// Установка темы приложения при остановке опроса платы

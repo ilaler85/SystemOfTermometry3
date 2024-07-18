@@ -9,7 +9,32 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <StackPanel Margin="40, 40, 0, 0">
 
-    </Grid>
+        <TextBlock FontSize="28" Text="Экспорт эксель файла" Margin="0,0,0,20"/>
+        <RadioButtons Header="Экспортировать:">
+            <RadioButton x:Name="rbOneSilos" Content="Один силос" Checked="rbOneSilos_Checked"/>
+            <RadioButton x:Name="rbAllSilos" Content="Все силоса" IsChecked="True" Checked="rbAllSilos_Checked"/>
+        </RadioButtons>
+
+
+        <TextBlock Text = "Введите дату и время" FontSize="16" Margin="0, 20, 0 ,10"/>
+        <StackPanel Orientation="Horizontal">
+
+            <TimePicker x:Name="TimePicker" ClockIdentifier="24HourClock" Header="Время" Margin="0,7,0,0" />
+
+            <CalendarDatePicker x:Name="CalendarPicker" PlaceholderText ="Выберете дату" Header="Дата" Margin="10, 0, 0, 0" />
+            <TeachingTip x:Name="TipCalendar" Title="Упс!" Subtitle="Не установлена дата или время" PreferredPlacement="Auto"
+                        PlacementMargin="20" IsLightDismissEnabled="True" CloseButtonContent="Ok">
+                <TeachingTip.IconSource>
+                    <SymbolIconSource Symbol="Calendar" />
+                </TeachingTip.IconSource>
+            </TeachingTip>
+        </StackPanel>
+        <StackPanel>
+            <Button Name ="OpenFolderButton" Content="Выбрать путь файла" Click="OpenFolderButton_Click"></Button>
+            <TextBlock Name ="filePath" Text="Путь не выбран" Margin="20,0,0,0"></TextBlock>
+        </StackPanel>
+        <AppBarToggleButton Label="Экспорт" Click="AppBarToggleButton_Click" Margin="0,30,0,0" Icon="Save" />
+    </StackPanel>
 </Page>

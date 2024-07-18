@@ -14,7 +14,7 @@ using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
 
 namespace SystemOfThermometry3.WinUIWorker;
-public partial class WinUIWorker : IBisnesLogicLayer
+public partial  class WinUIWorker : IBisnesLogicLayer
 {
     private IPresentationLayer presentation;
 
@@ -470,34 +470,52 @@ public partial class WinUIWorker : IBisnesLogicLayer
         showStatus();
     }
 
-    public void openSetting()
+    private async Task openSettingAsync()
     {
-
-        if (observer.IsRunning)
-        {
-            if (presentation.stopObserv() == true)
-            {
-                presentation.stopObservMode();
-                stopObserv();
-                Thread.Sleep(300);
-            }
-            else
-                return;
-
-        }
         try
         {
-            isSettingWindowOpen = true;
-            if (settingsService.IsAdminMode)
-                presentation.openAdminSetting();
-            else
-                presentation.openNormalSetting();
+            if (observer.IsRunning)
+            {
+                bool flagStopObserv = await presentation.stopObserv();
+                if (flagStopObserv == true)
+                {
+                    presentation.stopObservMode();
+                    stopObserv();
+                    Thread.Sleep(300);
+                }
+                else
+                    return;
+
+            }
+            try
+            {
+                isSettingWindowOpen = true;
+                if (settingsService.IsAdminMode)
+                    await presentation.openAdminSetting();
+                else
+                    await presentation.openNormalSetting();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("error openSettingAsync"+ex);
+            }
         }
         catch (Exception ex)
         {
-            MyLoger.LogError(ex.Message);
+            throw new Exception("Error"+ex);
         }
+    }
 
+    public async Task openSetting()
+    {
+        try
+        {
+            await openSettingAsync();
+        }
+        catch 
+        {
+            //Debug.WriteLine(ex.Message);
+        }
     }
 
     private void adminEnter()
@@ -761,9 +779,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
                 }
             }
         }
-        catch (Exception ex)
+        catch 
         {
-            Debug.WriteLine(ex.Message);
+            //Debug.WriteLine(ex.Message);
         }
     }
 
@@ -773,9 +791,9 @@ public partial class WinUIWorker : IBisnesLogicLayer
         {
             await asyncConnectDB(connectionString);
         }
-        catch (Exception ex)
+        catch 
         {
-            Debug.WriteLine(ex.Message);
+            //Debug.WriteLine(ex.Message);
         }
 
     }

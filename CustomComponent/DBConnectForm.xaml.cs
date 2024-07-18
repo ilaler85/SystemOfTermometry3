@@ -90,7 +90,7 @@ public sealed partial class DBConnectForm : Page
         List<string> errorMessage = checkingForEmptyLines();
         if (errorMessage.Count == 0)
         {
-            Locker.Set();
+            //Locker.Set();
             //this.Close();
             await bll.connectDB(getConnectionString());
         }

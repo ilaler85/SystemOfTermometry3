@@ -11,6 +11,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Diagnostics;
 using Windows.UI.ViewManagement;
 using Microsoft.UI;
+using Windows.Storage.Pickers;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -112,6 +114,18 @@ public sealed partial class MainWindow : Window
         titleBar.InactiveBackgroundColor = Colors.SeaGreen;
         titleBar.ButtonInactiveForegroundColor = Colors.Gainsboro;
         titleBar.ButtonInactiveBackgroundColor = Colors.SeaGreen;
+    }
+
+    public async Task<string> openFilaDialog()
+    {
+        FileOpenPicker openPicker = new FileOpenPicker();
+        openPicker.ViewMode = PickerViewMode.Thumbnail;
+        openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
+        StorageFile file = await openPicker.PickSingleFileAsync();
+        if (file != null)
+            return file.Path;
+        return "";
     }
 
 }

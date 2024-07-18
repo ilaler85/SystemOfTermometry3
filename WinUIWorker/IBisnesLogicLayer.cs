@@ -185,7 +185,7 @@ public interface IBisnesLogicLayer
     /// <summary>
     /// открытие настроек
     /// </summary>
-    public void openSetting();
+    public Task openSetting();
 
     /// <summary>
     /// Вычисление заполненности
