@@ -193,6 +193,40 @@ public interface IBisnesLogicLayer
     /// <param name="start">Время начала вычисления</param>
     public int calculateFilling(DateTime start);
 
+    #region Общие настройки
+    /// <summary>
+    /// Получение значений размера экспортируемого графика
+    /// </summary>
+    /// <returns>1 значение ШИРИНА, 2 значение ВЫСОТА</returns>
+    public List<int> getSizeChart();
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public string getNameCompany();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool getOrientationExcelFile();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool getColorCellsExcelFile();
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool getIsHighlightWhenObservStop();
+    #endregion
+
+
     #region настройка типов зерна
 
     /// <summary>

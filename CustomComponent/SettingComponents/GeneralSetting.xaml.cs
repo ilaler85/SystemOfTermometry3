@@ -33,21 +33,20 @@ public sealed partial class GeneralSetting : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if(e!=null)
+        if (e != null)
             bll = (IBisnesLogicLayer)e.Parameter;
-        BoxHeigh.Text = settingsService.PlotHeight.ToString();
-        BoxWidth.Text = settingsService.PlotWidth.ToString();
-        BoxNameCompany.Text = settingsService.CompanyName;
-        if (settingsService.ExcelExportType == SettingsService.EXCEL_EXPORT_STANDARD_TEMPLATE)
+
+        List<int> sizeChart = bll.getSizeChart();
+        BoxHeigh.Text = sizeChart[1].ToString();
+        BoxWidth.Text = sizeChart[0].ToString();
+        BoxNameCompany.Text = bll.getNameCompany();
+        if (bll.getOrientationExcelFile())
             RadioVertical.IsChecked = true;
         else
             RadioHorizont.IsChecked = true;
 
-        if (settingsService.ExportIsSetColorOnCellWithTemp == false)
-            CheckBoxColorExport.IsChecked = false;
-
-        if(settingsService.IsHighlightWhenObservStop == false)
-            CheckBoxColorStopObserv.IsChecked = false;
+        CheckBoxColorExport.IsChecked = bll.getColorCellsExcelFile();
+        CheckBoxColorStopObserv.IsChecked = bll.getIsHighlightWhenObservStop();
 
         SwitchTemp.IsOn = settingsService.OverheatPlaySound;
         BoxCountSensor.Text = settingsService.OverheatMinimumSensorToTrigger.ToString();
