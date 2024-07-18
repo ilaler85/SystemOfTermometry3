@@ -31,10 +31,16 @@
                 </TeachingTip.IconSource>
             </TeachingTip>
         </StackPanel>
-        <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0" VerticalAlignment = "Center">
             <Button Name ="OpenFolderButton" Content="Выбрать путь файла" Click="OpenFolderButton_Click"></Button>
-            <TextBlock Name ="filePath" Text="Путь не выбран" Margin="20,0,0,0"></TextBlock>
+            <TextBlock Name ="filePath" Text="Путь не выбран" Margin="20,5,0,0"></TextBlock>
         </StackPanel>
+        <Button Name ="exportButton"  Click="AppBarToggleButton_Click" Margin="0,30,0,0" Width="150" Height="50">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <SymbolIcon Symbol="Save" />
+                <TextBlock Text="Экспортировать"/>
+            </StackPanel>
+        </Button>
         <AppBarToggleButton Label="Экспорт" Click="AppBarToggleButton_Click" Margin="0,30,0,0" Icon="Save" />
     </StackPanel>
 </Page>

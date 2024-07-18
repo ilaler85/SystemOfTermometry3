@@ -78,7 +78,7 @@ public interface IPresentationLayer
     /// <summary>
     /// открваем обычные настройки
     /// </summary>
-    public Task openNormalSetting();
+    public void openNormalSetting();
 
     /// <summary>
     /// открываем настройки Администратора

@@ -493,7 +493,7 @@ public partial  class WinUIWorker : IBisnesLogicLayer
                 if (settingsService.IsAdminMode)
                     await presentation.openAdminSetting();
                 else
-                    await presentation.openNormalSetting();
+                    presentation.openNormalSetting();
             }
             catch (Exception ex)
             {

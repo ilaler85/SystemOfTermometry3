@@ -37,6 +37,7 @@ public partial class App : Application
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         window = new MainWindow();
+        Window = window;
         window.Activate();
         window.startBLL();
     }
@@ -46,4 +47,5 @@ public partial class App : Application
         throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
     }
     private MainWindow window;
+    public static Window? Window;
 }

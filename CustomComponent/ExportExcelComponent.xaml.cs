@@ -17,6 +17,7 @@ using System.Text;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using Windows.Storage.Provider;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -91,14 +92,16 @@ namespace SystemOfThermometry3.CustomComponent
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker openPicker = new FileOpenPicker();
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            FileOpenPicker picker = new FileOpenPicker()
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                FileTypeFilter = { ".ofx" }
+            };
+            picker.ViewMode = PickerViewMode.List;
+            nint windowHandle = WindowNative.GetWindowHandle(App.Window);
+            InitializeWithWindow.Initialize(picker, windowHandle);
+            StorageFile file = await picker.PickSingleFileAsync();
 
-            StorageFile file = await openPicker.PickSingleFileAsync();
-            if (file != null)
-                filePath.Text = file.Path;
-            
         }
     }
 }

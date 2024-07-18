@@ -304,9 +304,9 @@ public class PresentationLayerClass : IPresentationLayer
         return result;
     }
 
-    public async Task openNormalSetting()
+    public void openNormalSetting()
     {
-       await Task.Run(()=> window.getMethod("changeSetting"));
+        window.getMethod("changeSetting");
     }
     public async Task openAdminSetting()
     {

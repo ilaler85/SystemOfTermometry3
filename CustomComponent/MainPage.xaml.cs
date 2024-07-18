@@ -28,7 +28,7 @@ public sealed partial class MainPage : Page
         this.InitializeComponent();
         //WinUIWorker.WinUIWorker worker = new WinUIWorker.WinUIWorker(this);
         //bll = worker;
-        
+
         timer.Interval = TimeSpan.FromMilliseconds(4000);
         timer.Tick += Timer_Tick;
         timer.Stop();
@@ -49,7 +49,7 @@ public sealed partial class MainPage : Page
         this.bll = bll;
     }
 
-    private void Timer_Tick(object sender, object e) 
+    private void Timer_Tick(object sender, object e)
     {
         progressBarOff();
         timer.Stop();
@@ -89,18 +89,15 @@ public sealed partial class MainPage : Page
         return true;
     }
 
-    public async Task changeSetting()
+    public void changeSetting()
     {
-        _ = Task.Run(() =>
-        {
-            _ = contentFrame.Navigate(typeof(SettingComponent), bll);
-        });
+        _ = contentFrame.Navigate(typeof(SettingComponent), bll);
         //MethodInfo info = contentFrame.Content.GetType().GetMethod("changeModeSetting");
         //info?.Invoke(contentFrame.Content, parameters: null); 
     }
 
 
-    public void refreshLogPannel(RichTextBox richTextBox )
+    public void refreshLogPannel(RichTextBox richTextBox)
     {
         _ = contentFrame.Navigate(typeof(AllSilosComponent), bll);
     }
@@ -188,7 +185,7 @@ public sealed partial class MainPage : Page
         //iconAdminMode.Symbol = Symbol.Important;
         itemAdminMode.Content = "Выйти из режима обзора";
         setTitleText("Термометрия Nika. Offline режим");
-        
+
     }
 
 
