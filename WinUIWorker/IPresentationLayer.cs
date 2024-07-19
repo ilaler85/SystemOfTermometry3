@@ -61,7 +61,7 @@ public interface IPresentationLayer
     /// Открытие окна проверки пароля 
     /// Передается метод для проверки пароля зависит от запроса
     /// </summary>
-    public bool openEnterForm(modeCheckPassword checkPassword);
+    public bool openEnterForm(modeCheckPassword modeCheckPassword);
 
     /// <summary>
     /// Установка автономного режима
@@ -167,7 +167,7 @@ public interface IPresentationLayer
     /// закрытие настроек при старте опроса
     /// </summary>
     /// <returns>возвращает закрыли (true) ли настройки или нет (false)</returns>
-    public bool closeSetting();
+    public void closeSetting();
 
     /// <summary>
     /// Вызов окна с предупреждением о перегреве датчиков

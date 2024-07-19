@@ -204,4 +204,16 @@ public sealed partial class MailParameters : Page
         saveAndSendTestEmail.Invoke(BoxSMTPServer.Text, BoxMailAddress.Text, BoxPassword.Text, BoxThemeMail.Text, getArrayDestinations(gridMailRecipients),
             (bool)CheckBoxPinCharts.IsChecked, (bool)CheckBoxSendMail.IsChecked, (CheckBoxSendMail.IsChecked == true) ? Convert.ToInt32(BoxTimeSend.Text) : -1);
     }
+
+    private void SwitchSendMail_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (SwitchSendMail.IsOn)
+        {
+            changeEnableTrueMailSetting();
+        }
+        else
+        {
+            changeEnableFalseMailSetting();
+        }
+    }
 }

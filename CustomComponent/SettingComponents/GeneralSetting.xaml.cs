@@ -48,14 +48,12 @@ public sealed partial class GeneralSetting : Page
         CheckBoxColorExport.IsChecked = bll.getColorCellsExcelFile();
         CheckBoxColorStopObserv.IsChecked = bll.getIsHighlightWhenObservStop();
 
-        SwitchTemp.IsOn = settingsService.OverheatPlaySound;
-        BoxCountSensor.Text = settingsService.OverheatMinimumSensorToTrigger.ToString();
-        CheckBoxSendMail.IsChecked = settingsService.OverheatMailSend;
-        CheckBoxSendChart.IsChecked = settingsService.OverheatMailAddPlot;
-        CheckBoxSendExcel.IsChecked = settingsService.OverheatMailAddExcel;
-        BoxTimeOut.Text = settingsService.OverheatTriggerMinimumPeriod.ToString();
-
-
+        SwitchTemp.IsOn = bll.playSound();
+        BoxCountSensor.Text = bll.getOverheatMinimumSensorToTrigger().ToString();
+        CheckBoxSendMail.IsChecked = bll.sendMail();
+        CheckBoxSendChart.IsChecked = bll.sendChart();
+        CheckBoxSendExcel.IsChecked = bll.sendExcel();
+        BoxTimeOut.Text = bll.getOverheatTriggerMinimumPeriod().ToString();
 
     }
 

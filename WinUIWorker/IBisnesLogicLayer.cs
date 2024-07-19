@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OxyPlot;
+using SystemOfThermometry3.CustomComponent.Setting_components;
 using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Services.SettingServices;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public interface IBisnesLogicLayer
@@ -201,19 +203,19 @@ public interface IBisnesLogicLayer
     public List<int> getSizeChart();
     
     /// <summary>
-    /// 
+    /// получение названия компании
     /// </summary>
     /// <returns></returns>
     public string getNameCompany();
 
     /// <summary>
-    /// 
+    /// Получение ориентации при экспорте в Эксель
     /// </summary>
     /// <returns></returns>
     public bool getOrientationExcelFile();
 
     /// <summary>
-    /// 
+    /// Отмечать ли цветным ячейки при экспорте в эксель
     /// </summary>
     /// <returns></returns>
     public bool getColorCellsExcelFile();
@@ -224,8 +226,49 @@ public interface IBisnesLogicLayer
     /// </summary>
     /// <returns></returns>
     public bool getIsHighlightWhenObservStop();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool playSound();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public int getOverheatMinimumSensorToTrigger();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool sendMail();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool sendChart();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool sendExcel();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public int getOverheatTriggerMinimumPeriod();
+
     #endregion
 
+    #region настройка платы
+    public SettingBoard getParametrsBoard();
+
+    #endregion
 
     #region настройка типов зерна
 
@@ -255,7 +298,6 @@ public interface IBisnesLogicLayer
     public void deleteGrain(Grain g);
     #endregion
 
-
     #region автономные ражимы
     /// <summary>
     /// Переход в автономный режим с загрузкой конфигурации из файла 
@@ -281,7 +323,6 @@ public interface IBisnesLogicLayer
     public void loadTemperature(string filepath);
 
     #endregion
-
 
     #region структура подразделения
 
@@ -313,7 +354,6 @@ public interface IBisnesLogicLayer
     public void deleteDivision(int id);
 
     #endregion
-
 
     #region настройки разработчика
 
@@ -431,7 +471,6 @@ public interface IBisnesLogicLayer
     public void dropTemperature(string connectString, DateTime time);
 
     #endregion
-
 
     #region почтовая рассылка
 

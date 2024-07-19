@@ -11,6 +11,8 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Services.SettingServices;
+using SystemOfThermometry3.WinUIWorker;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -23,7 +25,7 @@ namespace SystemOfThermometry3.CustomComponent.Setting_components;
 /// </summary>
 public sealed partial class BoardParameters : Page
 {
-    private SettingsService settingsService;
+    private IBisnesLogicLayer bll;
     public BoardParameters()
     {
         this.InitializeComponent();
@@ -31,19 +33,21 @@ public sealed partial class BoardParameters : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        settingsService = (SettingsService)e.Parameter;
-        BoxNameCOMPort.Text = settingsService.PortComPort;
-        BoxSpeedRead.Text = settingsService.PortBaudRate.ToString();
-        BoxParity.Text = settingsService.PortParity.ToString();
-        BoxCountDataBit.Text = settingsService.PortDataBits.ToString();
-        BoxCountStopBit.Text= settingsService.PortStopBits.ToString();
-        BoxTimeBeforeTimeOut.Text = settingsService.PortTimeOut.ToString();
+        if(e!=null)
+            bll = (IBisnesLogicLayer)e.Parameter;
+        SettingBoard board = bll.getParametrsBoard();
+        BoxNameCOMPort.Text = board.PortComPort;
+        BoxSpeedRead.Text = board.PortBaudRate.ToString();
+        BoxParity.Text = board.PortParity.ToString();
+        BoxCountDataBit.Text = board.PortDataBits.ToString();
+        BoxCountStopBit.Text= board.PortStopBits.ToString();
+        BoxTimeBeforeTimeOut.Text = board.PortTimeOut.ToString();
 
-        BoxSurveyPeriod.Text = settingsService.ObserveIterationPeriod.ToString();
-        BoxCountAttempts.Text = settingsService.ObserveTriesToObserveBrokenWire.ToString();
+        BoxSurveyPeriod.Text = board.ObserveIterationPeriod.ToString();
+        BoxCountAttempts.Text = board.ObserveTriesToObserveBrokenWire.ToString();
 
-        BoxInterrogateBrokenSuspension.Text = settingsService.ObserveBrokenWireTimeOutMilisec.ToString();
-        SwitchTimeOutObservWire.IsOn = settingsService.ObserveIsGiveBrokenWireSecondChanse;
+        BoxInterrogateBrokenSuspension.Text = board.ObserveBrokenWireTimeOutMilisec.ToString();
+        SwitchTimeOutObservWire.IsOn = board.ObserveIsGiveBrokenWireSecondChanse;
         BoxInterrogateBrokenSuspension.IsReadOnly = !SwitchTimeOutObservWire.IsOn;
         
             

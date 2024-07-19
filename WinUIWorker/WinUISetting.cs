@@ -5,12 +5,15 @@ using System.IO.Ports;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Mysqlx.Cursor;
+using SystemOfThermometry3.CustomComponent.Setting_components;
 using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
+using SystemOfThermometry3.Services.SettingServices;
 
 namespace SystemOfThermometry3.WinUIWorker;
 public partial class WinUIWorker
 {
+    public SettingBoard settingBoard;
 
     private void showStatusSetting()
     {
@@ -18,8 +21,82 @@ public partial class WinUIWorker
                 + (settingsService.IsOnlyReadMode ? " Обзор." : ""));
     }
 
-   
 
+    #region общие настройки 
+
+    public List<int> getSizeChart()
+    {
+        List<int> result = new List<int> { settingsService.PlotWidth , settingsService.PlotHeight };
+        return result;
+
+    }
+
+    public string getNameCompany()
+    {
+        return settingsService.CompanyName;
+    }
+
+    public bool getOrientationExcelFile()
+    {
+        if (settingsService.ExcelExportType == SettingsService.EXCEL_EXPORT_STANDARD_TEMPLATE)
+            return true;
+        else if (settingsService.ExcelExportType == SettingsService.EXCEL_EXPORT_LEV_TEMPLATE)
+            return false;
+        else
+            return true;
+    }
+
+    public bool getColorCellsExcelFile()
+    {
+        return settingsService.ExportIsSetColorOnCellWithTemp;
+    }
+
+    public bool getIsHighlightWhenObservStop()
+    {
+        return settingsService.IsHighlightWhenObservStop;
+    }
+
+    public bool playSound()
+    {
+        return settingsService.OverheatPlaySound;
+    }
+
+    public int getOverheatMinimumSensorToTrigger()
+    {
+        return settingsService.OverheatMinimumSensorToTrigger;
+    }
+
+    public bool sendMail()
+    {
+        return settingsService.OverheatMailSend;
+    }
+
+    public bool sendChart()
+    {
+        return settingsService.OverheatMailAddPlot;
+    }
+
+    public bool sendExcel()
+    {
+        return settingsService.OverheatMailAddExcel;
+    }
+
+    public int getOverheatTriggerMinimumPeriod()
+    {
+        return settingsService.OverheatTriggerMinimumPeriod;
+    }
+
+
+    #endregion
+
+    #region параметры платы
+    public SettingBoard getParametrsBoard()
+    {
+        settingBoard = new SettingBoard(settingsService);
+        return settingBoard;
+    }
+
+    #endregion
 
     #region структура подразделений
     public void saveStructureSubvision(List<StructureSubdivision> subdivisions)

@@ -14,7 +14,7 @@ using SystemOfThermometry3.Model;
 using SystemOfThermometry3.Services;
 
 namespace SystemOfThermometry3.WinUIWorker;
-public partial  class WinUIWorker : IBisnesLogicLayer
+public partial class WinUIWorker : IBisnesLogicLayer
 {
     private IPresentationLayer presentation;
 
@@ -335,7 +335,7 @@ public partial  class WinUIWorker : IBisnesLogicLayer
                     return;
             silosService.deleteLastTemperatur();
             startObserv();
-            presentation.runObservMode();
+
         }
         else
         {
@@ -362,12 +362,19 @@ public partial  class WinUIWorker : IBisnesLogicLayer
 
         if (isSettingWindowOpen)
         {
-            presentation.callMessageBox("Закройте окно настроек!");
-            return;
+            if (presentation.askDialogShow("Для запуска опроса необходимо закрыть настройки").GetAwaiter().GetResult())
+            {
+                presentation.closeSetting();
+                isSettingWindowOpen = false;
+                presentation.runObservMode();
+            }
+            else
+                return;
         }
 
         if (observer.startAsyncObservation())
         {
+            presentation.runObservMode();
             settingsService.IsObserving = true;
             presentation.setNormalStyleForm();
             presentation.setStatus("Опрос запущен");
@@ -386,7 +393,7 @@ public partial  class WinUIWorker : IBisnesLogicLayer
         presentation.sendLogMessage("Опрос остановлен.", Color.Red);
         presentation.setStatus("Опрос остановлен.");
 
-        if (settingsService == null) 
+        if (settingsService == null)
             return;
 
         settingsService.IsObserving = false;
@@ -497,12 +504,12 @@ public partial  class WinUIWorker : IBisnesLogicLayer
             }
             catch (Exception ex)
             {
-                throw new Exception("error openSettingAsync"+ex);
+                throw new Exception("error openSettingAsync" + ex);
             }
         }
         catch (Exception ex)
         {
-            throw new Exception("Error"+ex);
+            throw new Exception("Error" + ex);
         }
     }
 
@@ -512,7 +519,7 @@ public partial  class WinUIWorker : IBisnesLogicLayer
         {
             await openSettingAsync();
         }
-        catch 
+        catch
         {
             //Debug.WriteLine(ex.Message);
         }
@@ -773,13 +780,13 @@ public partial  class WinUIWorker : IBisnesLogicLayer
                 }
                 else
                 {
-                    //await presentation.callMessageBox("Подключение успешно!");
+                    await presentation.callMessageBox("Подключение успешно!");
                     FileProcessingService.setConnectionString(connectionString);
                     successStartWithDB();
                 }
             }
         }
-        catch 
+        catch
         {
             //Debug.WriteLine(ex.Message);
         }
@@ -791,7 +798,7 @@ public partial  class WinUIWorker : IBisnesLogicLayer
         {
             await asyncConnectDB(connectionString);
         }
-        catch 
+        catch
         {
             //Debug.WriteLine(ex.Message);
         }

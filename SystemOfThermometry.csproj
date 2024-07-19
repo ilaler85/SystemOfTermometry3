@@ -77,6 +77,7 @@
     <None Remove="CustomComponent\DBConnectForm.xaml" />
     <None Remove="CustomComponent\DialogForm.xaml" />
     <None Remove="CustomComponent\Dialogs\MessageContentDialog.xaml" />
+    <None Remove="CustomComponent\EnterPassword.xaml" />
     <None Remove="CustomComponent\EnterPasswordForm.xaml" />
     <None Remove="CustomComponent\ExportExcelComponent.xaml" />
     <None Remove="CustomComponent\GrainComponent\GrainComponent.xaml" />
@@ -274,6 +275,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Remove="CustomComponent\ContentDialogPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomComponent\EnterPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\Dialogs\MessageContentDialog.xaml">

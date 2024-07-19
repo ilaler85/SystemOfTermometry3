@@ -16,11 +16,11 @@
     HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled"
     VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
 
-        <StackPanel Margin="0,0,0,10" HorizontalAlignment="Stretch" >
+        <StackPanel Margin="10,10,0,10" HorizontalAlignment="Stretch" >
             
-            <StackPanel>
-                <TextBlock>Ежедневная рассылка измерений</TextBlock>
-                <ToggleSwitch Name="SwitchSendMail" ></ToggleSwitch>
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock FontSize="18">Ежедневная рассылка измерений</TextBlock>
+                <ToggleSwitch Name="SwitchSendMail" Toggled="SwitchSendMail_Toggled" ></ToggleSwitch>
                 <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">SMTP Сервер</TextBlock>
                     <TextBox Name="BoxSMTPServer" Width="200"></TextBox>
@@ -56,7 +56,7 @@
             </StackPanel>
 
             <StackPanel >
-                <TextBlock>Отправка отчетов об ошибках</TextBlock>
+                <TextBlock FontSize="18">Отправка отчетов об ошибках</TextBlock>
                 <ToggleSwitch Name="SwitchSendErrorMail" Toggled="SwitchSendErrorMail_Toggled" ></ToggleSwitch>
                 <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">SMTP Сервер</TextBlock>

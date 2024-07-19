@@ -35,12 +35,11 @@
             <Button Name ="OpenFolderButton" Content="Выбрать путь файла" Click="OpenFolderButton_Click"></Button>
             <TextBlock Name ="filePath" Text="Путь не выбран" Margin="20,5,0,0"></TextBlock>
         </StackPanel>
-        <Button Name ="exportButton"  Click="AppBarToggleButton_Click" Margin="0,30,0,0" Width="150" Height="50">
+        <Button Name ="exportButton"  Click="AppBarToggleButton_Click" Margin="0,30,0,0" Width="120" Height="50">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                <SymbolIcon Symbol="Save" />
-                <TextBlock Text="Экспортировать"/>
+                <SymbolIcon Symbol="Save"/>
+                <TextBlock Text="Экспортировать" FontSize="12"/>
             </StackPanel>
         </Button>
-        <AppBarToggleButton Label="Экспорт" Click="AppBarToggleButton_Click" Margin="0,30,0,0" Icon="Save" />
     </StackPanel>
 </Page>

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using CustomComponent;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -88,18 +89,16 @@ public class PresentationLayerClass : IPresentationLayer
 
     public async Task<bool> askDialogShow(string message)
     {
-
-        dialog = new ContentDialog
+        try
         {
-            Title = "Вопрос",
-            Content = message,
-            PrimaryButtonText = "Да",
-            CloseButtonText = "Нет"
-        };
+            return await window.callAskDialog(message);
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+            return false;
+        }
 
-        ContentDialogResult result = await dialog.ShowAsync();
-
-        return result == ContentDialogResult.Primary;
     }
 
     public async Task callMessageBox(string message)
@@ -176,9 +175,9 @@ public class PresentationLayerClass : IPresentationLayer
             return false;
     }
 
-    public bool closeSetting()
+    public void closeSetting()
     {
-        return askCloseSetting().Result;
+        window.setFrame(typeof(AllSilosComponent));
     }
 
     public void closeFormConnectDB()
@@ -252,7 +251,7 @@ public class PresentationLayerClass : IPresentationLayer
     }
     public bool openEnterForm(modeCheckPassword checkPassword)
     {
-
+        //window
         return true;
     }
 
@@ -291,17 +290,7 @@ public class PresentationLayerClass : IPresentationLayer
 
     private async Task<bool> DialogShow(string title, string content)
     {
-        dialog = new ContentDialog()
-        {
-            Title = title,
-            Content = content,
-            PrimaryButtonText = "ОК",
-            SecondaryButtonText = "Отмена"
-        };
-        //await dialog.ShowAsync();
-        ContentDialogResult dialogResult = await dialog.ShowAsync();
-        result = dialogResult == ContentDialogResult.Primary;
-        return result;
+        return await window.callAskDialog(content, title);
     }
 
     public void openNormalSetting()

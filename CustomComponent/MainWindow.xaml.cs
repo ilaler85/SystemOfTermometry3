@@ -82,18 +82,57 @@ public sealed partial class MainWindow : Window
 
     private ContentDialog dialog;
 
-    public async Task callMessageBox(string message)
+
+    public async Task<bool> enterPasswordDialog(modeCheckPassword modeCheckPassword)
     {
-        dialog = new ContentDialog
-        {
-            Title = "Сообщение",
-            Content = message,
-            CloseButtonText = "OK"
-        };
+        ContentDialog dialog = new ContentDialog();
+        dialog.XamlRoot = frame.XamlRoot;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        dialog.Title = "Введите пароль";
+        dialog.Content = new EnterPassword();
+        dialog.PrimaryButtonText = "Войти";
+        dialog.CloseButtonText = "Отмена";
+        dialog.DefaultButton = ContentDialogButton.Close;
+        dialog.PrimaryButtonClick += Dialog_PrimaryButtonClick;
+        ContentDialogResult result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+            return true;
+        else 
+            return false;
+    }
+
+    private void Dialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        
+    }
+
+    public async Task<bool> callAskDialog(string message, string title = "Необходимо подтверждение")
+    {
+        ContentDialog dialog = new ContentDialog();
+        dialog.XamlRoot = frame.XamlRoot;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        dialog.Title = title;
+        dialog.Content = message;
+        dialog.PrimaryButtonText = "Да";
+        dialog.SecondaryButtonText = "Нет";
+        dialog.DefaultButton = ContentDialogButton.Secondary;
+        bool result = ContentDialogResult.Primary == await dialog.ShowAsync();
+        return result;
+    }
+
+    public async Task callMessageBox(string message, string title = "Внимание")
+    {
+        ContentDialog dialog = new ContentDialog();
+
+        // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+        dialog.XamlRoot = frame.XamlRoot;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        dialog.Title = title;
+        dialog.Content = message;
+        dialog.CloseButtonText = "Ok";
+        dialog.DefaultButton = ContentDialogButton.Close;
 
         await dialog.ShowAsync();
-
-
     }
 
     public void setStyle(string title)

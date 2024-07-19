@@ -16,8 +16,8 @@
             HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled"
             VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
 
-        <StackPanel Margin="5,0,0,10" HorizontalAlignment="Left">
-            <TextBlock Margin="5, 0, 0 ,10" FontSize="18">Насройка COM порта</TextBlock>
+        <StackPanel Margin="10,10,0,10" HorizontalAlignment="Left">
+            <TextBlock Margin="0, 0, 0 ,10" FontSize="18">Насройка COM порта</TextBlock>
             <Grid>
                 <StackPanel  Margin="0,0,0,10"  HorizontalAlignment="Left">
                     <TextBlock Margin="0,0,0,5">Имя порта</TextBlock>

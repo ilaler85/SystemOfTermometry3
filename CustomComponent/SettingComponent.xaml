@@ -18,7 +18,7 @@
                             OpenPaneLength="230"
                             >
         <NavigationView.MenuItems >
-            <NavigationViewItem Name = "GeneralSetting" Content="Общие настройки" Tag="Setting"  IsSelected="True" Margin="0, 40, 0, 0"/>
+            <NavigationViewItem Name = "GeneralSetting" Content="Общие настройки" Tag="Setting"  IsSelected="True" Margin="0, 40, 0, 0" />
             <NavigationViewItem Name = "BoardParameters" Content="Параметры платы" Tag="Setting"  />
             <NavigationViewItem Name = "SilosSetting" Content="Настройка силосов" Tag="Setting"  />
             <NavigationViewItem Name = "GrainSetting" Content="Настройка культур" Tag="Setting" />
