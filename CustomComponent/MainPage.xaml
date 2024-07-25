@@ -36,7 +36,7 @@
             <Frame x:Name="contentFrame"/>
         </NavigationView>
         <Grid>
-            <ProgressBar  x:Name="progressBar" IsIndeterminate="False" VerticalAlignment="Bottom" Value="40" Height="5" />
+            <ProgressBar  x:Name="progressBar" IsIndeterminate="False" VerticalAlignment="Bottom" Value="0" Height="5" Visibility="Collapsed"/>
         </Grid>
     </Grid>
 </Page>

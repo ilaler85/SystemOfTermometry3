@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Forms;
+
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -14,6 +14,9 @@ using Microsoft.UI.Xaml.Navigation;
 using SystemOfThermometry3.WinUIWorker;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
+using Windows.Storage;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,7 +38,7 @@ public sealed partial class OfflineMode : Page
     {
         if (e != null)
             bll = e.Parameter as IBisnesLogicLayer;
-    }
+    } 
 
     private void offlineModeButton_Click(object sender, RoutedEventArgs e)
     {
@@ -54,16 +57,19 @@ public sealed partial class OfflineMode : Page
         bll.setOfflineMode();
     }
 
-    private void saveSettingButton_Click(object sender, RoutedEventArgs e)
+    private async void saveSettingButton_Click(object sender, RoutedEventArgs e)
     {
-        SaveFileDialog saveFile = new SaveFileDialog();
-        saveFile.Filter = "Файлы с конфигурацией|*.cfg|Все файлы|*.*";
-        saveFile.FileName = "";
-        if (saveFile.ShowDialog() == DialogResult.OK)
+        FileOpenPicker picker = new FileOpenPicker()
         {
-            if (saveFile.FileName != "")
-                bll.saveToFile(saveFile.FileName);
-        }
+            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            FileTypeFilter = { "Файлы с конфигурацией|*.cfg|Все файлы|*.*" }
+            
+        };
+        picker.ViewMode = PickerViewMode.List;
+        nint windowHandle = WindowNative.GetWindowHandle(App.Window);
+        InitializeWithWindow.Initialize(picker, windowHandle);
+        StorageFile file = await picker.PickSingleFileAsync();
+
 
     }
 

@@ -13,10 +13,10 @@
     <Grid>
         <Image Name="silosImage" Width="150" Height="200"></Image>
         <StackPanel Name ="panelTemp" Background="Gray">
-            <TextBlock Name="nameLabel"></TextBlock>
-            <TextBlock Name="MinTempLabel" ></TextBlock>
-            <TextBlock Name="MidTempLabel"></TextBlock>
-            <TextBlock Name="MaxTempLabel"></TextBlock>
+            <TextBlock Name="nameLabel "  Text="{x:Bind Path=silos.Name, Mode=OneWay}"></TextBlock>
+            <TextBlock Name="MinTempLabel" Text="{x:Bind Path=silos.Min, Mode=OneWay}"></TextBlock>
+            <TextBlock Name="MidTempLabel" Text="{x:Bind Path=silos.Mid, Mode=OneWay}"></TextBlock>
+            <TextBlock Name="MaxTempLabel" Text="{x:Bind Path=silos.Max, Mode=OneWay}"></TextBlock>
         </StackPanel>
         
         
