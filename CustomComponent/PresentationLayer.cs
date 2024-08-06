@@ -297,6 +297,31 @@ public class PresentationLayerClass : IPresentationLayer
     {
         window.getMethod("changeSetting");
     }
+
+    public async bool enterPasswordAsync(modeCheckPassword checkPassword)
+    {
+        try
+        {
+            string result ="";
+            while (true)
+            {
+                await window.enterPasswordAsync();
+                result = window.costil;
+                await window.callMessageBox(result);
+                if (result == "")
+                    return false;
+                else
+                    if (checkPassword.Invoke(result))
+                        return true;
+            }
+        }
+        catch
+        {
+            Debug.WriteLine("Error enterPasswordAsync"); 
+            return false;
+        }
+    }
+
     public async Task openAdminSetting()
     {
         await Task.Run(() => window.getMethod("changeSetting"));

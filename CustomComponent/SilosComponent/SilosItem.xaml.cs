@@ -45,12 +45,13 @@ namespace CustomComponent.SilosComponent
         {
             MinTempLabel.Visibility = Visibility.Collapsed;
             MaxTempLabel.Visibility = Visibility.Collapsed;
-            silosImage.Source = ;
+            //silosImage.Source = ;
         }
 
         private string getColorSilos()
         {
-            if(silos.Max =)
+            return "";
+            //if(silos.Max =) 
         }
     }
 }

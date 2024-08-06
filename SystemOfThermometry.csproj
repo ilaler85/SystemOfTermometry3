@@ -21,13 +21,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Resource Include="Assets\filling0.png" />
+    <Resource Include="Assets\filling100.png" />
+    <Resource Include="Assets\filling25.png" />
+    <Resource Include="Assets\filling50.png" />
+    <Resource Include="Assets\filling75.png" />
+    <Resource Include="Assets\SplashScreen.scale-200.png" />
+    <Resource Include="Assets\LockScreenLogo.scale-200.png" />
+    <Resource Include="Assets\Square150x150Logo.scale-200.png" />
+    <Resource Include="Assets\Square44x44Logo.scale-200.png" />
+    <Resource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Resource Include="Assets\StoreLogo.png" />
+    <Resource Include="Assets\silos_blue.png" />
+    <Resource Include="Assets\silos_blue_green.png" />
+    <Resource Include="Assets\silos_crimson.png" />
+    <Resource Include="Assets\silos_gray_big.png" />
+    <Resource Include="Assets\silos_gray_small.png" />
+    <Resource Include="Assets\silos_green.png" />
+    <Resource Include="Assets\silos_red.png" />
+    <Resource Include="Assets\silos_top.png" />
+    <Resource Include="Assets\silos_yellow.png" />
+    <Resource Include="Assets\silos_yellow_green.png" />
+    <Resource Include="Assets\small_silos_blue.png" />
+    <Resource Include="Assets\small_silos_crimson.png" />
+    <Resource Include="Assets\small_silos_green.png" />
+    <Resource Include="Assets\small_silos_red.png" />
+    <Resource Include="Assets\small_silos_yellow.png" />
+    <Resource Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,18 +87,45 @@
     <PRIResource Remove="Service\**" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="Assets\Doc_NIKA.pdf" />
+    <Content Remove="Assets\filling0.png" />
+    <Content Remove="Assets\filling100.png" />
+    <Content Remove="Assets\filling25.png" />
+    <Content Remove="Assets\filling50.png" />
+    <Content Remove="Assets\filling75.png" />
+    <Content Remove="Assets\LockScreenLogo.scale-200.png" />
+    <Content Remove="Assets\silos_blue.png" />
+    <Content Remove="Assets\silos_blue_green.png" />
+    <Content Remove="Assets\silos_crimson.png" />
+    <Content Remove="Assets\silos_gray_big.png" />
+    <Content Remove="Assets\silos_gray_small.png" />
+    <Content Remove="Assets\silos_green.png" />
+    <Content Remove="Assets\silos_red.png" />
+    <Content Remove="Assets\silos_top.png" />
+    <Content Remove="Assets\silos_yellow.png" />
+    <Content Remove="Assets\silos_yellow_green.png" />
+    <Content Remove="Assets\small_silos_blue.png" />
+    <Content Remove="Assets\small_silos_crimson.png" />
+    <Content Remove="Assets\small_silos_green.png" />
+    <Content Remove="Assets\small_silos_red.png" />
+    <Content Remove="Assets\small_silos_yellow.png" />
+    <Content Remove="Assets\SplashScreen.scale-200.png" />
+    <Content Remove="Assets\Square150x150Logo.scale-200.png" />
+    <Content Remove="Assets\Square44x44Logo.scale-200.png" />
+    <Content Remove="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Remove="Assets\StoreLogo.png" />
+    <Content Remove="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="AllSilosComponent.xaml" />
     <None Remove="CustomComponent\AllSilosComponent.xaml" />
     <None Remove="CustomComponent\AllSilosView.xaml" />
     <None Remove="CustomComponent\ApplyKeyForm.xaml" />
     <None Remove="CustomComponent\ChartComponent.xaml" />
     <None Remove="CustomComponent\ChartFillingComponent.xaml" />
-    <None Remove="CustomComponent\ContentDialogPage.xaml" />
     <None Remove="CustomComponent\DBConnectForm.xaml" />
     <None Remove="CustomComponent\DialogForm.xaml" />
     <None Remove="CustomComponent\Dialogs\MessageContentDialog.xaml" />
-    <None Remove="CustomComponent\EnterPassword.xaml" />
-    <None Remove="CustomComponent\EnterPasswordForm.xaml" />
     <None Remove="CustomComponent\ExportExcelComponent.xaml" />
     <None Remove="CustomComponent\GrainComponent\GrainComponent.xaml" />
     <None Remove="CustomComponent\itemAboutComponent.xaml" />
@@ -111,6 +158,7 @@
   <ItemGroup>
     <Folder Include="CustomComponent\PlotingComponent\" />
     <Folder Include="Properties\Resourses\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -162,11 +210,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\MessageBoxWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="CustomComponent\EnterPasswordForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -271,15 +314,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <CustomAdditionalCompileInputs Remove="CustomComponent\ContentDialogPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Remove="CustomComponent\ContentDialogPage.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="CustomComponent\EnterPassword.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Resource Include="Assets\Doc_NIKA.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomComponent\Dialogs\MessageContentDialog.xaml">

@@ -452,6 +452,10 @@ public partial class WinUIWorker : IBisnesLogicLayer
             else
                 adminEnter();
         }
+        if (settingsService.IsAdminMode)
+        {
+            
+        }
     }
 
 
@@ -527,7 +531,7 @@ public partial class WinUIWorker : IBisnesLogicLayer
 
     private void adminEnter()
     {
-        presentation.openEnterForm(checkAdminPassword);
+        settingsService.IsAdminMode = presentation.enterPasswordAsync(checkAdminPassword);
     }
 
     public int getFilling(int silosId)

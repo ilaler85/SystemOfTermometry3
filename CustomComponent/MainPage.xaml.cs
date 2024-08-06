@@ -245,7 +245,7 @@ public sealed partial class MainPage : Page
                     pageType = typeof(AboutComponent);
                     break;
 
-                case "adminMode":
+                case "itemAdminMode":
                     bll.changeAdminMode();
                     return;
 
@@ -262,22 +262,6 @@ public sealed partial class MainPage : Page
         {
             //Debug.WriteLine(ex);
         }
-    }
-
-
-    private bool adminEnter()
-    {
-        var enterForm = new EnterPasswordForm();
-        enterForm.Activate();
-
-        return true;
-    }
-
-
-
-    private void changeMode()
-    {
-        adminEnter();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

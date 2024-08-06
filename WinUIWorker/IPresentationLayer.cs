@@ -197,4 +197,11 @@ public interface IPresentationLayer
     public void refreshSilosTabControl();
 
     public void refreshAllSilosTemperatur();
+
+    /// <summary>
+    /// Форма с вводом пароля
+    /// </summary>
+    /// <param name="checkPassword">Метод проверки пароля администратора/разработчика/оператора</param>
+    /// <returns></returns>
+    public bool enterPasswordAsync(modeCheckPassword checkPassword);
 }

@@ -13,6 +13,8 @@ using Windows.UI.ViewManagement;
 using Microsoft.UI;
 using Windows.Storage.Pickers;
 using Windows.Storage;
+using NPOI.SS.Formula.Functions;
+using Windows.Foundation.Metadata;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -80,30 +82,64 @@ public sealed partial class MainWindow : Window
         return method?.Invoke(frame.Content, parameters: null);
     }
 
-    private ContentDialog dialog;
+    //private ContentDialog dialog;
 
-
+    /*
     public async Task<bool> enterPasswordDialog(modeCheckPassword modeCheckPassword)
     {
-        ContentDialog dialog = new ContentDialog();
+       ContentDialog dialog = new ContentDialog();
         dialog.XamlRoot = frame.XamlRoot;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
-        dialog.Title = "Введите пароль";
-        dialog.Content = new EnterPassword();
+       dialog.Title = "Введите пароль";
+       dialog.Content = new EnterPassword();
         dialog.PrimaryButtonText = "Войти";
         dialog.CloseButtonText = "Отмена";
         dialog.DefaultButton = ContentDialogButton.Close;
         dialog.PrimaryButtonClick += Dialog_PrimaryButtonClick;
         ContentDialogResult result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
-            return true;
+           return true;
         else 
             return false;
-    }
+    } */
 
-    private void Dialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+
+    public string costil = "";
+    public async Task enterPasswordAsync()
     {
+        var inputTextBox = new PasswordBox
+        {
+            Height = 32,
+            Password = ""
+        };
+
+        ContentDialog dialog = new ContentDialog();
+        dialog.XamlRoot = App.Window.Content.XamlRoot;
+        //dialog.XamlRoot = frame.XamlRoot;
+        dialog.Content = inputTextBox;
+        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        dialog.Title = "Введите пароль";
+        dialog.PrimaryButtonText = "Войти";
+        dialog.SecondaryButtonText = "Отмена";
+        dialog.DefaultButton = ContentDialogButton.Close;
+
+        ContentDialogResult result = await dialog.ShowAsync();
         
+        if (result == ContentDialogResult.Primary)
+            //return 
+            costil = inputTextBox.Password;
+        /*else
+            return "";*/
+        //while (true)
+        //{
+        //    if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        //    {
+        //        if (checkPassword.Invoke(inputTextBox.Password))
+        //            return true;
+        //    }
+        //    else
+        //        return false;
+        //}
     }
 
     public async Task<bool> callAskDialog(string message, string title = "Необходимо подтверждение")
@@ -126,10 +162,12 @@ public sealed partial class MainWindow : Window
 
         // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
         dialog.XamlRoot = frame.XamlRoot;
+        //dialog.XamlRoot = App.Window.Content.XamlRoot;
         dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         dialog.Title = title;
         dialog.Content = message;
         dialog.CloseButtonText = "Ok";
+
         dialog.DefaultButton = ContentDialogButton.Close;
 
         await dialog.ShowAsync();
